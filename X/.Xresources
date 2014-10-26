@@ -1,0 +1,38 @@
+URxvt.urlLauncher: firefox
+!URxvt*background: Black
+!URxvt*foreground: White
+URxvt*scrollstyle: plain
+URxvt*scrollBar_right: true
+!URxvt.font: -misc-fixed-medium-r-normal--15-140-75-75-c-90-iso8859-1
+
+URxvt*font: xft:Bitstream Vera Sans Mono:pixelsize=14:antialias=true:hinting=true
+URxvt*boldFont: xft:Bitstream Vera Sans Mono:bold:pixelsize=14:antialias=true:hinting=true
+!URxvt*font: xft:DejaVu Sans Mono:pixelsize=13:antialias=true:hinting=true
+!URxvt*boldFont: xft:DejaVu Sans Mono:bold:pixelsize=13:antialias=true:hinting=true
+!#URxvt*font: xft:Liberation Mono:pixelsize=13:antialias=true:hinting=true
+!#URxvt*boldFont: xft:Liberation Mono:bold:pixelsize=13:antialias=true:hinting=true
+!#URxvt*font: xft:terminus:pixelsize=15
+!#URxvt*boldFont: xft:terminus:bold:pixelsize=15
+!#URxvt*font:-*-courier-medium-r-normal-*-14-*-*-*-*-*-iso8859-1
+!#URxvt*boldFont:-*-courier-bold-r-normal-*-14-*-*-*-*-*-iso8859-1
+
+URxvt*background: #000000
+URxvt*foreground: #bfbdc0
+URxvt*color0: #000000
+URxvt*color1: #8a110e
+URxvt*color2: #669f3d
+URxvt*color3: #b3751e
+URxvt*color4: #493d9f
+URxvt*color5: #9216a3
+URxvt*color6: #198a9c
+URxvt*color7: #bfbdc0
+URxvt*color8: #686773
+URxvt*color9: #fc5166
+URxvt*color10: #63ff54
+URxvt*color11: #ffd75c
+URxvt*color12: #766eff
+URxvt*color13: #e151ff
+URxvt*color14: #57ffec
+URxvt*color15: #ffffff
+
+
