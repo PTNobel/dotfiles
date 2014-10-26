@@ -1,0 +1,36 @@
+#!/bin/bash
+
+pa_down() {
+
+    pactl set-sink-volume 0 -- -5%
+}
+
+pa_up() {
+    VOLUME=`pacmd list-sinks|grep -A 15 '* index'| awk '/volume: front/{ print $5 }' | sed 's/%//g'`
+    END=$(($VOLUME + 5))
+    if [ $END -gt 100 ]
+        then exit 0
+    else pactl set-sink-volume 0 +5%
+    fi
+}
+
+pa_force_up() {
+    pactl set-sink-volume 0 +5%
+}
+
+pa_mute() {
+    pactl set-sink-mute 0 toggle
+}
+
+if [ "$1" == "down" ]
+    then pa_down
+elif [ "$1" == "up" ]
+    then pa_up
+elif [ "$1" == "force" ]
+    then pa_force_up
+elif [ "$1" == "mute" ]
+    then pa_mute
+else echo "Usage: $0 {up|down|force|mute}"
+    exit 2
+
+fi

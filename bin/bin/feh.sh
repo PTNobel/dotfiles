@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+angels() {
+feh --bg-scale ~/Pictures/Weeping\ Angel/1.JPG
+
+sleep 5
+
+feh --bg-scale ~/Pictures/Weeping\ Angel/2.JPG
+
+sleep 5
+
+feh --bg-scale ~/Pictures/Weeping\ Angel/3.JPG
+
+sleep 5
+
+feh --bg-scale ~/Pictures/Weeping\ Angel/4.JPG
+
+sleep 5
+
+feh --bg-scale ~/Pictures/Weeping\ Angel/5.JPG
+}
+
+while true ; do angels ; done

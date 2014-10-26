@@ -1,0 +1,37 @@
+#!/bin/sh
+lock() {
+    if xrandr | grep '*' | grep '^   1366x768' >/dev/null
+       then if xrandr | grep '*' | grep '^   1920x1080' >/dev/null
+          then i3lock -d -i  $HOME/Pictures/noise-texture.png -t
+       else i3lock -d -i $HOME/Pictures/262039-small.png
+       fi
+    else i3lock -d -i $HOME/Pictures/262039.png
+    fi 
+}
+#262039.png
+case "$1" in
+    lock)
+        lock
+        ;;
+    logout)
+        i3-msg exit
+        ;;
+    suspend)
+        lock && systemctl suspend
+        ;;
+    hibernate)
+        lock && systemctl hibernate
+        ;;
+    reboot)
+        systemctl reboot
+        ;;
+    shutdown)
+        systemctl poweroff
+        ;;
+    *)
+        echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"
+        exit 2
+esac
+
+exit 0
+
