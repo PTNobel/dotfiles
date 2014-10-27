@@ -2,7 +2,7 @@
 
 launch_thunderbird() {
     pidof thunderbird
-    if [ $? -eq 1 ]
+    if [ $? -ge 1 ]
     then echo "launching thunderbird" ; thunderbird
     else echo "thunderbird is running" 
     fi

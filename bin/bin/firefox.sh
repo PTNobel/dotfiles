@@ -2,7 +2,7 @@
 
 launch_firefox() {
     pidof firefox
-    if [ $? -eq 1 ]
+    if [ $? -ge 1 ]
     then echo "launching firefox" ; firefox
     else echo "firefox is running" 
     fi
