@@ -228,5 +228,5 @@ exec_always --no-startup-id bash -c 'sleep 3 ; feh --bg-scale Pictures/tardis-14
 exec --no-startup-id dunst
 exec --no-startup-id deskcon-desktop
 exec --no-startup-id hp-systray
-exec --no-startup-id firefox
-exec --no-startup-id thunderbird
+exec --no-startup-id firefox.sh
+exec --no-startup-id thunderbird.sh
