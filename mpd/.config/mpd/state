@@ -1,9 +1,9 @@
-sw_volume: 22
+sw_volume: 21
 audio_device_state:1:My HTTP Stream
 audio_device_state:1:My Pulse Output
 state: pause
-current: 0
-time: 18.657000
+current: 30
+time: 44.604000
 random: 0
 repeat: 0
 single: 0
@@ -12,5 +12,151 @@ crossfade: 0
 mixrampdb: 0.000000
 mixrampdelay: -1.000000
 playlist_begin
-0:Billy Joel/The Stranger/Disc 1 - 02 - The Stranger.ogg
+0:Journey/Captured/13 - La Do Da.ogg
+1:Queen/Greatest Hits I & II/Disc 1 - 8 - Save Me.ogg
+2:Journey/Captured/08 - Dixie Highway.ogg
+3:Rush/Retrospective 3/Disc 1 - 05 - Bravado.ogg
+4:Kansas/The Best of Kansas/03 Fight Fire With Fire.ogg
+5:Led Zeppelin/Presence/01 - Achilles Last Stand.ogg
+6:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 7 - We Weren't Born to Follow.ogg
+7:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 1 - In These Arms.ogg
+8:Journey/Greatest Hits/04 Faithfully.ogg
+9:Queen/Greatest Hits I & II/Disc 2 - 2 - Under Pressure.ogg
+10:Rush/Retrospective 3/Disc 1 - 01 - One Little Victory (remix).ogg
+11:Queen/Greatest Hits I & II/Disc 1 - 11 - Now I'm Here.ogg
+12:Queen/Greatest Hits I & II/Disc 1 - 14 - Flash.ogg
+13:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 12 - Lay Your Hands on Me.ogg
+14:Queen/Greatest Hits I & II/Disc 2 - 7 - It's a Hard Life.ogg
+15:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 9 - Born to Be My Baby.ogg
+16:Journey/Captured/07 - Too Late.ogg
+17:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 5 - When We Were Beautiful.ogg
+18:Journey/Captured/10 - Anytime.ogg
+19:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 10 - Blood on Blood.ogg
+20:Queen/Greatest Hits I & II/Disc 2 - 13 - The Invisible Man.ogg
+21:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 1 - Livin' on a Prayer.ogg
+22:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 14 - Runaway.ogg
+23:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 8 - I'll Be There for You.ogg
+24:Journey/Captured/04 - Line of Fire.ogg
+25:Queen/Greatest Hits I & II/Disc 2 - 6 - Innuendo.ogg
+26:Def Leppard/Pyromania/09 - Action! Not Words.ogg
+27:Queen/Greatest Hits I & II/Disc 1 - 10 - Somebody to Love.ogg
+28:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 8 - These Days.ogg
+29:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 13 - Always.ogg
+30:Rush/Retrospective 3/Disc 1 - 13 - Earthshine (remix).ogg
+31:Journey/Greatest Hits/15 Be Good To Yourself.ogg
+32:Rush/Retrospective 3/Disc 1 - 14 - Far Cry.ogg
+33:Kansas/The Best of Kansas/11 The Devil Game.ogg
+34:Queen/Greatest Hits I & II/Disc 1 - 13 - Play the Game.ogg
+35:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 11 - This Is Love This Is Life.ogg
+36:Three Days Grace/Transit of Venus/Disc 1 - 07 - Give in to Me.ogg
+37:Kansas/The Best of Kansas/06 Hold On.ogg
+38:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 7 - This Ain't a Love Song.ogg
+39:Three Days Grace/Transit of Venus/Disc 1 - 04 - Operate.ogg
+40:Def Leppard/Pyromania/05 - Die Hard the Hunter.ogg
+41:Queen/Greatest Hits I & II/Disc 1 - 1 - Bohemian Rhapsody.ogg
+42:Queen/Greatest Hits I & II/Disc 1 - 16 - We Will Rock You.ogg
+43:Journey/Greatest Hits/01 Only The Young.ogg
+44:Kansas/The Best of Kansas/04 Dust In the Wind.ogg
+45:Kansas/The Best of Kansas/05 Song for America.ogg
+46:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 6 - Bed of Roses.ogg
+47:Kansas/The Best of Kansas/08 Play the Game Tonight.ogg
+48:Queen/Greatest Hits I & II/Disc 1 - 4 - Fat Bottomed Girls.ogg
+49:Journey/Captured/12 - Walks Like a Lady.ogg
+50:Queen/Greatest Hits I & II/Disc 2 - 8 - Breakthru.ogg
+51:Journey/Greatest Hits/16 When You Love A Woman.ogg
+52:Journey/Greatest Hits/09 Separate Ways (Worlds Apart).ogg
+53:Def Leppard/Pyromania/01 - Rock! Rock! (Till You Drop).ogg
+54:Queen/Greatest Hits I & II/Disc 1 - 2 - Another One Bites the Dust.ogg
+55:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 15 - What Do You Got?.ogg
+56:Journey/Captured/03 - Just the Same Way.ogg
+57:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 11 - Who Says You Can't Go Home.ogg
+58:Queen/Greatest Hits I & II/Disc 2 - 4 - I Want It All.ogg
+59:Journey/Greatest Hits/03 Wheel In The Sky.ogg
+60:Queen/Greatest Hits I & II/Disc 2 - 12 - I'm Going Slightly Mad.ogg
+61:Journey/Captured/01 - Majestic.ogg
+62:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 9 - (You Want to) Make a Memory.ogg
+63:Led Zeppelin/Presence/04 - Nobody's Fault but Mine.ogg
+64:Def Leppard/Pyromania/04 - Too Late for Love.ogg
+65:Rush/Retrospective 3/Disc 1 - 04 - Presto.ogg
+66:Rush/Retrospective 3/Disc 1 - 07 - The Pass.ogg
+67:Three Days Grace/Transit of Venus/Disc 1 - 12 - Broken Glass.ogg
+68:Queen/Greatest Hits I & II/Disc 1 - 6 - You're My Best Friend.ogg
+69:Three Days Grace/Transit of Venus/Disc 1 - 02 - Chalk Outline.ogg
+70:Def Leppard/Pyromania/03 - Stagefright.ogg
+71:Queen/Greatest Hits I & II/Disc 2 - 11 - The Miracle.ogg
+72:Journey/Captured/06 - Stay Awhile.ogg
+73:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 3 - It's My Life.ogg
+74:Queen/Greatest Hits I & II/Disc 1 - 9 - Crazy Little Thing Called Love.ogg
+75:Journey/Captured/02 - Where Were You.ogg
+76:Kansas/The Best of Kansas/10 The Pinnacle.ogg
+77:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 6 - Bad Medicine.ogg
+78:Def Leppard/Pyromania/07 - Rock of Ages.ogg
+79:Journey/Greatest Hits/11 Lovin', Touchin', Squeezin'.ogg
+80:Queen/Greatest Hits I & II/Disc 1 - 3 - Killer Queen.ogg
+81:Journey/Greatest Hits/05 I'll Be Alright Without You.ogg
+82:Queen/Greatest Hits I & II/Disc 1 - 7 - Don’t Stop Me Now.ogg
+83:Led Zeppelin/Presence/07 - Tea for One.ogg
+84:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 2 - You Give Love a Bad Name.ogg
+85:Three Days Grace/Transit of Venus/Disc 1 - 09 - Give Me a Reason.ogg
+86:Def Leppard/Pyromania/08 - Comin' Under Fire.ogg
+87:Led Zeppelin/Presence/03 - Royal Orleans.ogg
+88:Three Days Grace/Transit of Venus/Disc 1 - 08 - Happiness.ogg
+89:Rush/Retrospective 3/Disc 1 - 12 - Leave That Thing Alone.ogg
+90:Kansas/The Best of Kansas/12 Closet Chronicles.ogg
+91:Queen/Greatest Hits I & II/Disc 2 - 15 - Friends Will Be Friends.ogg
+92:Rush/Retrospective 3/Disc 1 - 08 - Animate.ogg
+93:Journey/Greatest Hits/10 Lights.ogg
+94:Journey/Greatest Hits/13 Girl Can't Help It.ogg
+95:Journey/Greatest Hits/02 Don't Stop Believin'.ogg
+96:Three Days Grace/Transit of Venus/Disc 1 - 01 - Sign of the Times.ogg
+97:Queen/Greatest Hits I & II/Disc 2 - 16 - The Show Must Go On.ogg
+98:Journey/Captured/17 - The Party's Over (Hopelessly in Love).ogg
+99:Queen/Greatest Hits I & II/Disc 1 - 12 - Good Old Fashioned Lover Boy.ogg
+100:Queen/Greatest Hits I & II/Disc 1 - 5 - Bicycle Race.ogg
+101:Rush/Retrospective 3/Disc 1 - 06 - Driven.ogg
+102:Led Zeppelin/Presence/02 - For Your Life.ogg
+103:Journey/Greatest Hits/06 Any Way You Want It.ogg
+104:Rush/Retrospective 3/Disc 1 - 10 - Ghost of a Chance (live).ogg
+105:Queen/Greatest Hits I & II/Disc 1 - 17 - We Are the Champions.ogg
+106:Queen/Greatest Hits I & II/Disc 2 - 3 - Radio Ga Ga.ogg
+107:Kansas/The Best of Kansas/02 Point of Know Return.ogg
+108:Queen/Greatest Hits I & II/Disc 2 - 9 - Who Wants to Live Forever.ogg
+109:Queen/Greatest Hits I & II/Disc 2 - 14 - Hammer to Fall.ogg
+110:Kansas/The Best of Kansas/07 No One Together.ogg
+111:Journey/Greatest Hits/07 Ask The Lonely.ogg
+112:Queen/Greatest Hits I & II/Disc 2 - 5 - I Want to Break Free.ogg
+113:Kansas/The Best of Kansas/09 The Wall.ogg
+114:Three Days Grace/Transit of Venus/Disc 1 - 05 - Anonymous.ogg
+115:Three Days Grace/Transit of Venus/Disc 1 - 06 - Misery Loves My Company.ogg
+116:Rush/Retrospective 3/Disc 1 - 11 - Nobody's Hero.ogg
+117:Rush/Retrospective 3/Disc 1 - 02 - Dreamline.ogg
+118:Queen/Greatest Hits I & II/Disc 2 - 1 - A Kind of Magic.ogg
+119:Journey/Greatest Hits/12 Open Arms.ogg
+120:Led Zeppelin/Presence/05 - Candy Store Rock.ogg
+121:Queen/Greatest Hits I & II/Disc 1 - 15 - Seven Seas of Rhye.ogg
+122:Rush/Retrospective 3/Disc 1 - 03 - Workin' Them Angels.ogg
+123:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 4 - Keep the Faith.ogg
+124:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 3 - Lost Highway.ogg
+125:Three Days Grace/Transit of Venus/Disc 1 - 11 - Expectations.ogg
+126:Def Leppard/Pyromania/06 - Foolin'.ogg
+127:Def Leppard/Pyromania/10 - Billy's Got a Gun.ogg
+128:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 4 - Have a Nice Day.ogg
+129:Led Zeppelin/Presence/06 - Hots on for Nowhere.ogg
+130:Journey/Greatest Hits/08 Who's Crying Now.ogg
+131:Queen/Greatest Hits I & II/Disc 2 - 10 - Headlong.ogg
+132:Rush/Retrospective 3/Disc 1 - 09 - Roll the Bones.ogg
+133:Def Leppard/Pyromania/02 - Photograph.ogg
+134:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 10 - Blaze of Glory.ogg
+135:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 12 - The More Things Change.ogg
+136:Three Days Grace/Transit of Venus/Disc 1 - 13 - Unbreakable Heart.ogg
+137:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 2 - 2 - Someday I'll Be Saturday Night.ogg
+138:Journey/Greatest Hits/14 Send Her My Love.ogg
+139:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 16 - No Apologies.ogg
+140:Journey/Captured/11 - Do You Recall.ogg
+141:Journey/Captured/09 - Feeling That Way.ogg
+142:Three Days Grace/Transit of Venus/Disc 1 - 10 - Time That Remains.ogg
+143:Queen/Greatest Hits I & II/Disc 2 - 17 - One Vision.ogg
+144:Bon Jovi/Greatest Hits: The Ultimate Collection/Disc 1 - 5 - Wanted Dead or Alive.ogg
+145:Three Days Grace/Transit of Venus/Disc 1 - 03 - The High Road.ogg
+146:Kansas/The Best of Kansas/01 Carry On Wayward Son.ogg
 playlist_end
