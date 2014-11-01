@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 launch_firefox() {
     pidof firefox
