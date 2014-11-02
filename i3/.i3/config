@@ -218,7 +218,7 @@ exec --no-startup-id xcompmgr -c
 exec --no-startup-id transmission-gtk --hidden
 exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 exec --no-startup-id geary --hidden
-exec --no-startup-id bash -c "sleep 3 ; urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; sudo -v ;yaourt -Syua && good morning'"
+exec urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; sudo -v ;yaourt -Syua && good morning'
 exec --no-startup-id mpd.sh
 exec --no-startup-id redshift
 exec --no-startup-id "devmon --no-gui"
