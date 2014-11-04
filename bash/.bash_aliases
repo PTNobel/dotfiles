@@ -85,3 +85,4 @@ alias fix='sudo \`history -p \!\!\`'
 alias cd=cl
 alias iceweasel='setsid iceweasel'
 alias scan_wifi="iwlist wlo1 scanning | grep ESSID -B 3"
+alias watch_journal='journalctl -fe'
