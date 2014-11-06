@@ -3,5 +3,5 @@ if [ "$1" == "night" ]
 then echo 'Powering down' ; sleep 5 && systemctl poweroff -i $2
 elif [ "$1" == "morning" ]
 then bash /home/parth/bin/update.sh
-else echo 'good "$@" to you too.'
+else echo "good $@ to you too."
 fi

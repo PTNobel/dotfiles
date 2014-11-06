@@ -1,5 +1,7 @@
 #!/bin/dash
 
+kill `pidof -x $0 -o %PPID`
+
 launch_firefox() {
     pidof firefox
     if [ $? -ge 1 ]
