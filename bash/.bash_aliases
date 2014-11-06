@@ -86,4 +86,4 @@ alias cd=cl
 alias iceweasel='setsid iceweasel'
 alias scan_wifi="iwlist wlo1 scanning | grep ESSID -B 3"
 alias watch_journal='journalctl -fe'
-tail -f pacman.log -n`cat pacman.log|wc -l` | lolcat
+alias watch_pacman='tail -f /var/log/pacman.log -n`cat /var/log/pacman.log|wc -l` | lolcat'
