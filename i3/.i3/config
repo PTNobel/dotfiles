@@ -39,7 +39,7 @@ bindsym $mod+Shift+d exec dmenu_run
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
- bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
+ bindsym $mod+d exec --no-startup-id j4-dmenu-desktop 
 
 # change focus
 bindsym $mod+j focus left
@@ -214,8 +214,8 @@ exec_always --no-startup-id monitor-layout.sh
 exec --no-startup-id i3exit lock
 exec --no-startup-id urxvtd.sh
 exec --no-startup-id unlock-keyring.py
-exec --no-startup-id xcompmgr -c
-exec --no-startup-id transmission-gtk --hidden
+exec --no-startup-id compton -fbcCG
+exec --no-startup-id transmission.sh
 exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 exec --no-startup-id geary --hidden
 exec urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; sudo -v ;yaourt -Syua && good morning'
