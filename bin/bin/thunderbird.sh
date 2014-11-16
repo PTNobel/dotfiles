@@ -3,8 +3,8 @@
 kill `pidof -x $0 -o %PPID`
 
 launch_thunderbird() {
-    pidof thunderbird
-    if [ $? -ge 1 ]
+    THUNDER=`pidof thunderbird | wc -w`
+    if [ "$THUNDER" -lt "1" ]
     then echo "launching thunderbird" ; thunderbird
     else echo "thunderbird is running" 
     fi

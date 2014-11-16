@@ -1,10 +1,10 @@
-#!/bin/dash
+#!/bin/bash
 
 kill `pidof -x $0 -o %PPID`
 
 launch_firefox() {
-    pidof firefox
-    if [ $? -ge 1 ]
+    FIRE=`pidof firefox | wc -w`
+    if [ "$FIRE" -lt "1" ]
     then echo "launching firefox" ; firefox
     else echo "firefox is running" 
     fi
