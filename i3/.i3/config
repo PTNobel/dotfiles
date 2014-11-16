@@ -207,6 +207,8 @@ mode "$mode_system" {
 }
 bindsym $mod+Escape mode "$mode_system"
 
+#keyboard layout
+#bindsym $mod+k exec --no-startup-id keyboard.sh
 
 # Startup Applications autostart
 
