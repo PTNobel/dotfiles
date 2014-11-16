@@ -87,3 +87,4 @@ alias iceweasel='setsid iceweasel'
 alias scan_wifi="iwlist wlo1 scanning | grep ESSID -B 3"
 alias watch_journal='journalctl -fe'
 alias watch_pacman='tail -f /var/log/pacman.log -n`cat /var/log/pacman.log|wc -l` | lolcat'
+alias Spotify='env WINEPREFIX="/home/parth/.wine" wine C:\\\\users\\\\parth\\\\Application\ Data\\\\Spotify\\\\spotify.exe'
