@@ -216,7 +216,7 @@ exec_always --no-startup-id monitor-layout.sh
 exec --no-startup-id i3exit lock_without_sleep
 exec --no-startup-id urxvtd.sh
 exec --no-startup-id unlock-keyring.py
-exec_always --no-startup-id compton -fbcCG --no-fading-openclose
+exec_always --no-startup-id compton --config ~/.i3/compton.conf
 exec --no-startup-id transmission.sh
 exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 exec --no-startup-id geary --hidden
