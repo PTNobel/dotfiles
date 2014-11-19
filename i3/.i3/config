@@ -208,7 +208,10 @@ mode "$mode_system" {
 bindsym $mod+Escape mode "$mode_system"
 
 #keyboard layout
-#bindsym $mod+k exec --no-startup-id keyboard.sh
+bindsym $mod+Shift+b exec --no-startup-id keyboard.sh
+
+# Blur screen
+bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
 
 # Startup Applications autostart
 
