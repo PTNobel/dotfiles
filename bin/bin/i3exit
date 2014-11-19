@@ -19,6 +19,33 @@ lock_without_sleep() {
     fi
 }
 
+
+blur() {
+   file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
+   file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
+   scrot -d0 "$file1"
+   convert "$file1" -blur 0x9 "$file2"
+   i3lock -i "$file2" 
+   trap "rm '$file1' '$file2'" EXIT
+}
+
+blur_with_sleep() {
+   file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
+   file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
+   scrot -d0 "$file1"
+   convert "$file1" -blur 0x9 "$file2"
+   i3lock -di "$file2" 
+   trap "rm '$file1' '$file2'" EXIT
+
+}
+
+freeze() {
+   file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
+   scrot -d0 "$file1"
+   i3lock -i "$file1"
+   trap "rm '$file1'" EXIT
+}
+
 #262039.png
 case "$1" in
     lock)
@@ -26,6 +53,15 @@ case "$1" in
         ;;
     lock_without_sleep)
         lock_without_sleep
+        ;;
+    blur)
+        blur
+        ;;
+    blur_with_sleep)
+        blur_with_sleep
+        ;;
+    freeze)
+        freeze
         ;;
     logout)
         i3-msg exit
@@ -43,7 +79,7 @@ case "$1" in
         systemctl poweroff
         ;;
     *)
-        echo "Usage: $0 {lock|lock_without_sleep|logout|suspend|hibernate|reboot|shutdown}"
+        echo "Usage: $0 {lock|lock_without_sleep|blur|blur_with_sleep|freeze|logout|suspend|hibernate|reboot|shutdown}"
         exit 2
 esac
 
