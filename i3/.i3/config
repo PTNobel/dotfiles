@@ -213,13 +213,17 @@ bindsym $mod+Shift+b exec --no-startup-id keyboard.sh
 # Blur screen
 bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
 
+#try compton fix
+new_window pixel
+
 # Startup Applications autostart
 
 exec_always --no-startup-id monitor-layout.sh
 exec --no-startup-id i3exit lock_without_sleep
 exec --no-startup-id urxvtd.sh
+exec --no-startup-id bash -c 'echo started >> ~/file'
 exec --no-startup-id unlock-keyring.py
-exec_always --no-startup-id compton --config ~/.i3/compton.conf
+exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-active-win
 exec --no-startup-id transmission.sh
 exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 exec --no-startup-id geary --hidden
