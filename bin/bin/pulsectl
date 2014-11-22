@@ -32,5 +32,4 @@ elif [ "$1" == "mute" ]
     then pa_mute
 else echo "Usage: $0 {up|down|force|mute}"
     exit 1
-
 fi
