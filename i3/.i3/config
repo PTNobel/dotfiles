@@ -221,7 +221,6 @@ new_window pixel
 exec_always --no-startup-id monitor-layout.sh
 exec --no-startup-id i3exit lock_without_sleep
 exec --no-startup-id urxvtd.sh
-exec --no-startup-id bash -c 'echo started >> ~/file'
 exec --no-startup-id unlock-keyring.py
 exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-active-win
 exec --no-startup-id transmission.sh
