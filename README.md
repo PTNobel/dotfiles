@@ -10,3 +10,8 @@ These files are available for any purpose and may have their own licenses.
 
 
 Do you want to use these configs? Check out http://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html?round=two
+
+TODO
+====
+
+bin/bin/transperancy.sh needs to make new_window also be normal.
