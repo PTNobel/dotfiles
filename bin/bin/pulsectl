@@ -1,8 +1,12 @@
 #!/bin/bash
 
-pa_down() {
+get_pa_sink() {
+    var=`pactl list | grep Sink | awk '/Sink/{print $2}' | grep \#`
+    export sink=${var#\#}
+}
 
-    pactl set-sink-volume 0 -- -5%
+pa_down() {
+    pactl set-sink-volume $sink -- -5%
 }
 
 pa_up() {
@@ -10,17 +14,19 @@ pa_up() {
     END=$(($VOLUME + 5))
     if [ $END -gt 100 ]
         then exit 2
-    else pactl set-sink-volume 0 +5%
+    else pactl set-sink-volume $sink +5%
     fi
 }
 
 pa_force_up() {
-    pactl set-sink-volume 0 +5%
+    pactl set-sink-volume $sink +5%
 }
 
 pa_mute() {
-    pactl set-sink-mute 0 toggle
+    pactl set-sink-mute $sink toggle
 }
+
+get_pa_sink
 
 if [ "$1" == "down" ]
     then pa_down
