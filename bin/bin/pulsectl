@@ -1,12 +1,11 @@
 #!/bin/bash
 
 get_pa_sink() {
-    var=`pactl list | grep Sink | awk '/Sink/{print $2}' | grep \#`
-    export sink=${var#\#}
+    echo `pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#//`
 }
 
 pa_down() {
-    pactl set-sink-volume $sink -- -5%
+    pactl set-sink-volume `get_pa_sink` -- -5%
 }
 
 pa_up() {
@@ -14,28 +13,32 @@ pa_up() {
     END=$(($VOLUME + 5))
     if [ $END -gt 100 ]
         then exit 2
-    else pactl set-sink-volume $sink +5%
+    else pactl set-sink-volume `get_pa_sink` +5%
     fi
 }
 
 pa_force_up() {
-    pactl set-sink-volume $sink +5%
+    pactl set-sink-volume `get_pa_sink` +5%
 }
 
 pa_mute() {
-    pactl set-sink-mute $sink toggle
+    pactl set-sink-mute `get_pa_sink` toggle
 }
 
-get_pa_sink
-
-if [ "$1" == "down" ]
-    then pa_down
-elif [ "$1" == "up" ]
-    then pa_up
-elif [ "$1" == "force" ]
-    then pa_force_up
-elif [ "$1" == "mute" ]
-    then pa_mute
-else echo "Usage: $0 {up|down|force|mute}"
-    exit 1
-fi
+case "$1" in 
+    down)
+        pa_down
+        ;;
+    up)
+        pa_up
+        ;;
+    force)
+        pa_force_up
+        ;;
+    mute)
+        pa_mute
+        ;;
+    *)
+        echo "Usage: $0 {up|down|force|mute}"
+        exit 1
+esac
