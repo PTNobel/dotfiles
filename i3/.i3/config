@@ -164,21 +164,21 @@ bar {
 
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec pulsectl up #increase sound volume
-bindsym XF86AudioLowerVolume exec pulsectl down #decrease sound volume
-bindsym XF86AudioMute exec pulsectl mute  # mute sound
+bindsym XF86AudioRaiseVolume exec --no-startup-id pulsectl up #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pulsectl down #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
-bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
 
 
 # Media player controls
-bindsym XF86AudioPlay exec musicctl pause
-bindsym XF86AudioPause exec musicctl pause
-bindsym XF86AudioNext exec musicctl next
-bindsym XF86AudioPrev exec musicctl prev
-bindsym XF86AudioStop exec musicctl stop
+bindsym XF86AudioPlay exec --no-startup-id musicctl pause
+bindsym XF86AudioPause exec --no-startup-id musicctl pause
+bindsym XF86AudioNext exec --no-startup-id musicctl next
+bindsym XF86AudioPrev exec --no-startup-id musicctl prev
+bindsym XF86AudioStop exec --no-startup-id musicctl stop
 bindsym $mod+n exec urxvt -e ncmpcpp
 bindsym $mod+p exec urxvt -e pianoctl
 #bindsym $mod+m exec urxvt -e mpd.status.update
