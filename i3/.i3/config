@@ -178,7 +178,7 @@ bindsym XF86AudioPlay exec musicctl pause
 bindsym XF86AudioPause exec musicctl pause
 bindsym XF86AudioNext exec musicctl next
 bindsym XF86AudioPrev exec musicctl prev
-bindsym XF86AudioStop exec mpc stop
+bindsym XF86AudioStop exec musicctl stop
 bindsym $mod+n exec urxvt -e ncmpcpp
 bindsym $mod+p exec urxvt -e pianoctl
 #bindsym $mod+m exec urxvt -e mpd.status.update

@@ -38,6 +38,15 @@ next() {
    fi
 }
 
+stop() {
+   if [ "$player" == "pianoctl" ]
+   then pianoctl q
+   elif [ "$player" == "mpc" ]
+   then mpc stop
+   else exit 1
+   fi
+}
+
 get_player
 
 case "$1" in
@@ -49,6 +58,9 @@ case "$1" in
         ;;
     next)
         next
+        ;;
+   stop)
+        stop
         ;;
     *)
         echo "Usage: $0 {pause|back|next}"
