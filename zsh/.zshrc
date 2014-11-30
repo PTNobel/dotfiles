@@ -129,4 +129,8 @@ export BROWSER=firefox
 setopt HIST_IGNORE_DUPS
 setopt completealiases
 
+
+alias grep="/usr/bin/grep $GREP_OPTIONS"
+unset GREP_OPTIONS
+
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
