@@ -133,4 +133,8 @@ setopt completealiases
 alias grep="/usr/bin/grep $GREP_OPTIONS"
 unset GREP_OPTIONS
 
+autoload bashcompinit
+bashcompinit
+[ -r /usr/share/bash-completion/bash_completion   ] && source /usr/share/bash-completion/completions/*
+
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

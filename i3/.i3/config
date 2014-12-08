@@ -177,7 +177,7 @@ bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease
 bindsym XF86AudioPlay exec --no-startup-id musicctl pause
 bindsym XF86AudioPause exec --no-startup-id musicctl pause
 bindsym XF86AudioNext exec --no-startup-id musicctl next
-bindsym XF86AudioPrev exec --no-startup-id musicctl prev
+bindsym XF86AudioPrev exec --no-startup-id musicctl back
 bindsym XF86AudioStop exec --no-startup-id musicctl stop
 bindsym $mod+n exec urxvt -e ncmpcpp
 bindsym $mod+p exec urxvt -e pianoctl
@@ -233,10 +233,11 @@ exec --no-startup-id "devmon --no-gui"
 exec --no-startup-id "pulseaudio --start"
 exec --no-startup-id xautolock -time 5 -locker 'i3exit lock' &
 exec_always --no-startup-id bash -c 'sleep 3 ; feh --bg-scale Pictures/tardis-14940-1920x1080.jpg'
-exec --no-startup-id dunst -config /home/parth/.i3/dunstrc
+exec --no-startup-id bash -c 'sleep 3 ; dunst.sh'
 exec --no-startup-id deskcon-server
 exec --no-startup-id hp-systray
 exec_always --no-startup-id firefox.sh
 exec_always --no-startup-id thunderbird.sh
 exec skype
 exec --no-startup-id libreoffice --quickstart
+exec --no-startup-id pidgin
