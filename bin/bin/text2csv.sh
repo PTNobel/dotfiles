@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 #
-#  randomizer.sh
+#  text2csv.sh
 #  
 #  Copyright 2014 Parth Nobel <parth@parth-laptop>
 #  

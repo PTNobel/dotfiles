@@ -15,14 +15,14 @@ toggle_pause() {
    if [ "$player" == "pianoctl" ]
    then pianoctl \ 
    elif [ "$player" == "mpc" ]
-   then mpc pause
+   then mpc toggle
    else exit 1
    fi
 }
 
 back() {
    if [ "$player" == "pianoctl" ]
-   then exit 0 
+   then pianoctl + 
    elif [ "$player" == "mpc" ]
    then mpc prev
    else exit 1
@@ -31,7 +31,7 @@ back() {
 
 next() {
    if [ "$player" == "pianoctl" ]
-   then pianoctl n 
+   then pianoctl \-
    elif [ "$player" == "mpc" ]
    then mpc next
    else exit 1

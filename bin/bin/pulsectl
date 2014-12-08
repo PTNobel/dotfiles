@@ -12,7 +12,9 @@ pa_up() {
     VOLUME=`pacmd list-sinks|grep -A 15 '* index'| awk '/volume: front/{ print $5 }' | sed 's/%//g'`
     END=$(($VOLUME + 5))
     if [ $END -gt 100 ]
-        then exit 2
+        then if [ $END -lt 105 ] ;
+                  then pactl set-sink-volume `get_pa_sink` +$((100 - $VOLUME))% ;
+         else exit 2 ; fi
     else pactl set-sink-volume `get_pa_sink` +5%
     fi
 }
