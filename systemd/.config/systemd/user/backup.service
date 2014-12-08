@@ -1,0 +1,5 @@
+[Unit]
+Description=Backs up files
+
+[Service]
+ExecStart=bash -c 'backup.sh ; echo "backuped at `date`" >/home/parth/backup'
