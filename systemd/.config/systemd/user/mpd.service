@@ -1,0 +1,8 @@
+[Unit]
+Description=Music Player Daemon
+
+[Service]
+ExecStart=/home/parth/bin/mpd.sh
+
+[Install]
+WantedBy=default.target
