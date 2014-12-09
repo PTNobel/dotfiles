@@ -1,8 +1,13 @@
 #!/bin/bash
+
+#DEFINTIONS!
 DESTINATION=/media/Toshiba_Backups
+
 list_files() {
   \ls -a | grep -v \^$USER\$ | grep -v \^.\$ | grep -v \^..\$
 }
+
+# Nothing should be hardcoded beyond ~/.dotfiles
 if [ -d "$DESTINATION/" ]; then
   cd $DESTINATION
   mkdir $USER
