@@ -213,6 +213,9 @@ bindsym $mod+Shift+b exec --no-startup-id keyboard.sh
 # Blur screen
 bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
 
+# Calculator
+bindsym $mod+c exec urxvt -e calc
+
 #try compton fix
 new_window pixel
 
@@ -227,7 +230,7 @@ exec --no-startup-id transmission.sh
 exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 exec --no-startup-id geary --hidden
 exec urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; sudo -v ;yaourt -Syua && good morning'
-exec --no-startup-id mpd.sh
+#exec --no-startup-id mpd.sh
 exec --no-startup-id redshift
 exec --no-startup-id "devmon --no-gui"
 exec --no-startup-id "pulseaudio --start"
