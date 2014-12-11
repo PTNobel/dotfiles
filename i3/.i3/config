@@ -229,7 +229,7 @@ exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-activ
 exec --no-startup-id transmission.sh
 exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 exec --no-startup-id geary --hidden
-exec urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; sudo -v ;yaourt -Syua && good morning'
+exec urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; update.sh'
 #exec --no-startup-id mpd.sh
 exec --no-startup-id redshift
 exec --no-startup-id "devmon --no-gui"
