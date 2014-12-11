@@ -1,19 +1,38 @@
 #!/bin/bash
 
+export OUTPUT_FILE=$(mktemp)
+export WATCHDOG_FILE=$(mktemp)
+
+echo OUTPUT_FILE=$OUTPUT_FILE
+echo WATCHDOG_FILE=$WATCHDOG_FILE
+
+watchdog() {
+  until [ `cat $1 | wc -l` -eq 4 ];
+    do sleep 10
+  done
+  echo 4 processes have announced finishing killing script
+  sleep 3
+  kill $$
+}
+
+watchdog $WATCHDOG_FILE &
+
 sudo -v
+
+
+echo "starting update of pkgfile database"
+sudo -E bash -c 'pkgfile -u &>> $OUTPUT_FILE ; echo DONE >> $WATCHDOG_FILE' &
+
+echo "starting backup of $USER home directory"
+bash -c 'backup.sh &>> $OUTPUT_FILE ; echo DONE >> $WATCHDOG_FILE' &
 
 yaourt -Syua
 
-OUTPUT_FILE=$(mktemp)
 
 sudo -v
 
-echo "starting update of pkgfile database"
-sudo pkgfile -u &>>$OUTPUT_FILE &
 echo "starting update of mlocate database"
-sudo updatedb & &>>$OUTPUT_FILE &
+sudo -E bash -c 'updatedb &>> $OUTPUT_FILE ; echo DONE >> $WATCHDOG_FILE' &
 echo "starting update of man database"
-sudo mandb &>>$OUTPUT_FILE &
-echo "starting backup of $USER home directory"
-backup.sh &>>$OUTPUT_FILE &
+sudo -E bash -c 'mandb &>> $OUTPUT_FILE ; echo DONE >> $WATCHDOG_FILE' &
 tail -f $OUTPUT_FILE | lolcat
