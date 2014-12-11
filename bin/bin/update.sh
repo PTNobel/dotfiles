@@ -3,14 +3,17 @@
 export OUTPUT_FILE=$(mktemp)
 export WATCHDOG_FILE=$(mktemp)
 
-echo OUTPUT_FILE=$OUTPUT_FILE
-echo WATCHDOG_FILE=$WATCHDOG_FILE
+#echo OUTPUT_FILE=$OUTPUT_FILE
+#echo WATCHDOG_FILE=$WATCHDOG_FILE
 
 watchdog() {
   until [ `cat $1 | wc -l` -eq 4 ];
     do sleep 10
   done
-  echo 4 processes have announced finishing killing script
+  echo 4 processes have announced finishing: beginning shutdown routine
+  echo deleting OUTPUT_FILE and WATCHDOG_FILE
+  rm $OUTPUT_FILE $WATCHDOG_FILE
+  echo killing script 
   sleep 3
   kill $$
 }
