@@ -16,7 +16,7 @@ class musicctl:
 
     def pause(self):
         if self.player == "pianobar":
-            os.system("pianoctl \ ")
+            os.system("pianoctl p")
         elif self.player == "mpd":
             os.system("mpc toggle")
 

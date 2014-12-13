@@ -13,7 +13,7 @@ get_player() {
 
 toggle_pause() {
    if [ "$player" == "pianoctl" ]
-   then pianoctl \ 
+   then pianoctl p
    elif [ "$player" == "mpc" ]
    then mpc toggle
    else exit 1
