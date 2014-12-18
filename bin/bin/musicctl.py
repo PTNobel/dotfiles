@@ -12,7 +12,11 @@ class musicctl:
             self.player = "pianobar"
         elif os.system("pidof mpd >/dev/null") == 0:
             self.player = "mpd"
-        eval("self." + sys.argv[1])()
+        try:
+            eval("self." + sys.argv[1])()
+        except IndexError:
+            print("Usage: %s {pause|back|next}" % sys.argv[0])
+            exit(1)        
 
     def pause(self):
         if self.player == "pianobar":
