@@ -5,3 +5,5 @@ elif [ "$1" == "morning" ]
 then bash /home/parth/bin/update.sh
 else echo "good $@ to you too."
 fi
+
+#case
