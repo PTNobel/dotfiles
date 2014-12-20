@@ -159,7 +159,7 @@
     # Xev might be helpful to find names for keys.
     
     # Close notification.
-    close = mod4+dead_grave
+    close = mod4+Shift+w
     
     # Close all notifications.
     close_all = mod4+shift+dead_grave

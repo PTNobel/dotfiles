@@ -29,7 +29,7 @@ if [ $UID -ne 0 ]; then
     alias root='sudo -s'
     alias reboot='systemctl reboot'
     alias poweroff='systemctl poweroff'
-    alias update='yaourt -Syua'
+    alias update='update.sh'
     alias netctl='sudo netctl'
     alias wifi-menu='sudo wifi-menu'
 fi
