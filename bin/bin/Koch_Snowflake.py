@@ -113,9 +113,11 @@ def snowflake(x1,y1,x2,y2,x3,y3,maxdepth,depth=0):
     """
 
 
-def snowflake(iterations):
+def snowflake(distance, iterations):
     koch_flake = "FRFRF"
- 
+    print(-distance/4)
+    turtle.setworldcoordinates(-distance*0*4, -distance*2, distance*2, distance)
+    turtle.mode("world") 
     for i in range(iterations):
         koch_flake = koch_flake.replace("F","FLFRFLF")
  
@@ -129,5 +131,5 @@ def snowflake(iterations):
         elif move == "R":
             turtle.right(120)
 
-snowflake(3)
+snowflake(200,3)
 time.sleep(10000000)
