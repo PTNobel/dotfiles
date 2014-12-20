@@ -6,26 +6,35 @@ export WATCHDOG_FILE=$(mktemp)
 #echo OUTPUT_FILE=$OUTPUT_FILE
 #echo WATCHDOG_FILE=$WATCHDOG_FILE
 
+exit_routine() {
+  echo deleting OUTPUT_FILE and WATCHDOG_FILE
+  rm $OUTPUT_FILE $WATCHDOG_FILE
+  echo killing script
+  trap - HUP INT TERM
+  kill $$
+  exit 0
+}
+
 watchdog() {
   until [ `cat $1 | wc -l` -eq $2 ];
     do sleep 10
   done
   echo $2 processes have announced finishing: beginning shutdown routine
-  echo deleting OUTPUT_FILE and WATCHDOG_FILE
-  rm $OUTPUT_FILE $WATCHDOG_FILE
-  echo killing script 
-  sleep 3
+  exit_routine
+  echo Killing
   kill $$
 }
 
 backup() {
-  backup.sh &>> $OUTPUT_FILE
+  backup.sh &>> $OUTPUT_FILE || notify-send "backup.sh failed"
   echo DONE >> $WATCHDOG_FILE
 }
 
-#TODO: Handle already locked mlocate.db
+#TODO: Handle already locked mlocate.db: Draft implemented 
 mlocate() {
-  sudo -E updatedb &>> $OUTPUT_FILE
+  until sudo -E updatedb &>> $OUTPUT_FILE
+  do sleep 30
+  done
   echo DONE >> $WATCHDOG_FILE
 }
 
@@ -42,10 +51,13 @@ man_u() {
 
 watchdog $WATCHDOG_FILE 5 &
 
+#TODO trap!
+#trap exit_routine INT HUP TERM
+
 echo "starting backup of $HOME"
 backup &
 
-setsid yaourt -S &>/dev/null
+setsid yaourt -S &>/dev/null &
 
 sudo -v
 
@@ -56,6 +68,8 @@ echo "starting update of pkgfile database"
 pkgfile_u &
 
 yaourt -Syua
+
+sudo -v
 
 echo "starting update of mlocate database"
 mlocate &
