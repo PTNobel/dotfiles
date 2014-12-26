@@ -2,16 +2,19 @@
 
 export OUTPUT_FILE=$(mktemp)
 export WATCHDOG_FILE=$(mktemp)
-
+export PID_OF_SCRIPT=$$
 #echo OUTPUT_FILE=$OUTPUT_FILE
 #echo WATCHDOG_FILE=$WATCHDOG_FILE
+#echo PID_OF_SCRIPT=$PID_OF_SCRIPT
+
+#trap "exit 1" 
 
 exit_routine() {
   echo deleting OUTPUT_FILE and WATCHDOG_FILE
   rm $OUTPUT_FILE $WATCHDOG_FILE
-  echo killing script
-  trap - HUP INT TERM
-  kill $$
+  echo killing script in exit_routine\(\)
+  kill -s TERM $PID_OF_SCRIPT
+  echo "script killed"
   exit 0
 }
 
@@ -22,7 +25,7 @@ watchdog() {
   echo $2 processes have announced finishing: beginning shutdown routine
   exit_routine
   echo Killing
-  kill $$
+  kill -s TERM $$
 }
 
 backup() {
@@ -30,22 +33,19 @@ backup() {
   echo DONE >> $WATCHDOG_FILE
 }
 
-#TODO: Handle already locked mlocate.db: Draft implemented 
 mlocate() {
-  until sudo -E updatedb &>> $OUTPUT_FILE
-  do sleep 30
-  done
+  /usr/local/bin/update_tools_helper mlocate &>> $OUTPUT_FILE
   echo DONE >> $WATCHDOG_FILE
 }
 
 pkgfile_u() {
-  sudo -E pkgfile -u &>> $OUTPUT_FILE 
+  /usr/local/bin/update_tools_helper pkgfile &>> $OUTPUT_FILE 
   echo DONE >> $WATCHDOG_FILE
 
 }
 
 man_u() {
-  sudo -E mandb &>> $OUTPUT_FILE 
+  /usr/local/bin/update_tools_helper man &>> $OUTPUT_FILE
   echo DONE >> $WATCHDOG_FILE
 }
 
@@ -59,17 +59,14 @@ backup &
 
 setsid yaourt -S &>/dev/null &
 
-sudo -v
-
 echo "starting update of mlocate database"
 mlocate &
 
 echo "starting update of pkgfile database"
 pkgfile_u &
 
-yaourt -Syua
-
 sudo -v
+yaourt -Syua
 
 echo "starting update of mlocate database"
 mlocate &
