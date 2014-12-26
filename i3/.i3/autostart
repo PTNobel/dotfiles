@@ -1,0 +1,5 @@
+transmission.sh
+urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; update.sh'
+skype
+pidgin
+/usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki

@@ -226,10 +226,6 @@ exec --no-startup-id i3exit lock_without_sleep
 exec --no-startup-id urxvtd.sh
 exec --no-startup-id unlock-keyring.py
 exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-active-win
-exec --no-startup-id transmission.sh
-exec /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
-exec --no-startup-id geary --hidden
-exec urxvt -e bash -c 'export EDITOR=vim ; export PATH=$HOME/bin:$PATH ; update.sh'
 exec --no-startup-id mpd.sh
 exec --no-startup-id redshift
 exec --no-startup-id "devmon --no-gui"
@@ -241,6 +237,5 @@ exec --no-startup-id deskcon-server
 exec --no-startup-id hp-systray
 exec_always --no-startup-id firefox.sh
 exec_always --no-startup-id thunderbird.sh
-exec skype
 exec --no-startup-id libreoffice --quickstart
-exec --no-startup-id pidgin
+exec --no-startup-id /home/parth/.i3/startup.py
