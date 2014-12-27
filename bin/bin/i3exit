@@ -1,4 +1,19 @@
 #!/bin/sh
+
+active_lock() {
+    echo test > $1
+    if xrandr | grep '*' | grep '^   1366x768' >/dev/null
+       then if xrandr | grep '*' | grep '^   1920x1080' >/dev/null
+          then i3lock -n -d -i  $HOME/Pictures/noise-texture.png -t
+       else i3lock -n -d -i $HOME/Pictures/262039-small.png
+       fi
+    else i3lock -n -d -i $HOME/Pictures/262039.png
+    fi
+    rm $1
+}
+
+export -f active_lock
+
 lock() {
     if xrandr | grep '*' | grep '^   1366x768' >/dev/null
        then if xrandr | grep '*' | grep '^   1920x1080' >/dev/null
@@ -7,6 +22,19 @@ lock() {
        fi
     else i3lock -d -i $HOME/Pictures/262039.png
     fi 
+}
+
+inactive_lock() {
+    WATCHDOG_FILE=$(mktemp)
+    NUM=0
+    active_lock $WATCHDOG_FILE &
+    while [ -f $WATCHDOG_FILE ] ; do
+      sleep 60
+      if [ $NUM == 30 ]; then
+        systemctl suspend
+      fi
+      let NUM=1+$NUM
+    done
 }
 
 lock_without_sleep() {
@@ -77,6 +105,9 @@ case "$1" in
         ;;
     shutdown)
         systemctl poweroff
+        ;;
+    inactive_lock)
+        inactive_lock
         ;;
     *)
         echo "Usage: $0 {lock|lock_without_sleep|blur|blur_with_sleep|freeze|logout|suspend|hibernate|reboot|shutdown}"
