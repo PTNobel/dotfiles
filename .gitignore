@@ -1,3 +1,4 @@
 bin/bin/unlock-keyring.py
 mpd/.config/mpd/state
 mpd/.config/mpd/database
+*.swp
