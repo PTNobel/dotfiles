@@ -9,3 +9,6 @@ all:
 
 install:
 	install -m 4755 $(EXECUTABLE) /usr/local/bin/
+
+clean:
+	rm $(EXECUTABLE)
