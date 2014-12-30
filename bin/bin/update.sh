@@ -49,7 +49,7 @@ man_u() {
   echo DONE >> $WATCHDOG_FILE
 }
 
-watchdog $WATCHDOG_FILE 5 &
+watchdog $WATCHDOG_FILE 4 &
 
 #TODO trap!
 #trap exit_routine INT HUP TERM
@@ -58,9 +58,6 @@ echo "starting backup of $HOME"
 backup &
 
 setsid yaourt -S &>/dev/null &
-
-echo "starting update of mlocate database"
-mlocate &
 
 echo "starting update of pkgfile database"
 pkgfile_u &
