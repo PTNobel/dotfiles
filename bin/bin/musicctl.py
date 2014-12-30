@@ -9,37 +9,40 @@ class musicctl:
 
     def __init__(self):
         if os.system("pidof pianobar >/dev/null") == 0:
-            self.player = "pianobar"
+            if os.system("mpc status | grep playing >/dev/null") == 0:
+                self.player = "mpd"
+            else:
+                self.player = "pianobar"
         elif os.system("pidof mpd >/dev/null") == 0:
             self.player = "mpd"
         try:
             eval("self." + sys.argv[1])()
         except IndexError:
-            print("Usage: %s {pause|back|next}" % sys.argv[0])
+            print("Usage: %s {pause|back|stop|next}" % sys.argv[0])
             exit(1)        
 
     def pause(self):
         if self.player == "pianobar":
-            os.system("pianoctl p")
+            exit(os.system("pianoctl p"))
         elif self.player == "mpd":
-            os.system("mpc toggle")
+            exit(os.system("mpc toggle"))
 
     def back(self):
         if self.player == "pianobar":
-            return 0
+            exit(os.system*("pianoctl +"))
         elif self.player == "mpd":
-            os.system("mpc prev")
+            exit(os.system("mpc prev"))
 
     def next(self):
         if self.player == "pianobar":
-            os.system("pianoctl n")
+            exit(os.system("pianoctl n"))
         elif self.player == "mpd":
-            os.system("mpc next")
+            exit(os.system("mpc next"))
 
     def stop(self):
         if self.player == "pianobar":
-            os.system("pianoctl q")
+            exit(os.system("pianoctl q"))
         elif self.player == "mpd":
-            os.system("mpc stop")
+            exit(os.system("mpc stop"))
 
 music = musicctl()
