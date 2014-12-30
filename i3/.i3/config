@@ -155,7 +155,7 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3status --config ~/.i3/status.conf
+        status_command measure-net-speed-i3status.bash
         position top
         tray_output primary
 
@@ -174,11 +174,11 @@ bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease
 
 
 # Media player controls
-bindsym XF86AudioPlay exec --no-startup-id musicctl pause
-bindsym XF86AudioPause exec --no-startup-id musicctl pause
-bindsym XF86AudioNext exec --no-startup-id musicctl next
-bindsym XF86AudioPrev exec --no-startup-id musicctl back
-bindsym XF86AudioStop exec --no-startup-id musicctl stop
+bindsym XF86AudioPlay exec --no-startup-id musicctl.py pause
+bindsym XF86AudioPause exec --no-startup-id musicctl.py pause
+bindsym XF86AudioNext exec --no-startup-id musicctl.py next
+bindsym XF86AudioPrev exec --no-startup-id musicctl.py back
+bindsym XF86AudioStop exec --no-startup-id musicctl.py stop
 bindsym $mod+n exec urxvt -e ncmpcpp
 bindsym $mod+p exec urxvt -e pianoctl
 #bindsym $mod+m exec urxvt -e mpd.status.update
@@ -212,7 +212,7 @@ bindsym $mod+Shift+b exec --no-startup-id keyboard.sh
 
 # Blur screen
 bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
-
+bindsym $mod+Shift+s exec --no-startup-id i3exit suspend 
 # Calculator
 bindsym $mod+c exec urxvt -e calc
 
@@ -230,12 +230,8 @@ exec --no-startup-id mpd.sh
 exec --no-startup-id redshift
 exec --no-startup-id "devmon --no-gui"
 exec --no-startup-id "pulseaudio --start"
-exec --no-startup-id xautolock -time 5 -locker 'i3exit lock' &
-exec_always --no-startup-id bash -c 'sleep 3 ; feh --bg-scale Pictures/tardis-14940-1920x1080.jpg'
+exec --no-startup-id xautolock -time 5 -locker 'i3exit inactive_lock' &
+exec_always --no-startup-id feh --bg-scale Pictures/tardis-14940-1920x1080.jpg
 exec --no-startup-id bash -c 'sleep 3 ; dunst.sh'
 exec --no-startup-id deskcon-server
-exec --no-startup-id hp-systray
-exec_always --no-startup-id firefox.sh
-exec_always --no-startup-id thunderbird.sh
-exec --no-startup-id libreoffice --quickstart
 exec --no-startup-id /home/parth/.i3/startup.py
