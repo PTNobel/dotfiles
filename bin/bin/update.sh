@@ -60,7 +60,7 @@ alpm() {
 
 alpm_watchdog() {
   cat $ALPM_OUTPUT_FILE
-  tail -f -n0 $ALPM_OUTPUT_FILE &
+  tail -f -n0 $ALPM_OUTPUT_FILE | lolcat &
   until [ `cat $ALPM_WATCHDOG_FILE | wc -l` -eq 1 ]; do
     sleep 5
   done

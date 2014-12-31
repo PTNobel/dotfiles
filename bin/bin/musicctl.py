@@ -20,6 +20,9 @@ class musicctl:
         except IndexError:
             print("Usage: %s {pause|back|stop|next}" % sys.argv[0])
             exit(1)        
+    
+    def play(self):
+        self.pause()
 
     def pause(self):
         if self.player == "pianobar":
