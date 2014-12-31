@@ -7,16 +7,23 @@ import subprocess
 
 log="/home/parth/.parth/date.log"
 autostart="/home/parth/.i3/autostart"
+bootstrap="/home/parth/.i3/bootstrap"
 log_file=open(log, 'r')
 today=str(datetime.date.today())
 autostart_file_list=open(autostart,'r')
+bootstrap_file_list=open(bootstrap,'r')
 commands=list()
+bootstrap_commands=list()
 
-raw_commands=autostart_file_list.readlines()
+raw_commands=autostart_file_list.readlines() + bootstrap_file_list.readlines()
+raw_bootstarp_commands=bootstrap_file_list.readlines()
 
 for i in raw_commands:
-            var=i.replace('\n','')
-            commands.append(var)
+    var=i.replace('\n','')
+    commands.append(var)
+for i in raw_bootstarp_commands:
+    var=i.replace('\n','')
+    bootstrap_commands.append(var)
 
 #print(commands)
 def success(log_file, log,commands):
@@ -49,7 +56,9 @@ if len(sys.argv) > 1:
 elif log_file.read() == today:
    log_file.close()
    print("The computer has already booted today")
-   
+   if len(sys.argv) > 1:
+       if sys.argv[1] == "-b":
+           success(log_file,log,bootstrap_commands)
 else:
     success(log_file,log,commands)
 
