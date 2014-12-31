@@ -171,12 +171,12 @@ alias top10='print -l ${(o)history%% *} | uniq -c | sort -nr | head -n 10'
 #manzsh()  { /usr/bin/man zshall |  most +/"$1" ; }
 
 ## Switching shell safely and efficiently? http://www.zsh.org/mla/workers/2001/msg02410.html
-#bash() {
-#    NO_SWITCH="yes" command bash "$@"
-#}
-#restart () {
-#    exec $SHELL $SHELL_ARGS "$@"
-#}
+bash() {
+    NO_SWITCH="yes" command bash "$@"
+}
+restart () {
+    exec $SHELL $SHELL_ARGS "$@"
+}
 
 ## Handy functions for use with the (e::) globbing qualifier (like nt)
 #contains() { grep -q "$*" $REPLY }
@@ -368,4 +368,4 @@ alias gc='git commit -v'
 compdef _git gc=git-commit
 alias ga='git add'
 compdef _git ga=git-add
-
+alias ppwd='cd `pwd -P`'
