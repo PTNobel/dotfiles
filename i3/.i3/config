@@ -216,6 +216,10 @@ bindsym $mod+Shift+s exec --no-startup-id i3exit suspend
 # Calculator
 bindsym $mod+c exec urxvt -e calc
 
+#firefox + thunderbird
+bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
+bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
+
 #try compton fix
 new_window pixel
 
@@ -226,7 +230,6 @@ exec --no-startup-id i3exit lock_without_sleep
 exec --no-startup-id urxvtd.sh
 exec --no-startup-id unlock-keyring.py
 exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-active-win
-exec --no-startup-id mpd.sh
 exec --no-startup-id redshift
 exec --no-startup-id "devmon --no-gui"
 exec --no-startup-id "pulseaudio --start"
