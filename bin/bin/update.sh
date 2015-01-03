@@ -59,8 +59,7 @@ alpm() {
 }
 
 alpm_watchdog() {
-  cat $ALPM_OUTPUT_FILE
-  tail -f -n0 $ALPM_OUTPUT_FILE | lolcat &
+  tail -f -n`cat $ALPM_OUTPUT_FILE | wc -l` $ALPM_OUTPUT_FILE | lolcat &
   until [ `cat $ALPM_WATCHDOG_FILE | wc -l` -eq 1 ]; do
     sleep 5
   done
@@ -81,7 +80,9 @@ pkgfile_u &
 echo "starting update of alpm database"
 alpm &
 
-sudo -v
+until sudo -v ; do
+		sleep 3
+done
 alpm_watchdog
 yaourt -Sua
 
