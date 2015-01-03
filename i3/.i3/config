@@ -220,6 +220,9 @@ bindsym $mod+c exec urxvt -e calc
 bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
 bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
 
+# monitor-layout.sh
+bindsym $mod+Shift+m exec --no-starup-id monitor-layout.sh
+
 #try compton fix
 new_window pixel
 
