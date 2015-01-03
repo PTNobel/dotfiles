@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 DIR=$1
 FILES=$2
 if [ -z "$1" ]; then DIR=755; fi
