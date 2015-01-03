@@ -8,10 +8,10 @@ list_files() {
 
 #Check user
 
-if  [ -f $DESTINATION/$USER ]; then
+if [ -d "$DESTINATION/" ]; then
+  if  [ -f $DESTINATION/$USER ]; then
 
 # No files/directories should be hardcoded
-  if [ -d "$DESTINATION/" ]; then
     chmod -R +w $DESTINATION
     cd $DESTINATION
     rm $DESTINATION/$USER
@@ -29,8 +29,7 @@ if  [ -f $DESTINATION/$USER ]; then
     echo $USER > $DESTINATION/$USER
     chmod -R a-w $DESTINATION
     exit $?
-  else echo $DESTINATION is not found ; exit 1
+  else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
-
-else echo $DESTINATION not authorized for write by current user ; exit 10
+else echo $DESTINATION is not found ; exit 1
 fi
