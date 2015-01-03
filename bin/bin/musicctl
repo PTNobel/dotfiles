@@ -4,47 +4,47 @@
 get_player() {
     if pidof pianobar >/dev/null
     then if mpc | grep playing >/dev/null
-	     then player=mpc
-		 else player=pianoctl 
+	     then player=mpd
+		 else player=pianobar 
 		 fi
     elif pidof mpd >/dev/null
-    then player=mpc
+    then player=mpd
     else exit 1
     fi
     export $player
 }
 
 toggle_pause() {
-   if [ "$player" == "pianoctl" ]
+   if [ "$player" == "pianobar" ]
    then pianoctl p
-   elif [ "$player" == "mpc" ]
+   elif [ "$player" == "mpd" ]
    then mpc toggle
    else exit 1
    fi
 }
 
 back() {
-   if [ "$player" == "pianoctl" ]
+   if [ "$player" == "pianobar" ]
    then pianoctl + 
-   elif [ "$player" == "mpc" ]
+   elif [ "$player" == "mpd" ]
    then mpc prev
    else exit 1
    fi
 }
 
 next() {
-   if [ "$player" == "pianoctl" ]
+   if [ "$player" == "pianobar" ]
    then pianoctl \-
-   elif [ "$player" == "mpc" ]
+   elif [ "$player" == "mpd" ]
    then mpc next
    else exit 1
    fi
 }
 
 stop() {
-   if [ "$player" == "pianoctl" ]
+   if [ "$player" == "pianobar" ]
    then pianoctl q
-   elif [ "$player" == "mpc" ]
+   elif [ "$player" == "mpd" ]
    then mpc stop
    else exit 1
    fi
