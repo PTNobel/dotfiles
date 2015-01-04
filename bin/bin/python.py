@@ -23,10 +23,10 @@
 #  
 
 import os
-
+exit_code=False
 def python():
-#     import os
-     return os.system("bash -c 'echo -ne \"\033c\" && python'")
-while python() != 9472:
-	os.system('echo -ne \"\033c\"')
+    return os.system("bash -c 'echo -ne \"\033c\" && python'")
+while exit_code != 9472 and exit_code != 10752:
+    os.system('echo -ne \"\033c\"')
+    exit_code=python()
 os.system('echo -ne \"\033c\"')
