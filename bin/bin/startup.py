@@ -48,7 +48,7 @@ def success(log_file, log,commands):
                 print(call_command)
                 print(subprocess.call(call_command))
 """
-print(commands)
+#print(commands)
 if len(sys.argv) > 1:
     if sys.argv[1] == "-f":
        success(log_file,log,commands)
