@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #DEFINTIONS!
-DESTINATION=/media/Toshiba_Backups
+DESTINATION=/media/Toshiba_Backups/Backups
 list_files() {
   \ls -a | grep -v \^$USER\$ | grep -v \^.\$ | grep -v \^..\$
 }
