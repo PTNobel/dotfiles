@@ -2,6 +2,7 @@
 
 #DEFINTIONS!
 DESTINATION=/media/Toshiba_Backups/Backups
+DUPLICITY_DESTINATION=file:///media/Toshiba_Backups/Duplicity
 list_files() {
   \ls -a | grep -v \^$USER\$ | grep -v \^.\$ | grep -v \^..\$
 }
@@ -31,5 +32,6 @@ if [ -d "$DESTINATION/" ]; then
     exit $?
   else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
+  duplicity --no-encryption $HOME $DUPLICITY_DESTINATION 
 else echo $DESTINATION is not found ; exit 1
 fi
