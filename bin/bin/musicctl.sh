@@ -14,7 +14,7 @@ get_player() {
     export $player
 }
 
-toggle_pause() {
+pause() {
    if [ "$player" == "pianobar" ]
    then pianoctl p
    elif [ "$player" == "mpd" ]
@@ -50,26 +50,27 @@ stop() {
    fi
 }
 
+eval $1
 
-case "$1" in
-    pause)
-        get_player
-        toggle_pause
-        ;;
-    back)
-        get_player
-        back
-        ;;
-    next)
-        get_player
-        next
-        ;;
-   stop)
-        get_player
-        stop
-        ;;
-    *)
-        echo "Usage: $0 {pause|back|next}"
-        exit 1
-        ;;
-esac
+#case "$1" in
+    #pause)
+        #get_player
+        #pause
+        #;;
+    #back)
+        #get_player
+        #back
+        #;;
+    #next)
+        #get_player
+        #next
+        #;;
+   #stop)
+        #get_player
+        #stop
+        #;;
+    #*)
+        #echo "Usage: $0 {pause|back|next}"
+        #exit 1
+        #;;
+#esac
