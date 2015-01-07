@@ -1,15 +1,16 @@
 #!/bin/bash
 
 #DEFINTIONS!
-DESTINATION=/media/Toshiba_Backups/Backups
-DUPLICITY_DESTINATION=file:///media/Toshiba_Backups/Duplicity
+PRIMARY_DIRECTORY=/media/Toshiba_Backups
+DESTINATION=${PRIMARY_DIRECTORY}/Backups
+DUPLICITY_DESTINATION=file://${PRIMARY_DIRECTORY}/Duplicity
 list_files() {
   \ls -a | grep -v \^$USER\$ | grep -v \^.\$ | grep -v \^..\$
 }
 
 #Check user
 
-if [ -d "$DESTINATION/" ]; then
+if [ -d "$PRIMARY_DIRECTORY/" ]; then
   if  [ -f $DESTINATION/$USER ]; then
 
 # No files/directories should be hardcoded
@@ -32,6 +33,7 @@ if [ -d "$DESTINATION/" ]; then
     exit $?
   else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
-  duplicity --no-encryption $HOME $DUPLICITY_DESTINATION 
+  echo starting duplicity
+  duplicity incremental --no-encryption $HOME $DUPLICITY_DESTINATION 
 else echo $DESTINATION is not found ; exit 1
 fi
