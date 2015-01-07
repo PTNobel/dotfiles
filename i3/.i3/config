@@ -173,6 +173,7 @@ bindsym XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
+bindsym XF86Sleep exec --no-startup-id i3exit short_inactive_lock
 
 
 # Media player controls
