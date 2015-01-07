@@ -2,7 +2,7 @@
 
 # A python3 port of the bash musicctl program. Should be a drop in replacment.
 
-import os 
+import os
 import sys
 
 class musicctl:
@@ -19,8 +19,8 @@ class musicctl:
             eval("self." + sys.argv[1])()
         except IndexError:
             print("Usage: %s {pause|back|stop|next}" % sys.argv[0])
-            exit(1)        
-    
+            exit(1)
+
     def play(self):
         self.pause()
 
@@ -32,7 +32,7 @@ class musicctl:
 
     def back(self):
         if self.player == "pianobar":
-            exit(os.system*("pianoctl +"))
+            exit(os.system("pianoctl +"))
         elif self.player == "mpd":
             exit(os.system("mpc prev"))
 
