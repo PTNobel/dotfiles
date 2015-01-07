@@ -25,6 +25,8 @@ lock() {
 }
 
 inactive_lock() {
+	#xautolock
+    #kill `ps | grep  xautolock | cut -f 1 --delimiter=\ `
     WATCHDOG_FILE=$(mktemp)
     NUM=0
     active_lock $WATCHDOG_FILE &
