@@ -213,6 +213,7 @@ bindsym $mod+Escape mode "$mode_system"
 
 #keyboard layout
 bindsym $mod+Shift+b exec --no-startup-id keyboard.sh
+bindsym $mod+Shift+v exec --no-startup-id touchpad.sh
 
 # Blur screen
 bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
@@ -226,7 +227,7 @@ bindsym $mod+Shift+i exec --no-startup-id icecat -firetrayShowHide
 bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
 
 # monitor-layout.sh
-bindsym $mod+Shift+m exec --no-starup-id monitor-layout.sh
+bindsym $mod+Shift+m exec --no-startup-id monitor-layout.sh
 
 #try compton fix
 new_window pixel
