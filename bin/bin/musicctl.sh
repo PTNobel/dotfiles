@@ -15,6 +15,7 @@ get_player() {
 }
 
 pause() {
+   get_player
    if [ "$player" == "pianobar" ]
    then pianoctl p
    elif [ "$player" == "mpd" ]
@@ -23,7 +24,12 @@ pause() {
    fi
 }
 
+play() {
+    pause
+}
+
 back() {
+   get_player
    if [ "$player" == "pianobar" ]
    then pianoctl + 
    elif [ "$player" == "mpd" ]
@@ -33,6 +39,7 @@ back() {
 }
 
 next() {
+   get_player
    if [ "$player" == "pianobar" ]
    then pianoctl \-
    elif [ "$player" == "mpd" ]
@@ -42,6 +49,7 @@ next() {
 }
 
 stop() {
+   get_player
    if [ "$player" == "pianobar" ]
    then pianoctl q
    elif [ "$player" == "mpd" ]
@@ -50,27 +58,4 @@ stop() {
    fi
 }
 
-eval $1
-
-#case "$1" in
-    #pause)
-        #get_player
-        #pause
-        #;;
-    #back)
-        #get_player
-        #back
-        #;;
-    #next)
-        #get_player
-        #next
-        #;;
-   #stop)
-        #get_player
-        #stop
-        #;;
-    #*)
-        #echo "Usage: $0 {pause|back|next}"
-        #exit 1
-        #;;
-#esac
+$1
