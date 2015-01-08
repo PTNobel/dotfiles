@@ -2,6 +2,7 @@
 
 loadplugins '\.(js|penta)$'
 group user
+set defsearch=duckduckgo
 set errorbells
 set visualbell
 
