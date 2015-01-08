@@ -222,7 +222,7 @@ bindsym $mod+Shift+s exec --no-startup-id i3exit suspend
 bindsym $mod+c exec urxvt -e calc
 
 #firefox + thunderbird
-bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
+#bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
 bindsym $mod+Shift+i exec --no-startup-id icecat -firetrayShowHide
 bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
 
