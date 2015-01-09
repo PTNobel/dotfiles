@@ -30,3 +30,4 @@ while exit_code != 9472 and exit_code != 10752:
     os.system('echo -ne "\033c"')
     exit_code=zsh()
 os.system('echo -ne "\033c"')
+exit(0)
