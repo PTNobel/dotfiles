@@ -10,3 +10,4 @@ execute pathogen#infect()
 syntax on
 let g:SuperTabDefaultCompletionType = "context"
 let g:jedi#popup_on_dot = 0  " disables the autocomplete to popup whenever you press .
+au BufRead /tmp/mutt-* set tw=72
