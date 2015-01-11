@@ -6,7 +6,7 @@ import os
 import sys
 
 def usage():
-    print("Usage: %s {pause|back|stop|next}" % sys.argv[0])
+    print("Usage: %s {play|pause|back|stop|next|help}" % sys.argv[0])
 
 def warning(*objs):
     print("WARNING: ", *objs, file=sys.stderr)
