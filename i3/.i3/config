@@ -193,8 +193,8 @@ bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
 # Lock screen
-bindsym $mod+q exec --no-startup-id i3exit lock
-bindsym $mod+Shift+w exec --no-startup-id i3exit inactive_lock
+bindsym $mod+q exec --no-startup-id i3exit inactive_lock
+bindsym $mod+Shift+w exec --no-startup-id i3exit lock
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
@@ -227,10 +227,11 @@ bindsym $mod+Shift+i exec --no-startup-id icecat -firetrayShowHide
 bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
 
 # monitor-layout.sh
-bindsym $mod+Shift+m exec --no-startup-id monitor-layout.sh
+bindsym $mod+Shift+m exec --no-startup-id bash -c 'monitor-layout.sh && sh ~/.fehbg'
 
 #try compton fix
 new_window pixel
+bindsym $mod+t exec --no-startup-id transperancy.sh
 
 # Startup Applications autostart
 
