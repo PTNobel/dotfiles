@@ -26,11 +26,13 @@ for i in raw_bootstarp_commands:
     bootstrap_commands.append(var)
 
 #print(commands)
-def success(log_file, log,commands):
+def update_log(log_file,log):
     log_file.close()
     log_file_writeable=open(log,'w')
     log_file_writeable.write(today)
     log_file_writeable.close()
+    
+def success(commands):
     print("starting first boot routine")
     for i in commands:
         os.system(i + " &")
@@ -51,17 +53,19 @@ def success(log_file, log,commands):
 #print(commands)
 if len(sys.argv) > 1:
     if sys.argv[1] == "-f":
-       success(log_file,log,commands)
+       success(commands)
 
 elif log_file.read() == today:
    log_file.close()
    print("The computer has already booted today")
    if len(sys.argv) > 1:
        if sys.argv[1] == "-b":
-           success(log_file,log,bootstrap_commands)
+           success(bootstrap_commands)
+elif log_file.read() != today and os.system('xrandr | grep HDMI1 | grep connected') == 1:
+    success(bootstrap_commands)
+
 else:
-    success(log_file,log,commands)
+    update_log(log_file,log)
+    success(commands)
 
 exit(0)
-print(today)
-
