@@ -90,6 +90,21 @@ freeze() {
    trap "rm '$file1'" EXIT
 }
 
+usage() {
+   echo "Usage: $0 OPTION
+lock - Locks screen and puts the computer to sleep.
+inactive_lock - lock, but suspends computer after 30 minutes
+short_inactive_lock - inactive_lock, but 3m
+lock_without_sleep - locks screen but leaves the screen on
+blur - blurs screen
+blur_with_sleep - blurs screen but puts the computer to sleep
+freeze - freezes the screen
+logout - exits i3
+suspend - locks screen and suspends (depends on systemctl)
+hibernate - locks screen and suspends (depends on systemctl)
+reboot - reboots (depends on systemctl)
+shutdown - shutsdown (depends on systemctl)"
+}
 #262039.png
 case "$1" in
     lock)
@@ -129,7 +144,7 @@ case "$1" in
         inactive_lock
         ;;
     *)
-        echo "Usage: $0 {lock|lock_without_sleep|blur|blur_with_sleep|freeze|logout|suspend|hibernate|reboot|shutdown}"
+		usage
         exit 2
 esac
 
