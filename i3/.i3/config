@@ -193,7 +193,7 @@ bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
 # Lock screen
-bindsym $mod+q exec --no-startup-id i3exit inactive_lock
+bindsym $mod+q exec --no-startup-id i3exit short_inactive_lock
 bindsym $mod+Shift+w exec --no-startup-id i3exit lock
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
