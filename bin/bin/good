@@ -5,6 +5,10 @@ elif [ "$1" == "morning" ]
 then bash /home/parth/bin/update.sh
 elif [ "$1" == "computer" ]
 then echo Thank you!
+elif [ "$1" == "" ]
+then echo What\'s so good?
+elif [ "$1" == "ana" ]
+then echo That\'s not my name!
 else echo "good $@ to you too."
 fi
 
