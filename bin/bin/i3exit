@@ -92,18 +92,20 @@ freeze() {
 
 usage() {
    echo "Usage: $0 OPTION
-lock - Locks screen and puts the computer to sleep.
-inactive_lock - lock, but suspends computer after 30 minutes
-short_inactive_lock - inactive_lock, but 3m
-lock_without_sleep - locks screen but leaves the screen on
-blur - blurs screen
-blur_with_sleep - blurs screen but puts the computer to sleep
-freeze - freezes the screen
-logout - exits i3
-suspend - locks screen and suspends (depends on systemctl)
-hibernate - locks screen and suspends (depends on systemctl)
-reboot - reboots (depends on systemctl)
-shutdown - shutsdown (depends on systemctl)"
+OPTIONS:
+  lock - Locks screen and puts the computer to sleep.
+  inactive_lock - lock, but suspends computer after 30 minutes
+  short_inactive_lock - inactive_lock, but 3m
+  lock_without_sleep - locks screen but leaves the screen on
+  blur - blurs screen
+  blur_with_sleep - blurs screen but puts the computer to sleep
+  freeze - freezes the screen
+  logout - exits i3
+  suspend - locks screen and suspends (depends on systemctl)
+  hibernate - locks screen and suspends (depends on systemctl)
+  reboot - reboots (depends on systemctl)
+  shutdown - shutsdown (depends on systemctl)
+  help - print this help and exit"
 }
 #262039.png
 case "$1" in
@@ -143,7 +145,15 @@ case "$1" in
     inactive_lock)
         inactive_lock
         ;;
+	help)
+	    usage
+		;;
+	"")
+		usage
+		exit 2
+		;;
     *)
+		echo "Invalid arguement"
 		usage
         exit 2
 esac
