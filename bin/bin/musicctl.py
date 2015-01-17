@@ -4,6 +4,7 @@
 
 import os
 import sys
+import time
 
 def usage():
     print("Usage: %s {play|pause|back|stop|next|help}" % sys.argv[0])
@@ -12,14 +13,14 @@ def warning(*objs):
     print("WARNING: ", *objs, file=sys.stderr)
 
 def processargs():
-    output={"verbose":None,"input":None}
+    output = {"verbose":None, "input":None}
     for i in sys.argv:
         if i == "-h":
             usage()
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
     if len(sys.argv) == 1:
-        output=None
+        output = None
         warning("Not enough argurements")
         usage()
         exit(1)
@@ -27,14 +28,14 @@ def processargs():
         output["input"] = sys.argv[len(sys.argv) - 1]
     return output
 
-arguements=processargs()
+arguements = processargs()
 
 if arguements["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to
         # stuff everything to be printed into a single string
         for arg in args:
-           print(arg)
+            print(arg)
 else:
     verboseprint = lambda *a: None      # do-nothing function
 
@@ -81,9 +82,19 @@ class musicctl:
 
     def stop(self):
         if self.player == "pianobar":
-            exit(os.system("pianoctl q"))
+            exit_code = os.system("pianoctl q")
+            time.sleep(1)
+            if os.system("pidof pianobar") == 0:
+                exit(os.system("killall pianobar"))
+            else:
+                exit(exit_code)
         elif self.player == "mpd":
             exit(os.system("mpc stop >/dev/null"))
+    def tired(self):
+        if self.player == "pianobar":
+            exit(os.system("pianoctl t"))
+        elif self.player == "mpd":
+            exit(os.system("mpc next"))
 
     def help(self):
         usage()
