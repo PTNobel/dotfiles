@@ -41,11 +41,10 @@ else:
 
 class musicctl:
     def __init__(self):
-        if os.system("pidof pianobar >/dev/null") == 0:
-            if os.system("mpc status | grep playing >/dev/null") == 0:
-                self.player = "mpd"
-            else:
-                self.player = "pianobar"
+        if os.system("mpc status | grep playing 2>/dev/null") == 0:
+            self.player = "mpd"
+        elif os.system("pidof pianobar >/dev/null") == 0:
+            self.player = "pianobar"
         elif os.system("pidof mpd >/dev/null") == 0:
             self.player = "mpd"
         else:
@@ -94,9 +93,10 @@ class musicctl:
         if self.player == "pianobar":
             exit(os.system("pianoctl t"))
         elif self.player == "mpd":
-            exit(os.system("mpc next"))
+            exit(os.system("mpc next >/dev/null"))
 
     def help(self):
+        verboseprint(self.player)
         usage()
         exit(0)
 
