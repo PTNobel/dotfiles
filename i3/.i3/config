@@ -30,6 +30,7 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec urxvtc
+bindsym $mod+Control+Return exec urxvtc -e /usr/bin/screen -c /home/parth/.screenrc
 bindsym $mod+Shift+Return exec urxvt
 
 
@@ -222,7 +223,7 @@ bindsym $mod+Shift+s exec --no-startup-id i3exit suspend
 bindsym $mod+c exec urxvt -e calc
 
 #firefox + thunderbird
-#bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
+bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
 bindsym $mod+Shift+i exec --no-startup-id icecat -firetrayShowHide
 bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
 
