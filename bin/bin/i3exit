@@ -100,7 +100,7 @@ OPTIONS:
   blur - blurs screen
   blur_with_sleep - blurs screen but puts the computer to sleep
   freeze - freezes the screen
-  logout - exits i3
+  logout - exits i3 (depends on i3-msg)
   suspend - locks screen and suspends (depends on systemctl)
   hibernate - locks screen and suspends (depends on systemctl)
   reboot - reboots (depends on systemctl)
@@ -108,6 +108,11 @@ OPTIONS:
   help - print this help and exit"
 }
 #262039.png
+
+check_for_i3lock() {
+		if [ $(strings /proc/$(pgrep i3lock)/environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ] ; then exit ; fi
+}
+
 case "$1" in
     lock)
         lock
@@ -148,9 +153,13 @@ case "$1" in
 	help)
 	    usage
 		;;
+	i3exit)
+		bash $0 "$2" "$3" "$4" "$5" "$6"
+		exit $?
+		;;
 	"")
 		usage
-		exit 2
+		exit 3
 		;;
     *)
 		echo "Invalid arguement"
