@@ -1,4 +1,5 @@
 #!/bin/bash
+#$! for watchdog?
 
 export OUTPUT_FILE=$(mktemp)
 export ALPM_OUTPUT_FILE=$(mktemp)
@@ -71,11 +72,13 @@ alpm_watchdog() {
 
 echo "starting backup of $HOME"
 backup &
+export PID1=$!
 
 setsid yaourt -S &>/dev/null &
 
 echo "starting update of pkgfile database"
 pkgfile_u &
+export PID2=$!
 
 echo "starting update of alpm database"
 alpm &
@@ -88,9 +91,11 @@ yaourt -Sua
 
 echo "starting update of mlocate database"
 mlocate &
+export PID3=$!
 
 echo "starting update of man database"
 man_u &
+export PID4=$!
 
 tail -n`cat $OUTPUT_FILE | wc -l`  -f $OUTPUT_FILE | lolcat &
 watchdog $WATCHDOG_FILE 4 && exit 0
