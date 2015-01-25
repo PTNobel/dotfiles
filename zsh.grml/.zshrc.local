@@ -288,6 +288,9 @@ hex() {
 #vimpm ()      { vim `perldoc -l $1 | sed -e 's/pod$/pm/'` }
 #vimhelp ()    { vim -c "help $1" -c on -c "au! VimEnter *" }
 
+alias grep="/usr/bin/grep $GREP_OPTIONS"
+unset GREP_OPTIONS
+
 if [ -f ~/.zsh_aliases ]; then
     . ~/.zsh_aliases
 fi
@@ -345,8 +348,6 @@ setopt HIST_IGNORE_DUPS
 setopt completealiases
 
 
-alias grep="/usr/bin/grep $GREP_OPTIONS"
-unset GREP_OPTIONS
 
 autoload bashcompinit
 bashcompinit
