@@ -15,37 +15,34 @@ today = str(datetime.date.today())
 autostart_file_list = open(autostart, 'r')
 bootstrap_file_list = open(bootstrap, 'r')
 weekly_file_list = open(week, 'r')
-command_list = list()
-bootstrap_commands = list()
-weekly = list()
+
+def clean_list(input_list):
+    output_list = list()
+    for i in input_list:
+        var = i.replace('\n', '')
+        output_list.append(var)
+    return output_list
 
 raw_commands = autostart_file_list.readlines()
 raw_bootstarp_commands = bootstrap_file_list.readlines()
 raw_weekly = weekly_file_list.readlines()
 raw_commands += raw_bootstarp_commands
 
-for i in raw_commands:
-    var = i.replace('\n', '')
-    command_list.append(var)
-for i in raw_bootstarp_commands:
-    var = i.replace('\n', '')
-    bootstrap_commands.append(var)
-for i in raw_weekly:
-    var = i.replace('\n', '')
-    weekly.append(var)
+command_list = clean_list(raw_commands)
+bootstrap_commands = clean_list(raw_bootstarp_commands)
+weekly = clean_list(raw_weekly)
 
-#print(commands)
 def update_log(log):
     log_file_writeable = open(log, 'w')
     log_file_writeable.write(today)
     log_file_writeable.close()
 
 def success(commands):
-    print("starting first boot routine")
     for i in commands:
-        os.system(i + " &")
+        os.system(i + " >/dev/null &")
         #os.spawnl(os.P_NOWAIT, i)
 #print(commands)
+
 if len(sys.argv) > 1:
     if sys.argv[1] == "-f":
         success(command_list)
