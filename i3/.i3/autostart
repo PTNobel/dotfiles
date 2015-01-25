@@ -4,4 +4,4 @@ pidgin
 /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 mpd.sh
 mpd.sh
-backup.sh || notify-send backup.sh\ failed.
+if backup.sh ; then notify-send backup.sh succeeded ; else notify-send backup.sh\ failed. ; fi

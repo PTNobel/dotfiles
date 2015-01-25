@@ -172,8 +172,8 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pulsectl down #decrease sound 
 bindsym XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 20 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 20 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10 # decrease screen brightness
 bindsym XF86Sleep exec --no-startup-id i3exit short_inactive_lock
 
 
@@ -197,9 +197,11 @@ bindsym $mod+minus scratchpad show
 bindsym $mod+q exec --no-startup-id i3exit short_inactive_lock
 bindsym $mod+Shift+w exec --no-startup-id i3exit lock
 
-set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+set $mode_system System (l) lock, (b) blur, (f) freeze, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id i3exit lock, mode "default"
+    bindsym b exec --no-startup-id i3exit blur, mode "default"
+    bindsym f exec --no-startup-id i3exit freeze, mode "default"
     bindsym e exec --no-startup-id i3exit logout, mode "default"
     bindsym s exec --no-startup-id i3exit suspend, mode "default"
     bindsym h exec --no-startup-id i3exit hibernate, mode "default"
