@@ -2,15 +2,20 @@
 
 # A python3 port of the bash musicctl program. Should be a drop in replacment.
 
+from __future__ import print_function
 import os
 import sys
 import time
+
 
 def usage():
     print("Usage: %s {play|pause|back|stop|next|help}" % sys.argv[0])
 
 def warning(*objs):
-    print("WARNING: ", *objs, file=sys.stderr)
+    printed_list = 'WARNING: '
+    for i in objs:
+        printed_list += i
+    print(printed_list, file=sys.stderr)
 
 def processargs():
     output = {"verbose":None, "input":None}
@@ -41,7 +46,7 @@ else:
 
 class musicctl:
     def __init__(self):
-        if os.system("mpc status | grep playing 2>/dev/null") == 0:
+        if os.system("mpc status | grep playing &>/dev/null") == 0:
             self.player = "mpd"
         elif os.system("pidof pianobar >/dev/null") == 0:
             self.player = "pianobar"
@@ -75,7 +80,7 @@ class musicctl:
 
     def next(self):
         if self.player == "pianobar":
-            exit(os.system("pianoctl n"))
+            exit(os.system("pianoctl -"))
         elif self.player == "mpd":
             exit(os.system("mpc next >/dev/null"))
 
