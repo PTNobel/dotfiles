@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#partly taken from the Arch Wiki, extended by me.
+
 active_lock() {
     echo test > $1
     if xrandr | grep '*' | grep '^   1366x768' >/dev/null
@@ -100,7 +102,7 @@ OPTIONS:
   blur - blurs screen
   blur_with_sleep - blurs screen but puts the computer to sleep
   freeze - freezes the screen
-  logout - exits i3 (depends on i3-msg)
+  logout - exits i3 (depends on i3-msg
   suspend - locks screen and suspends (depends on systemctl)
   hibernate - locks screen and suspends (depends on systemctl)
   reboot - reboots (depends on systemctl)
