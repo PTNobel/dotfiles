@@ -369,5 +369,5 @@ alias gc='git commit -v'
 compdef _git gc=git-commit
 alias ga='git add'
 compdef _git ga=git-add
-alias ppwd='cd `pwd -P`'
+alias ppwd='cd `pwd -P` ; pwd'
 source /home/parth/.zsh-dwim/init.zsh
