@@ -6,9 +6,9 @@ My dotfiles
 Pretty self explanitory.....
 
 DISCLAIMER: I did not write the code in contrib directory. 
-I did write all the code in bin/bin except part of bin/bin/i3exit, however I have extended it.
+I wrote all the code in bin/bin except part of bin/bin/i3exit, however I have extended it.
 I have not put any copyright notices on any code I do not have copyright for.
-I have not removed the copyright notice from any code that contained copyright notices.
+I have not removed the copyright notice from any code that contained a copyright notice.
 These files are available for any purpose and may have their own licenses.
 
 My Setup
