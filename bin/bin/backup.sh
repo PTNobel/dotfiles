@@ -19,6 +19,7 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
   if [ -f $DESTINATION/$USER ]; then
 
 # No files/directories should be hardcoded
+    echo starting backup.
     chmod -R +w $DESTINATION
     #cd $DESTINATION
     #rm $DESTINATION/$USER
@@ -42,7 +43,7 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
     #exit $?
   else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
-  echo starting duplicity ; notify-send duplicity started
-  duplicity incremental --no-encryption $HOME $DUPLICITY_DESTINATION 
+  echo starting duplicity #; notify-send duplicity started
+  duplicity incremental --allow-source-mismatch --no-encryption $HOME $DUPLICITY_DESTINATION 
 else echo $DESTINATION is not found ; exit 1
 fi
