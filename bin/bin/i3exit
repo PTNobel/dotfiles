@@ -69,7 +69,7 @@ lock_without_sleep() {
 blur() {
    file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
    file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
-   scrot -d0 "$file1"
+   scrot -zd0 "$file1"
    convert "$file1" -blur 0x9 "$file2"
    i3lock -i "$file2" 
    trap "rm '$file1' '$file2'" EXIT
@@ -78,7 +78,7 @@ blur() {
 blur_with_sleep() {
    file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
    file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
-   scrot -d0 "$file1"
+   scrot -zd0 "$file1"
    convert "$file1" -blur 0x9 "$file2"
    i3lock -di "$file2" 
    trap "rm '$file1' '$file2'" EXIT
