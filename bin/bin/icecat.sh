@@ -11,5 +11,5 @@ launch_icecat() {
 }
 
 while true
-do launch_icecat ; sleep 5
+do launch_icecat ; sleep 3
 done
