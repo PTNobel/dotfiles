@@ -28,7 +28,7 @@
 #echo "script started"
 #echo "iput="$1
 #INPUT_FILE=`echo "$1" | sed 's/ /\\\ /g'`
-INPUT_FILE=$1
+INPUT_FILE="$1"
 #echo INPUT_FILE: $INPUT_FILE
 #exit
 LIST=`cat "$INPUT_FILE" | tr '\n' '"'  | sed 's/\"/,/g'`
