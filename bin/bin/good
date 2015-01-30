@@ -1,17 +1,59 @@
 #!/bin/bash
-if [ "$1" == "night" ]
-then echo 'Powering down' ; sleep 5 && systemctl poweroff -i $2
-elif [ "$1" == "morning" ]
-then bash /home/parth/bin/update.sh
-elif [ "$1" == "work" ]
-then echo Thank you!
-elif [ "$1" == "computer" ]
-then echo Thank you!
-elif [ -z "$1" ]
-then echo What\'s so good?
-elif [ "$1" == "ana" ]
-then echo That\'s not my name!
-else echo "good $@ to you too."
-fi
 
-#case
+bad_func() {
+  if [ "$1" == "night" ] ; then
+     echo Shall we stay up a bit later then?
+
+  elif [ "$1" == "morning" ] ; then
+     echo Let\'s not risk on update then?
+
+  elif [ "$1" == "work" ] ; then
+     echo I\'m sorry...I\'ll try to do be better next time.
+
+  elif [ "$1" == "computer" ] ; then
+     echo I\'ll do better next time.
+
+  elif [ -z "$1" ] ; then
+     echo What\'s so bad?
+
+  elif [ "$1" == "ana" ] ; then
+     echo That\'s not my name! I\'m sure she didn\'t do anything wrong.
+
+  elif [ "$1" == "day" ] ; then
+     echo It has been hasn\'t it?
+  else echo "bad $@ to you too." ; fi
+}
+
+good_func() {
+  if [ "$1" == "night" ] ; then
+     echo 'Powering down' ; sleep 5 && systemctl poweroff -i $2
+
+  elif [ "$1" == "morning" ] ; then
+     bash /home/parth/bin/update.sh
+
+  elif [ "$1" == "work" ] ; then
+     echo Thank you!
+
+  elif [ "$1" == "computer" ] ; then
+     echo Thank you!
+
+  elif [ -z "$1" ] ; then
+     echo What\'s so good?
+
+  elif [ "$1" == "ana" ] ; then
+     echo That\'s not my name!
+
+  else echo "good $@ to you too." ; fi
+}
+
+case "$0" in
+    *bad)
+        bad_func "$1"
+        ;;
+    *good)
+        good_func "$1"
+        ;;
+    *)
+        echo what are you calling this script?
+esac
+
