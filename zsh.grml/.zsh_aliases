@@ -98,3 +98,4 @@ alias Spotify='env WINEPREFIX="/home/parth/.wine" wine C:\\\\users\\\\parth\\\\A
 alias bash.py='exec bash.py'
 alias python.py='exec python.py'
 alias zsh.py='exec zsh.py'
+alias shell.py='exec shell.py'
