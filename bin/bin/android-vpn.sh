@@ -6,6 +6,6 @@ cd /usr/local/share/vpn.sh/
 
 if wifi | grep on; then sudo wifi off; else
 
-sudo openvpn azilink.ovpn
+sudo setsid openvpn azilink.ovpn
 fi
 sudo wifi on

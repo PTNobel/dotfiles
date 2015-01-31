@@ -112,8 +112,10 @@ OPTIONS:
 #262039.png
 
 check_for_i3lock() {
-		if [ $(strings /proc/$(pgrep i3lock)/environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ] ; then exit ; fi
+   if pgrep i3lock && [ $(strings /proc/$(pgrep i3lock)/environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ] ; then return 1 ; else return 0; fi
 }
+
+#check_for_i3lock || exit 4
 
 case "$1" in
     lock)

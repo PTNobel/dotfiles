@@ -63,6 +63,9 @@ class musicctl:
             exit(1)
         verboseprint(self.player, self)
 
+    def is_mpd_running(self):
+        return
+
     def play(self):
         self.pause()
 
