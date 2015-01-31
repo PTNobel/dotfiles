@@ -42,6 +42,9 @@ good_func() {
 
   elif [ "$1" == "ana" ] ; then
      echo That\'s not my name!
+  
+  elif [ "$1" == "luck" ] ; then
+      echo Thanks! I hope I won\'t need it!
 
   else echo "good $@ to you too." ; fi
 }
