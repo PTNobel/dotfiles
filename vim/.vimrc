@@ -2,6 +2,9 @@ set vb
 filetype plugin indent on 
 set nocp
 set autoindent
+set expandtab
+set softtabstop=4
+set shiftwidth=4
 set cindent
 set ts=4
 set scrolloff=2
