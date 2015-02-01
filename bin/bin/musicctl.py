@@ -46,15 +46,7 @@ else:
 
 class musicctl:
     def __init__(self):
-        if os.system("mpc status | grep playing &>/dev/null") == 0:
-            self.player = "mpd"
-        elif os.system("pidof pianobar >/dev/null") == 0:
-            self.player = "pianobar"
-        elif os.system("pidof mpd >/dev/null") == 0:
-            self.player = "mpd"
-        else:
-            warning("No music players found")
-            exit(1)
+        self.get_player()
         try:
             eval("self." + sys.argv[len(sys.argv) - 1])()
         except IndexError:
@@ -63,8 +55,18 @@ class musicctl:
             exit(1)
         verboseprint(self.player, self)
 
-    def is_mpd_running(self):
-        return
+    def get_player(self):
+        if os.system("pidof mpd >/dev/null") == 0:
+            if os.system("pidof pianobar >/dev/null") == 0:
+                if os.system("mpc status | grep playing &>/dev/null") == 0:
+                    self.player = "mpd"
+                else:
+                    self.player = "pianobar"
+        elif os.system("pidof pianobar >/dev/null") == 0:
+            self.player = "pianobar"
+        else:
+            warning("No music player found")
+            exit(1)
 
     def play(self):
         self.pause()
