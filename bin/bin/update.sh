@@ -55,7 +55,7 @@ man_u() {
 }
 
 alpm() {
-  /usr/local/bin/update_tools_helper alpm &>> $ALPM_OUTPUT_FILE
+  until /usr/local/bin/update_tools_helper alpm &>> $ALPM_OUTPUT_FILE ; do sleep 1 ; done
   echo ALPM >> $ALPM_WATCHDOG_FILE
 }
 
