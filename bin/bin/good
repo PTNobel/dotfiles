@@ -1,27 +1,39 @@
 #!/bin/bash
 
 bad_func() {
-  if [ "$1" == "night" ] ; then
-     echo Shall we stay up a bit later then?
+    case "$1" in
+        night)
+            echo Shall we stay up a bit later then?
+            ;;
 
-  elif [ "$1" == "morning" ] ; then
-     echo Let\'s not risk on update then?
+        morning)
+            echo Let\'s not risk an update then?
+            ;;
 
-  elif [ "$1" == "work" ] ; then
-     echo I\'m sorry...I\'ll try to do be better next time.
+        work)
+            echo I\'m sorry...I\'ll try to do be better next time.
+            ;;
 
-  elif [ "$1" == "computer" ] ; then
-     echo I\'ll do better next time.
+        computer)
+            echo I\'ll do better next time.
+            ;;
 
-  elif [ -z "$1" ] ; then
-     echo What\'s so bad?
+        ana)
+            echo That\'s not my name! I\'m sure she didn\'t do anything wrong.
+            ;;
 
-  elif [ "$1" == "ana" ] ; then
-     echo That\'s not my name! I\'m sure she didn\'t do anything wrong.
+        day)
+            echo It has been hasn\'t it?
+            ;;
 
-  elif [ "$1" == "day" ] ; then
-     echo It has been hasn\'t it?
-  else echo "bad $@ to you too." ; fi
+        "")
+            echo What\'s so bad?
+            ;;
+
+        *)
+            echo Bad $@ to you too.
+
+    esac
 }
 
 good_func() {
