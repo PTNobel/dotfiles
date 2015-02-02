@@ -84,7 +84,7 @@ echo "starting update of alpm database"
 alpm &
 
 until sudo -v ; do
-		sleep 3
+        sleep 3
 done
 alpm_watchdog
 yaourt -Sua
