@@ -4,9 +4,9 @@
 get_player() {
     if pidof pianobar >/dev/null
     then if mpc | grep playing >/dev/null
-	     then player=mpd
-		 else player=pianobar 
-		 fi
+        then player=mpd
+        else player=pianobar 
+        fi
     elif pidof mpd >/dev/null
     then player=mpd
     else exit 1
