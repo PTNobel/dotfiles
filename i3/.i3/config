@@ -236,6 +236,8 @@ bindsym $mod+Shift+m exec --no-startup-id bash -c 'monitor-layout.sh && sh ~/.fe
 new_window pixel
 bindsym $mod+t exec --no-startup-id transperancy.sh
 
+# TODO write redshift.sh
+bindsym $mod+Shift+p exec --no-startup-id redshift.sh
 # Startup Applications autostart
 
 exec_always --no-startup-id monitor-layout.sh
