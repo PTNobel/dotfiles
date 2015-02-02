@@ -1,6 +1,6 @@
 #!/bin/bash
 
 if pidof mutt >/dev/null; then
-		mutt -R "$@"
+    mutt -R "$@"
 else mutt "$@"
 fi
