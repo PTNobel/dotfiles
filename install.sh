@@ -14,7 +14,7 @@ stow_wrapper(){
 export MANIFEST_FILE="$(pwd -P)/manifest.repos"
 if [ -z "$1" ] ; then
 cd $(dirname $0) 
-    stow_wrapper -S
+    stow_wrapper -R
 
 elif [ "$1" == "-D" ] ; then
     stow_wrapper -D 
