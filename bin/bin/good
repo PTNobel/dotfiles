@@ -37,28 +37,38 @@ bad_func() {
 }
 
 good_func() {
-  if [ "$1" == "night" ] ; then
-     echo 'Powering down' ; sleep 5 && systemctl poweroff -i $2
+    case "$1" in
+        night)
+            echo 'Powering down' ; sleep 5 && systemctl poweroff -i $2
+            ;;
 
-  elif [ "$1" == "morning" ] ; then
-     bash /home/parth/bin/update.sh
+        morning)
+            bash /home/parth/bin/update.sh
+            ;;
 
-  elif [ "$1" == "work" ] ; then
-     echo Thank you!
+        work)
+            echo Thank you!
+            ;;
 
-  elif [ "$1" == "computer" ] ; then
-     echo Thank you!
+        computer)
+            echo Thank you!
+            ;;
 
-  elif [ -z "$1" ] ; then
-     echo What\'s so good?
+        ana)
+            echo That\'s not my name!
+            ;;
 
-  elif [ "$1" == "ana" ] ; then
-     echo That\'s not my name!
-  
-  elif [ "$1" == "luck" ] ; then
-      echo Thanks! I hope I won\'t need it!
+        luck)
+            echo Thanks! I hope I won\'t need it!
+            ;;
 
-  else echo "good $@ to you too." ; fi
+        "")
+            echo What\'s so good?
+            ;;
+        
+        *)
+            echo Good $@ to you too.
+    esac
 }
 
 case "$0" in
