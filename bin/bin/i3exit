@@ -27,7 +27,7 @@ lock() {
 }
 
 short_inactive_lock() {
-	#xautolock
+    #xautolock
     #kill `ps | grep  xautolock | cut -f 1 --delimiter=\ `
     WATCHDOG_FILE=$(mktemp)
     NUM=0
@@ -41,7 +41,7 @@ short_inactive_lock() {
     done
 }
 inactive_lock() {
-	#xautolock
+    #xautolock
     #kill `ps | grep  xautolock | cut -f 1 --delimiter=\ `
     WATCHDOG_FILE=$(mktemp)
     NUM=0
@@ -154,20 +154,20 @@ case "$1" in
     inactive_lock)
         inactive_lock
         ;;
-	help)
-	    usage
-		;;
-	i3exit)
-		bash $0 "$2" "$3" "$4" "$5" "$6"
-		exit $?
-		;;
-	"")
-		usage
-		exit 3
-		;;
+    help)
+        usage
+        ;;
+    i3exit)
+        bash $0 "$2" "$3" "$4" "$5" "$6"
+        exit $?
+        ;;
+    "")
+        usage
+        exit 3
+        ;;
     *)
-		echo "Invalid arguement"
-		usage
+        echo "Invalid arguement"
+        usage
         exit 2
 esac
 
