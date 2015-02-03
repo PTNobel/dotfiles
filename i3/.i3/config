@@ -252,4 +252,4 @@ exec_always --no-startup-id feh --bg-scale Pictures/tardis-14940-1920x1080.jpg
 exec --no-startup-id bash -c 'sleep 3 ; dunst.sh'
 exec --no-startup-id deskcon-server
 exec --no-startup-id /usr/share/android-notifier-desktop/run.sh 
-exec --no-startup-id startup.py
+exec --no-startup-id startup
