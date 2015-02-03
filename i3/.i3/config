@@ -36,6 +36,7 @@ bindsym $mod+Shift+Return exec urxvt
 
 # kill focused window
 bindsym $mod+Shift+q kill
+bindsym $mod+Shift+x exec --no-startup-id xkill
 
 # start dmenu (a program launcher)
 bindsym $mod+Shift+d exec --no-startup-id dmenu_run
