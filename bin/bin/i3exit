@@ -95,18 +95,19 @@ freeze() {
 usage() {
    echo "Usage: $0 OPTION
 OPTIONS:
-  lock - Locks screen and puts the computer to sleep.
-  inactive_lock - lock, but suspends computer after 30 minutes
+  lock - Locks screen and puts the computer to sleep. (depends on i3lock)
+  inactive_lock - lock, but suspends computer after 30 minutes (depends on i3lock and systemctl)
   short_inactive_lock - inactive_lock, but 3m
-  lock_without_sleep - locks screen but leaves the screen on
-  blur - blurs screen
-  blur_with_sleep - blurs screen but puts the computer to sleep
-  freeze - freezes the screen
-  logout - exits i3 (depends on i3-msg
-  suspend - locks screen and suspends (depends on systemctl)
-  hibernate - locks screen and suspends (depends on systemctl)
+  lock_without_sleep - locks screen but leaves the screen on (depends on i3lock)
+  blur - blurs screen (depends on scrot, convert [from imagemagick], and i3lock)
+  blur_with_sleep - blur, but puts the computer to sleep
+  freeze - freezes the screen (depends on scrot and i3lock)
+  logout - exits i3 (depends on i3-msg)
+  suspend - locks screen and suspends (depends on i3lock and systemctl)
+  hibernate - locks screen and suspends (depends on i3lock and systemctl)
   reboot - reboots (depends on systemctl)
   shutdown - shutsdown (depends on systemctl)
+  usage - print this help and exit
   help - print this help and exit"
 }
 #262039.png
@@ -154,12 +155,8 @@ case "$1" in
     inactive_lock)
         inactive_lock
         ;;
-    help)
+    usage|help|-h|--help)
         usage
-        ;;
-    i3exit)
-        bash $0 "$2" "$3" "$4" "$5" "$6"
-        exit $?
         ;;
     "")
         usage
