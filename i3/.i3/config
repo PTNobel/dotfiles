@@ -33,7 +33,6 @@ bindsym $mod+Return exec urxvtc
 bindsym $mod+Control+Return exec urxvtc -e /usr/bin/screen -c /home/parth/.screenrc
 bindsym $mod+Shift+Return exec urxvt
 
-
 # kill focused window
 bindsym $mod+Shift+q kill
 bindsym $mod+Shift+x exec --no-startup-id xkill
