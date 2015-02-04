@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Warning: this script can be used to execute
+# anything. go ahead try $0 bash.
+#
 
 # Pianobar or mpd?
 get_player() {
@@ -58,4 +62,4 @@ stop() {
    fi
 }
 
-$1
+"$1"
