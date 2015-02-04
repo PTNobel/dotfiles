@@ -58,7 +58,7 @@ alias chgrp='chgrp --preserve-root'
 alias cls=' echo -ne "\033c"'       # clear screen for real (it does not work in Terminology)
 # }}}
 
-## Make Bash error tolerant ## {{{
+## Make Zsh error tolerant ## {{{
 alias :q=' exit'
 alias :Q=' exit'
 alias :x=' exit'
@@ -75,19 +75,14 @@ alias up='cd ..'
 alias pacman='pacman --color=auto'
 alias free='free -h'
 alias suod='sudo'
-alias rhythmbox='setsid rhythmbox'
 alias firefox='setsid firefox'
 alias icecat='setsid icecat'
-alias conky='setsid conky'
 alias geany='setsid geany'
-alias file-roller='setsid file-roller'
 alias x="setsid env DISPLAY=:0 "
-alias root-shell="sudo bash -c 'reset ; cd /root ; /home/parth/bin/bash.py';exit"
+alias root-shell="sudo bash -c 'reset ; cd /root ; /home/parth/bin/shell.py';exit"
 alias xdg-open="setsid xdg-open &>/dev/null"
 alias gimp='setsid gimp'
-alias thunar='setsid thunar'
-alias clementine="setsid clementine"
-alias fix='sudo \`history -p \!\!\`'
+alias fix='sudo `history -p \!\!`'
 alias cd=cl
 alias iceweasel='setsid iceweasel'
 alias scan_wifi="iwlist wlo1 scanning | grep ESSID -B 3"
