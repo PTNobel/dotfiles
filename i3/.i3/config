@@ -222,7 +222,7 @@ bindsym $mod+Shift+v exec --no-startup-id touchpad.sh
 bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
 bindsym $mod+Shift+s exec --no-startup-id i3exit suspend 
 # Calculator
-bindsym $mod+c exec urxvt -e calc
+bindsym $mod+c exec urxvt -e calc -d
 
 #firefox + thunderbird
 bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
@@ -236,8 +236,10 @@ bindsym $mod+Shift+m exec --no-startup-id bash -c 'monitor-layout.sh && sh ~/.fe
 new_window pixel
 bindsym $mod+t exec --no-startup-id transperancy.sh
 
-# TODO write redshift.sh
+# redshift.sh and other scripts
+bindsym $mod+Shift+o exec --no-startup-id video.sh
 bindsym $mod+Shift+p exec --no-startup-id redshift.sh
+
 # Startup Applications autostart
 
 exec_always --no-startup-id monitor-layout.sh

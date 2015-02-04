@@ -3,8 +3,8 @@
 if pidof xautolock >/dev/null ; then
     for i in $(pidof xautolock) ; do
         echo $i
-        cd $i
-        if [ $(strings ./environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ]; then
+        #cd $i
+        if [ $(strings /proc/$i/environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ]; then
             SWITCH_STATES=1
             if [ $SWITCH_STATES == 1 ] ; then
                 kill $i
