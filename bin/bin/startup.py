@@ -4,6 +4,35 @@ import os
 import sys
 import datetime
 
+
+def warning(*objs):
+    printed_list = 'WARNING: '
+    for i in objs:
+        printed_list += str(i)
+    print(printed_list, file=sys.stderr)
+
+def processargs():
+    output = {"verbose":None, "bootstrap":None, "force":None}
+    for i in sys.argv:
+        if i == "-v" or i == "--verbose":
+            output["verbose"] = True
+        elif i == "-b":
+            output["bootstrap"] = True
+        elif i == "-f":
+            output["force"] = True
+    return output
+
+arguements = processargs()
+
+if arguements["verbose"]:
+    def verboseprint(*args):
+        # Print each argument separately so caller doesn't need to
+        # stuff everything to be printed into a single string
+        for arg in args:
+            print(arg)
+else:
+    verboseprint = lambda *a: None      # do-nothing function
+
 date_log = "/home/parth/.parth/date.log"
 autostart = "/home/parth/.i3/autostart"
 bootstrap = "/home/parth/.i3/bootstrap"
@@ -43,11 +72,16 @@ def success(commands):
         #os.spawnl(os.P_NOWAIT, i)
 #print(commands)
 
-if len(sys.argv) > 1:
-    if sys.argv[1] == "-f":
-        success(command_list)
-    elif sys.argv[1] == "-b":
-        success(bootstrap_commands)
+if os.system('urxvt -e exit') != 0:
+    print('Something\'s very wrong with this X server')
+    print('Dazed and confused and quitting now')
+    exit(5)
+
+elif arguements["force"]:
+    success(command_list)
+
+elif arguements["bootstrap"]:
+    success(bootstrap_commands)
 
 elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
     success(bootstrap_commands)
