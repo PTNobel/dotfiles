@@ -62,6 +62,8 @@ class musicctl:
                     self.player = "mpd"
                 else:
                     self.player = "pianobar"
+            else:
+                self.player = "mpd"
         elif os.system("pidof pianobar >/dev/null") == 0:
             self.player = "pianobar"
         else:
