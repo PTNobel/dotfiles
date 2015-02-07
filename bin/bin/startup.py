@@ -32,7 +32,8 @@ if arguements["verbose"]:
         # stuff everything to be printed into a single string
         for arg in args:
             print(arg)
-else: verboseprint = lambda *a: None      # do-nothing function
+else:
+    verboseprint = lambda *a: None      # do-nothing function
 
 
 def check_if_pid_is_startuppy(pidnum):
