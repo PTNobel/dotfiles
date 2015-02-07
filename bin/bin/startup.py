@@ -3,7 +3,7 @@
 import os
 import sys
 import datetime
-
+import re
 
 def warning(*objs):
     printed_list = 'WARNING: '
@@ -12,7 +12,7 @@ def warning(*objs):
     print(printed_list, file=sys.stderr)
 
 def processargs():
-    output = {"verbose":None, "bootstrap":None, "force":None}
+    output = {"weekly":None, "verbose":None, "bootstrap":None, "force":None}
     for i in sys.argv:
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
@@ -20,6 +20,8 @@ def processargs():
             output["bootstrap"] = True
         elif i == "-f":
             output["force"] = True
+        elif i == "-w":
+            output["weeky"] = True
     return output
 
 arguements = processargs()
@@ -30,8 +32,39 @@ if arguements["verbose"]:
         # stuff everything to be printed into a single string
         for arg in args:
             print(arg)
-else:
-    verboseprint = lambda *a: None      # do-nothing function
+else: verboseprint = lambda *a: None      # do-nothing function
+
+
+def check_if_pid_is_startuppy(pidnum):
+    python_check = re.findall(r"python", str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read()))
+    startup_check = re.findall(r"startup", str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read()))
+    if python_check == [] or startup_check == []:
+        return False
+    else:
+        return True
+
+pids = [pid for pid in os.listdir('/proc') if pid.isdigit() and pid != str(os.getpid())]
+
+verboseprint(pids)
+verboseprint(str(os.getpid()))
+
+if pids[-1] == str(os.getpid()):
+    verboseprint('OK then')
+
+for pid in pids:
+    try:
+        verboseprint(pid)
+        if pid == str(os.getpid()):
+            print('This script')
+        verboseprint(open(os.path.join('/proc/', pid, 'cmdline'), 'rb').read())
+        if check_if_pid_is_startuppy(pid):
+            warning("Is there another " + sys.argv[0] + " running?")
+            exit(4)
+
+        else:
+            verboseprint("This looks like the only version of startup")
+    except IOError: # proc has already terminated
+        continue
 
 date_log = "/home/parth/.parth/date.log"
 autostart = "/home/parth/.i3/autostart"
@@ -44,6 +77,7 @@ today = str(datetime.date.today())
 autostart_file_list = open(autostart, 'r')
 bootstrap_file_list = open(bootstrap, 'r')
 weekly_file_list = open(week, 'r')
+run_log_name = "startup." + os.environ["DISPLAY"][1:] +'.log'
 
 def clean_list(input_list):
     output_list = list()
@@ -66,34 +100,49 @@ def update_log(log):
     log_file_writeable.write(today)
     log_file_writeable.close()
 
-def success(commands):
+def success(commands, run_log_str):
     for i in commands:
-        os.system(i + " >/dev/null &")
+        verboseprint(i)
+        if os.system('urxvt -e exit') != 0:
+            warning('Something\'s very wrong with this X server')
+            warning('Dazed and confused and quitting now')
+            exit(6)
+        os.system(i + ' >/dev/null &')
+    run_log = open('/tmp' + run_log_str, mode='w')
+    run_log.write('We finished.\n')
+    run_log.close()
         #os.spawnl(os.P_NOWAIT, i)
 #print(commands)
 
 if os.system('urxvt -e exit') != 0:
-    print('Something\'s very wrong with this X server')
-    print('Dazed and confused and quitting now')
+    warning('Something\'s very wrong with this X server')
+    warning('Dazed and confused and quitting now')
     exit(5)
 
 elif arguements["force"]:
-    success(command_list)
+    success(command_list, run_log_name)
 
 elif arguements["bootstrap"]:
-    success(bootstrap_commands)
+    success(bootstrap_commands, run_log_name)
+
+elif arguements["weekly"]:
+    command_list += weekly
+    success(command_list, run_log_name)
+
+elif run_log_name in os.listdir('/tmp'):
+    warning('Already ran')
+    exit(8)
 
 elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
-    success(bootstrap_commands)
+    success(bootstrap_commands, run_log_name)
 
 elif log_value != today:
-    if datetime.date.today().weekday() == 4:
+    if datetime.date.today().weekday() == 4 or arguements["weekly"]:
         command_list += weekly
     update_log(date_log)
-    success(command_list)
+    success(command_list, run_log_name)
 
 else:
-    success(bootstrap_commands)
-
+    success(bootstrap_commands, run_log_name)
 
 exit(0)
