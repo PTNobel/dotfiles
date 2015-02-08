@@ -9,9 +9,15 @@ int main( int argc, char *argv[] )
 	  fprintf(stderr,"Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
       return 1;
     }
+    else if( strcmp(argv[1],"abs") == 0 )
+    {
+        setuid( 0 );
+        system( "/usr/bin/abs" );
+        return 0;
+    }
     else if( strcmp(argv[1],"mlocate") == 0 )
     {
-      setuid( 0 );   // you can set it at run time also
+      setuid( 0 );
 	  system( "/usr/bin/updatedb" );
       return 0;
     }
