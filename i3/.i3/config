@@ -184,7 +184,7 @@ bindsym XF86AudioNext exec --no-startup-id musicctl.py next
 bindsym XF86AudioPrev exec --no-startup-id musicctl.py back
 bindsym XF86AudioStop exec --no-startup-id musicctl.py stop
 bindsym $mod+n exec urxvt -e ncmpcpp
-bindsym $mod+p exec urxvt -e pianoctl
+bindsym $mod+p exec urxvt -e pianoctl.py
 #bindsym $mod+m exec urxvt -e mpd.status.update
 
 # Make the currently focused window a scratchpad
