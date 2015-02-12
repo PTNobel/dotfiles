@@ -30,5 +30,4 @@ for i in $(cat $(pwd -P)/manifest_build.repos); do
     sudo make install
     make clean
     cd $(dirname $0) 
-    stow_wrapper -R
 done
