@@ -1,2 +1,2 @@
 #!/bin/bash
-libreoffice --writer $HOME/Templates/APEC\ Essay\ Test.ott 
+libreoffice --writer $HOME/Templates/Chem\ Test.ott
