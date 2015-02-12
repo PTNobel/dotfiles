@@ -1,7 +1,8 @@
 bash
 bin
 contrib
-i3 mpd
+i3
+mpd
 pentadactyl
 screen
 systemd
