@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -6,7 +7,7 @@
 int main( int argc, char *argv[] )
 {
     if ( argc != 2 ) {
-	  fprintf(stderr,"Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
+      fprintf(stderr,"Usage: update_tools_helper {abs|alpm|man|mlocate|pkgfile}\n");
       return 1;
     }
     else if( strcmp(argv[1],"abs") == 0 )
@@ -15,40 +16,45 @@ int main( int argc, char *argv[] )
         system( "/usr/bin/abs" );
         return 0;
     }
-    else if( strcmp(argv[1],"mlocate") == 0 )
+
+    else if(strcmp(argv[1],"alpm") == 0 )
     {
       setuid( 0 );
-	  system( "/usr/bin/updatedb" );
+      system( "/usr/bin/pacman -Sy" );
+      system( "/usr/bin/pacman -Suw --noconfirm" );
       return 0;
     }
-    else if( strcmp(argv[1],"pkgfile") == 0 )
-    {
-      setuid( 0 );
-      system( "/usr/bin/pkgfile -u" );
-      return 0;
-    }
+
     else if(strcmp(argv[1],"man") == 0 )
     {
       setuid( 0 );
       system( "/usr/bin/mandb" );
       return 0;
     }
-	else if(strcmp(argv[1],"alpm") == 0 )
-	{
-	  setuid( 0 );
-	  system( "/usr/bin/pacman -Sy" );
-	  system( "/usr/bin/pacman -Suw --noconfirm" );
-	  return 0;
-	}
-	else if(strcmp(argv[1],"-h") == 0 )
-	{
-	  printf("Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
-	  return 0;
-	}
-	else
+
+    else if( strcmp(argv[1],"mlocate") == 0 )
     {
-	  fprintf(stderr,"Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
+      setuid( 0 );
+      system( "/usr/bin/updatedb" );
+      return 0;
+    }
+
+    else if( strcmp(argv[1],"pkgfile") == 0 )
+    {
+      setuid( 0 );
+      system( "/usr/bin/pkgfile -u" );
+      return 0;
+    }
+
+    else if(strcmp(argv[1],"-h") == 0 )
+    {
+      printf("Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
+      return 0;
+    }
+
+    else
+    {
+      fprintf(stderr,"Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
       return 1;
-	}
-  
+    }
 }
