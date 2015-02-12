@@ -109,7 +109,7 @@ def success(commands, run_log_str):
             warning('Dazed and confused and quitting now')
             exit(6)
         os.system(i + ' >/dev/null &')
-    run_log = open('/tmp' + run_log_str, mode='w')
+    run_log = open('/tmp/' + run_log_str, mode='w')
     run_log.write('We finished.\n')
     run_log.close()
         #os.spawnl(os.P_NOWAIT, i)
