@@ -1,13 +1,9 @@
 #!/bin/bash
-#
-# Warning: this script can be used to execute
-# anything. go ahead try $0 bash.
-#
 
 # Pianobar or mpd?
 get_player() {
     if pidof pianobar >/dev/null
-    then if mpc | grep playing >/dev/null
+    then if pidof mpd >/dev/null && mpc | grep playing >/dev/null
         then player=mpd
         else player=pianobar 
         fi
@@ -18,7 +14,7 @@ get_player() {
     export $player
 }
 
-pause() {
+self.pause() {
    get_player
    if [ "$player" == "pianobar" ]
    then pianoctl p
@@ -28,11 +24,11 @@ pause() {
    fi
 }
 
-play() {
+self.play() {
     pause
 }
 
-back() {
+self.back() {
    get_player
    if [ "$player" == "pianobar" ]
    then pianoctl + 
@@ -42,7 +38,7 @@ back() {
    fi
 }
 
-next() {
+self.next() {
    get_player
    if [ "$player" == "pianobar" ]
    then pianoctl \-
@@ -52,7 +48,7 @@ next() {
    fi
 }
 
-stop() {
+self.stop() {
    get_player
    if [ "$player" == "pianobar" ]
    then pianoctl q
@@ -62,4 +58,4 @@ stop() {
    fi
 }
 
-"$1"
+self."$1"
