@@ -21,26 +21,13 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
 # No files/directories should be hardcoded
     echo starting backup.
     chmod -R +w $DESTINATION
-    #cd $DESTINATION
-    #rm $DESTINATION/$USER
-    #ls #debug
-    #file $USER  #debug
-    #sleep 30 #debug
-    #mkdir $DESTINATION/$USER
-    #mv $(list_files) $DESTINATION/$USER/ 
     echo pwd=$PWD
     ls
     mv $DESTINATION $PRIMARY_DIRECTORY/$USER
     bash -c "rsync -apv --delete --exclude=.cache $HOME $PRIMARY_DIRECTORY ; true"
-    #mv $DESTINATION/$USER/* $DESTINATION
     mv $PRIMARY_DIRECTORY/$USER $DESTINATION
-    #cd $USER
-    #mv $(list_files) $DESTINATION
-    #rmdir $DESTINATION/$USER
-    #sleep 40 #debug
     echo $USER > $DESTINATION/$USER
     chmod -R a-w $DESTINATION
-    #exit $?
   else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
   echo starting duplicity #; notify-send duplicity started
