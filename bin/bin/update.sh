@@ -8,7 +8,7 @@ export ALPM_OUTPUT_FILE=$(mktemp)
 exit_routine() {
   #echo deleting OUTPUT_FILE and WATCHDOG_FILE
   rm $OUTPUT_FILE $ALPM_OUTPUT_FILE
-  exit 0
+  exit $?
 }
 
 backup() {
@@ -60,6 +60,8 @@ ALPM_PID=$!
 until sudo -v ; do
   sleep 3
 done
+
+tail -n`cat $ALPM_OUTPUT_FILE | wc -l`  -f $ALPM_OUTPUT_FILE | lolcat &
 
 while [ -d /proc/$ALPM_PID ]; do
   sleep 1;
