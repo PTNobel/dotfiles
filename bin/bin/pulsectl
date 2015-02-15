@@ -5,7 +5,7 @@ get_pa_sink() {
 }
 
 pa_down() {
-    pactl set-sink-volume `get_pa_sink` -- -5%
+    pactl set-sink-volume `get_pa_sink` -5%
 }
 
 pa_up() {
