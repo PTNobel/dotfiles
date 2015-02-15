@@ -35,4 +35,9 @@ URxvt*color13: #e151ff
 URxvt*color14: #57ffec
 URxvt*color15: #ffffff
 
-
+URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
+URxvt.url-select.launcher:  icecat
+URxvt.url-select.underline: true
+URxvt.keysym.M-u:           perl:url-select:select_next
+URxvt.keysym.M-Escape:      perl:keyboard-select:activate
+URxvt.keysym.M-s:           perl:keyboard-select:search
