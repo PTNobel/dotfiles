@@ -242,4 +242,8 @@
 #    summary = *twitter.com*
 #    urgency = normal
 #
+[deskcon]
+    appname = Desktop Connector
+    summary = *
+    urgency = normal
 # vim: ft=cfg
