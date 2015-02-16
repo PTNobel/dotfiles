@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ -x update_tools_helper ] || exit 1
+
 _test(){
 for i in $(strings update_tools_helper | grep bin); do
     if echo $i | grep \- >/dev/null; then
