@@ -1,9 +1,7 @@
 #!/bin/bash
 
-kill `pidof -x $0 -o %PPID`
-
-for i in $(pidof -x firefox.sh) ; do
-    if [ strings /proc/$i/environ | grep DISPLAY = "DISPLAY=${DISPLAY}"; then
+for i in $(pidof -x firefox.sh -o %PPID) ; do
+    if strings /proc/$i/environ | grep DISPLAY | grep "DISPLAY=${DISPLAY}" >/dev/null ; then
         kill $i
     fi
 done
