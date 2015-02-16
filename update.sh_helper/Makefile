@@ -14,7 +14,8 @@ test:
 	./tests.sh
 
 install:
-	install -m 4755 $(EXECUTABLE) /usr/local/bin/
+	mkdir -p $(DESTDIR)/usr/local/bin/
+	install -m 4755 $(EXECUTABLE) $(DESTDIR)/usr/local/bin/
 
 clean:
 	rm $(EXECUTABLE)
