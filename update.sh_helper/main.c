@@ -4,11 +4,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+int usage(char *argv[] ) 
+{
+    printf(argv[0]);
+    printf(": update_tools_helper {abs|alpm|man|mlocate|pkgfile}\n");
+    return 0;
+}
+
 int main( int argc, char *argv[] )
 {
     if ( argc != 2 ) {
-      fprintf(stderr,"Usage: update_tools_helper {abs|alpm|man|mlocate|pkgfile}\n");
-      return 1;
+        usage(argv);
+        return 1;
     }
     else if( strcmp(argv[1],"abs") == 0 )
     {
@@ -48,13 +55,13 @@ int main( int argc, char *argv[] )
 
     else if(strcmp(argv[1],"-h") == 0 )
     {
-      printf("Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
+      usage(argv);
       return 0;
     }
 
     else
     {
-      fprintf(stderr,"Usage: update_tools_helper {mlocate|pkgfile|man|alpm}\n");
+      usage(argv);
       return 1;
     }
 }
