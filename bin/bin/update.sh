@@ -78,6 +78,8 @@ echo "starting update of man database"
 man_u &
 PID[4]=$!
 
+yaourt -C
+
 tail -n`cat $OUTPUT_FILE | wc -l`  -f $OUTPUT_FILE | lolcat &
 
 echo $PID
@@ -88,5 +90,6 @@ for i in $PID; do
   done
 done
 
-rm $OUTPUT_FILE $ALPM_OUTPUT_FILE
-#exit_routine
+echo All PIDS dead.
+sleep 5
+exit_routine
