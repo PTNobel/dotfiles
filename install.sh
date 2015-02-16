@@ -27,9 +27,9 @@ stow_wrapper -D
 
 for i in $(cat $(pwd -P)/manifest_build.repos); do
     cd $i
-    make
-    make test
-    sudo make install
-    make clean
+    make || exit 1
+    make test || exit 1
+    sudo make install || exit 1
+    make clean || exit 1
     cd $(dirname $0) 
 done
