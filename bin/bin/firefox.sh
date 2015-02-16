@@ -2,6 +2,12 @@
 
 kill `pidof -x $0 -o %PPID`
 
+for i in $(pidof -x firefox.sh) ; do
+    if [ strings /proc/$i/environ | grep DISPLAY = "DISPLAY=${DISPLAY}"; then
+        kill $i
+    fi
+done
+
 launch_firefox() {
     FIRE=`pidof firefox | wc -w`
     if [ "$FIRE" -lt "1" ]
