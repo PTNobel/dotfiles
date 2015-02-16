@@ -9,6 +9,15 @@ if pidof xautolock >/dev/null ; then
             if [ $SWITCH_STATES == 1 ] ; then
                 kill $i
                 xset -dpms
+                for i in $(pgrep bash); do
+                    cd /proc/$i 
+                    if cat cmdline | grep windowdecorations.sh ; then
+                        CHANGE_TRANSPERANCY=0
+                    fi
+                done
+                if ! [ $CHANGE_TRANSPERANCY == 0 ] ; then
+                    transperancy.sh
+                fi
             else
                 echo dazed and confused
                 echo running away into the woods.
