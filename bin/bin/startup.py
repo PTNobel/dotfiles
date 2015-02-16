@@ -50,7 +50,7 @@ verboseprint(pids)
 verboseprint(str(os.getpid()))
 
 if pids[-1] == str(os.getpid()):
-    verboseprint('OK then')
+    verboseprint('Something\'s weird... pids containts os.getpid()', pids, os.getpid())
 
 for pid in pids:
     try:
@@ -63,7 +63,7 @@ for pid in pids:
             exit(4)
 
         else:
-            verboseprint("This looks like the only version of startup")
+            verboseprint(pid + " is not startup.py")
     except IOError: # proc has already terminated
         continue
 
@@ -102,6 +102,7 @@ def update_log(log):
     log_file_writeable.close()
 
 def success(commands, run_log_str):
+    verboseprint(commands)
     for i in commands:
         verboseprint(i)
         if os.system('urxvt -e exit') != 0:
@@ -112,8 +113,6 @@ def success(commands, run_log_str):
     run_log = open('/tmp/' + run_log_str, mode='w')
     run_log.write('We finished.\n')
     run_log.close()
-        #os.spawnl(os.P_NOWAIT, i)
-#print(commands)
 
 if os.system('urxvt -e exit') != 0:
     warning('Something\'s very wrong with this X server')
