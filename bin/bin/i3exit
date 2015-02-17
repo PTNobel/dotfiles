@@ -1,6 +1,8 @@
 #!/bin/sh
-
-#partly taken from the Arch Wiki, extended by me.
+#
+# Partly taken from the Arch Wiki, extended by me.
+#
+#
 
 active_lock() {
     echo test > $1
