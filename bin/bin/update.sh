@@ -36,6 +36,11 @@ alpm() {
   until /usr/local/bin/update_tools_helper alpm &>> $ALPM_OUTPUT_FILE ; do sleep 1 ; done
 }
 
+yaourt_wrapper() {
+  export EDITOR=vim
+  yaourt "$@"
+}
+
 #TODO trap!
 #trap exit_routine INT HUP TERM
 
@@ -64,11 +69,11 @@ done
 tail -n`cat $ALPM_OUTPUT_FILE | wc -l`  -f $ALPM_OUTPUT_FILE | lolcat &
 
 while [ -d /proc/$ALPM_PID ]; do
-  sleep 1;
+  sleep 1
 done
 
 echo about to launch yaourt ALPM_PID done. $ALPM_PID
-yaourt -Sua
+yaourt_wrapper -Sua
 
 echo "starting update of mlocate database"
 mlocate &
@@ -78,7 +83,7 @@ echo "starting update of man database"
 man_u &
 PID[4]=$!
 
-yaourt -C
+yaourt_wrapper -C
 
 tail -n`cat $OUTPUT_FILE | wc -l`  -f $OUTPUT_FILE | lolcat &
 
