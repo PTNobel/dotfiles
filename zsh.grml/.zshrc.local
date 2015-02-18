@@ -297,11 +297,7 @@ fi
 
 #cd and ls in one
 cl() {
-    dir=$1
-    if [[ -z "$dir" ]]; then
-        dir=$HOME
-    fi
-    \cd "$dir" && ls
+    \cd "$@" && ls
 }
 
 # extract files
