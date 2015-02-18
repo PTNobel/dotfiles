@@ -108,6 +108,7 @@ def success(commands, run_log_str):
         if os.system('urxvt -e exit') != 0:
             warning('Something\'s very wrong with this X server')
             warning('Dazed and confused and quitting now')
+            os.system('dmesg >/var/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] +'.log')
             exit(6)
         os.system(i + ' >/dev/null &')
     run_log = open('/tmp/' + run_log_str, mode='w')
