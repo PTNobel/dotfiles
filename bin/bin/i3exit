@@ -6,12 +6,14 @@
 
 active_lock() {
     echo test > $1
-    if xrandr | grep '*' | grep '^   1366x768' >/dev/null
-       then if xrandr | grep '*' | grep '^   1920x1080' >/dev/null
-          then i3lock -n -d -i  $HOME/Pictures/noise-texture.png -t
-       else i3lock -n -d -i $HOME/Pictures/262039-small.png
+    if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
+       if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
+          i3lock -n -d -i  $HOME/Pictures/noise-texture.png -t
+       else
+          i3lock -n -d -i $HOME/Pictures/262039-small.png
        fi
-    else i3lock -n -d -i $HOME/Pictures/262039.png
+    else
+       i3lock -n -d -i $HOME/Pictures/262039.png
     fi
     rm $1
 }
@@ -19,12 +21,14 @@ active_lock() {
 export -f active_lock
 
 lock() {
-    if xrandr | grep '*' | grep '^   1366x768' >/dev/null
-       then if xrandr | grep '*' | grep '^   1920x1080' >/dev/null
-          then i3lock -d -i  $HOME/Pictures/noise-texture.png -t
-       else i3lock -d -i $HOME/Pictures/262039-small.png
+    if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
+       if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
+          i3lock -d -i  $HOME/Pictures/noise-texture.png -t
+       else
+          i3lock -d -i $HOME/Pictures/262039-small.png
        fi
-    else i3lock -d -i $HOME/Pictures/262039.png
+    else
+       i3lock -d -i $HOME/Pictures/262039.png
     fi 
 }
 
@@ -58,12 +62,14 @@ inactive_lock() {
 }
 
 lock_without_sleep() {
-    if xrandr | grep '*' | grep '^   1366x768' >/dev/null
-       then if xrandr | grep '*' | grep '^   1920x1080' >/dev/null
-          then i3lock -i  $HOME/Pictures/noise-texture.png -t
-       else i3lock -i $HOME/Pictures/262039-small.png
+    if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
+       if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
+          i3lock -i  $HOME/Pictures/noise-texture.png -t
+       else
+          i3lock -i $HOME/Pictures/262039-small.png
        fi
-    else i3lock -i $HOME/Pictures/262039.png
+    else
+       i3lock -i $HOME/Pictures/262039.png
     fi
 }
 
@@ -95,22 +101,22 @@ freeze() {
 }
 
 usage() {
-   echo "Usage: $0 OPTION
-OPTIONS:
-  lock - Locks screen and puts the computer to sleep. (depends on i3lock)
-  inactive_lock - lock, but suspends computer after 30 minutes (depends on i3lock and systemctl)
-  short_inactive_lock - inactive_lock, but 3m
-  lock_without_sleep - locks screen but leaves the screen on (depends on i3lock)
-  blur - blurs screen (depends on scrot, convert [from imagemagick], and i3lock)
-  blur_with_sleep - blur, but puts the computer to sleep
-  freeze - freezes the screen (depends on scrot and i3lock)
-  logout - exits i3 (depends on i3-msg)
-  suspend - locks screen and suspends (depends on i3lock and systemctl)
-  hibernate - locks screen and suspends (depends on i3lock and systemctl)
-  reboot - reboots (depends on systemctl)
-  shutdown - shutsdown (depends on systemctl)
-  usage - print this help and exit
-  help - print this help and exit"
+   echo "Usage: $0 OPTION"
+   echo "OPTIONS:"
+   echo "  lock - Locks screen and puts the computer to sleep. (depends on i3lock)"
+   echo "  inactive_lock - lock, but suspends computer after 30 minutes (depends on i3lock and systemctl)"
+   echo "  short_inactive_lock - inactive_lock, but 3m"
+   echo "  lock_without_sleep - locks screen but leaves the screen on (depends on i3lock)"
+   echo "  blur - blurs screen (depends on scrot, convert [from imagemagick], and i3lock)"
+   echo "  blur_with_sleep - blur, but puts the computer to sleep"
+   echo "  freeze - freezes the screen (depends on scrot and i3lock)"
+   echo "  logout - exits i3 (depends on i3-msg)"
+   echo "  suspend - locks screen and suspends (depends on i3lock and systemctl)"
+   echo "  hibernate - locks screen and suspends (depends on i3lock and systemctl)"
+   echo "  reboot - reboots (depends on systemctl)"
+   echo "  shutdown - shutsdown (depends on systemctl)"
+   echo "  usage - print this help and exit"
+   echo "  help - print this help and exit"
 }
 #262039.png
 
