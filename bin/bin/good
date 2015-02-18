@@ -63,7 +63,8 @@ good_func() {
             ;;
 
         day)
-            Good day to you too!
+            echo Good day to you too!
+            ;;
 
         "")
             echo What\'s so good?
