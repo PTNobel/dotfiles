@@ -31,7 +31,7 @@ bad_func() {
             ;;
 
         *)
-            echo Bad "$@" to you too.
+            echo How should I respond?
 
     esac
 }
@@ -62,12 +62,15 @@ good_func() {
             echo Thanks! I hope I won\'t need it!
             ;;
 
+        day)
+            Good day to you too!
+
         "")
             echo What\'s so good?
             ;;
         
         *)
-            echo Good "$@" to you too.
+            echo How should I respond?
     esac
 }
 
