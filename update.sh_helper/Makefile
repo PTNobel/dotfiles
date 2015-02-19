@@ -16,6 +16,7 @@ test:
 install:
 	mkdir -p $(DESTDIR)/usr/local/bin/
 	install -m 4755 $(EXECUTABLE) $(DESTDIR)/usr/local/bin/
+	ln -sf update_tools_helper $(DESTDIR)/usr/local/bin/uth
 
 clean:
 	rm $(EXECUTABLE)
