@@ -10,7 +10,7 @@ launch_iceweasel() {
     ICE=`pidof iceweasel | wc -w`
     if [ "$ICE" -lt "1" ]
     then echo "launching iceweasel" ; iceweasel
-    else echo "iceweasel is running" 
+    else echo "iceweasel is running"
     fi
 }
 

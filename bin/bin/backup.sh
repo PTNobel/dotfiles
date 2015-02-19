@@ -31,6 +31,6 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
   else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
   echo starting duplicity #; notify-send duplicity started
-  duplicity incremental --allow-source-mismatch --no-encryption $HOME $DUPLICITY_DESTINATION 
+  duplicity incremental --allow-source-mismatch --no-encryption $HOME $DUPLICITY_DESTINATION
 else echo $DESTINATION is not found ; exit 1
 fi

@@ -2,6 +2,6 @@
 
 if cat /proc/$(pgrep compton)/cmdline | grep transperancy ; then
   i3-msg '[ class=".*" ] border normal'
-else 
+else
   echo nothing to do
 fi

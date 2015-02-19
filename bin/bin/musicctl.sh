@@ -5,7 +5,7 @@ get_player() {
     if pidof pianobar >/dev/null
     then if pidof mpd >/dev/null && mpc | grep playing >/dev/null
         then player=mpd
-        else player=pianobar 
+        else player=pianobar
         fi
     elif pidof mpd >/dev/null
     then player=mpd
@@ -31,7 +31,7 @@ self.play() {
 self.back() {
    get_player
    if [ "$player" == "pianobar" ]
-   then pianoctl + 
+   then pianoctl +
    elif [ "$player" == "mpd" ]
    then mpc prev
    else exit 1

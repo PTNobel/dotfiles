@@ -27,7 +27,7 @@ function ActivateHDMI {
 function DeactivateHDMI {
     echo "Switching to LVDS1"
     xrandr --output HDMI1 --off
-    xrandr --output LVDS1 --mode 1366-768  --pos 0x0    --rotate normal --primary 
+    xrandr --output LVDS1 --mode 1366-768  --pos 0x0    --rotate normal --primary
     MONITOR="LVDS1"
     sh $HOME/.fehbg
 }

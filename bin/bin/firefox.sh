@@ -10,7 +10,7 @@ launch_firefox() {
     FIRE=`pidof firefox | wc -w`
     if [ "$FIRE" -lt "1" ]
     then echo "launching firefox" ; firefox
-    else echo "firefox is running" 
+    else echo "firefox is running"
     fi
 }
 

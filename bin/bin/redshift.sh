@@ -14,9 +14,9 @@ if pidof redshift; then
     if echo $OPTIONS | grep redshift.alt.conf >/dev/null ; then
         redshift &
     else
-        redshift -c $HOME/.config/redshift.alt.conf & 
+        redshift -c $HOME/.config/redshift.alt.conf &
     fi
-else 
+else
     echo redshift lauching
     redshift &
 fi

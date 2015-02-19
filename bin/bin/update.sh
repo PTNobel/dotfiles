@@ -24,7 +24,7 @@ abs_u() {
 }
 
 pkgfile_u() {
-  /usr/local/bin/update_tools_helper pkgfile &>> $OUTPUT_FILE 
+  /usr/local/bin/update_tools_helper pkgfile &>> $OUTPUT_FILE
 
 }
 

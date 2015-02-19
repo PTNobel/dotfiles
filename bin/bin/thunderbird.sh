@@ -10,7 +10,7 @@ launch_thunderbird() {
     THUNDER=`pidof thunderbird | wc -w`
     if [ "$THUNDER" -lt "1" ]
     then echo "launching thunderbird" ; thunderbird
-    else echo "thunderbird is running" 
+    else echo "thunderbird is running"
     fi
 }
 

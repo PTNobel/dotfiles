@@ -10,7 +10,7 @@ if pidof xautolock >/dev/null ; then
                 kill $i
                 xset -dpms
                 for i in $(pgrep bash); do
-                    cd /proc/$i 
+                    cd /proc/$i
                     if cat cmdline | grep windowdecorations.sh ; then
                         CHANGE_TRANSPERANCY=0
                     fi
