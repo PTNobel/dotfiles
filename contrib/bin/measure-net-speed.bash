@@ -6,7 +6,7 @@
 
 
 # path to store the old results in
-path="/dev/shm/measure-net-speed"
+path="/dev/shm/measure-net-speed$DISPLAY"
 
 # grabbing data for each adapter. 
 # You can find the paths to your adapters using
