@@ -3,7 +3,7 @@ dotfiles
 
 My dotfiles
 
-Pretty self explanitory.....
+Pretty self explanatory.....
 
 DISCLAIMER: I did not write the code in `contrib/`  
 I wrote all the code in `bin/bin/` except part of `bin/bin/i3exit`,
