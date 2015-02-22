@@ -1,13 +1,11 @@
 #!/bin/bash
 
 export OUTPUT_FILE=$(mktemp)
-export ALPM_OUTPUT_FILE=$(mktemp)
 #echo OUTPUT_FILE=$OUTPUT_FILE
-#echo ALPM_OUTPUT_FILE=$ALPM_OUTPUT_FILE
 
 exit_routine() {
   #echo deleting OUTPUT_FILE and WATCHDOG_FILE
-  rm $OUTPUT_FILE $ALPM_OUTPUT_FILE
+  rm $OUTPUT_FILE
   exit $?
 }
 
@@ -33,7 +31,7 @@ man_u() {
 }
 
 alpm() {
-  until /usr/local/bin/update_tools_helper alpm &>> $ALPM_OUTPUT_FILE ; do sleep 1 ; done
+  until /usr/local/bin/update_tools_helper alpm ; do sleep 1 ; done
 }
 
 yaourt_wrapper() {
@@ -59,16 +57,8 @@ abs_u &
 PID[5]=$!
 
 echo "starting update of alpm database"
-alpm &
-ALPM_PID=$!
+alpm
 
-tail -n`cat $ALPM_OUTPUT_FILE | wc -l`  -f $ALPM_OUTPUT_FILE | lolcat &
-
-while [ -d /proc/$ALPM_PID ]; do
-  sleep 1
-done
-
-echo about to launch yaourt ALPM_PID done. $ALPM_PID
 yaourt_wrapper -Sua
 
 echo "starting update of mlocate database"
