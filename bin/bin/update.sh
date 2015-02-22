@@ -62,10 +62,6 @@ echo "starting update of alpm database"
 alpm &
 ALPM_PID=$!
 
-until sudo -v ; do
-  sleep 3
-done
-
 tail -n`cat $ALPM_OUTPUT_FILE | wc -l`  -f $ALPM_OUTPUT_FILE | lolcat &
 
 while [ -d /proc/$ALPM_PID ]; do
