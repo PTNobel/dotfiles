@@ -5,3 +5,4 @@ pidgin
 mpd.sh
 mpd.sh
 if backup.sh ; then notify-send backup.sh succeeded ; else notify-send backup.sh\ failed. ; fi
+hp-systray
