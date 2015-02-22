@@ -25,3 +25,4 @@ let g:syntastic_check_on_wq = 0
 
 set grepprg=grep\ -nH\ $*
 let g:tex_flavor = "latex"
+map <F5> :setlocal spell! spelllang=en_us<CR>
