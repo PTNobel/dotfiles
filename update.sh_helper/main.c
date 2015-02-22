@@ -27,8 +27,7 @@ int main( int argc, char *argv[] )
     else if(strcmp(argv[1],"alpm") == 0 )
     {
       setuid( 0 );
-      system( "/usr/bin/pacman -Sy" );
-      system( "/usr/bin/pacman -Suw --noconfirm" );
+      system( "/usr/bin/pacman -Syuw --noconfirm" );
       return 0;
     }
 
