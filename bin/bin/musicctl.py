@@ -2,11 +2,9 @@
 
 # A python3 port of the bash musicctl program. Should be a drop in replacment.
 
-from __future__ import print_function
 import os
 import sys
 import time
-
 
 def usage():
     print("Usage: %s {play|pause|back|stop|next|help}" % sys.argv[0])
