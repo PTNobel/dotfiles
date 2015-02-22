@@ -335,7 +335,7 @@ extract() {
     done
     return "$e"
 }
-source /usr/share/doc/pkgfile/command-not-found.zsh
+#source /usr/share/doc/pkgfile/command-not-found.zsh
 export VISUAL=vim
 export EDITOR=vim
 export BROWSER=firefox
