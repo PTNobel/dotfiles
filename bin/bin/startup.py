@@ -5,12 +5,17 @@ import sys
 import datetime
 import re
 
+
+# Usage: warning(as, many, objects, as, desired)
 def warning(*objs):
     printed_list = 'WARNING: '
     for i in objs:
         printed_list += str(i)
     print(printed_list, file=sys.stderr)
 
+# processargs() goes through sys.argv and returns a dictionary that specifies
+# whether the associated flag was passed.
+# Usage: processargs() accepts no arguements.
 def processargs():
     output = {"weekly":None, "verbose":None, "bootstrap":None, "force":None}
     for i in sys.argv:
@@ -26,6 +31,10 @@ def processargs():
 
 arguements = processargs()
 
+# verboseprint() finctions similarly to warning() accepts it only exists if
+# arguements["verbose"] is true, or when -v is present. It is intended to dump
+# objects into stdout.
+# Usage: verboseprint(as,  many, objects, as, desired)
 if arguements["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to
@@ -35,7 +44,9 @@ if arguements["verbose"]:
 else:
     verboseprint = lambda *a: None      # do-nothing function
 
-
+# Begin checking to make sure this is the only version of startup.py to be
+# running. This helps fight issues with multiple instances of startup.py
+# launching processes repeatedly.
 def check_if_pid_is_startuppy(pidnum):
     python_check = re.findall(r"python", str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read()))
     startup_check = re.findall(r"startup", str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read()))
@@ -49,7 +60,7 @@ pids = [pid for pid in os.listdir('/proc') if pid.isdigit() and pid != str(os.ge
 verboseprint(pids)
 verboseprint(str(os.getpid()))
 
-if pids[-1] == str(os.getpid()):
+if (os.getpid() in pids:
     verboseprint('Something\'s weird... pids containts os.getpid()', pids, os.getpid())
 
 for pid in pids:
@@ -65,6 +76,7 @@ for pid in pids:
         else:
             verboseprint(pid + " is not startup.py")
     except IOError: # proc has already terminated
+        verboseprint(pid + " has terminated")
         continue
 
 date_log = "/home/parth/.parth/date.log"
@@ -80,6 +92,7 @@ bootstrap_file_list = open(bootstrap, 'r')
 weekly_file_list = open(week, 'r')
 run_log_name = "startup." + os.environ["DISPLAY"][1:] +'.log'
 
+# removes unnecessary characters from a list.
 def clean_list(input_list):
     output_list = list()
     for i in input_list:
@@ -96,11 +109,14 @@ command_list = clean_list(raw_commands)
 bootstrap_commands = clean_list(raw_bootstarp_commands)
 weekly = clean_list(raw_weekly)
 
+# writes today's date to a log file.
 def update_log(log):
     log_file_writeable = open(log, 'w')
     log_file_writeable.write(today)
     log_file_writeable.close()
 
+# Iterates through the list commands, and executes the commands. It then
+# creates run_log_str in /tmp/
 def success(commands, run_log_str):
     verboseprint(commands)
     for i in commands:
@@ -108,7 +124,7 @@ def success(commands, run_log_str):
         if os.system('urxvt -e exit') != 0:
             warning('Something\'s very wrong with this X server')
             warning('Dazed and confused and quitting now')
-            os.system('dmesg >/var/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] +'.log')
+            os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] +'.log')
             exit(6)
         os.system(i + ' >/dev/null &')
     run_log = open('/tmp/' + run_log_str, mode='w')
