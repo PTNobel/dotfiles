@@ -338,7 +338,7 @@ extract() {
 #source /usr/share/doc/pkgfile/command-not-found.zsh
 export VISUAL=vim
 export EDITOR=vim
-export BROWSER=firefox
+export BROWSER=icecat
 #source ~/.config/beets/completion
 setopt HIST_IGNORE_DUPS
 setopt completealiases
