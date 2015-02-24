@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 bad_func() {
     case "$1" in
@@ -25,7 +25,9 @@ bad_func() {
         day)
             echo It has been hasn\'t it?
             ;;
-
+        afternoon)
+            echo It has sucked.
+            ;;
         "")
             echo What\'s so bad?
             ;;
@@ -65,7 +67,9 @@ good_func() {
         day)
             echo Good day to you too!
             ;;
-
+        afternoon)
+            echo Good afternoon kind gentleman.
+            ;;
         "")
             echo What\'s so good?
             ;;
