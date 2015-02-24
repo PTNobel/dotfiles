@@ -19,7 +19,7 @@ echo $WINDOW_LOG_FILE; cat $WINDOW_LOG_FILE
 echo $WINDOW_ID_OF_VIM
 while sleep .3; cat "$1" | grep "^\[" >|/dev/null ; do
     echo starting a round
-    xdotool key --window $WINDOW_ID_OF_VIM slash asciicircum backslash bracketleft Return # /^\[
+    xdotool key --window $WINDOW_ID_OF_VIM slash asciicircum backslash bracketleft Return
     xdotool key --window $WINDOW_ID_OF_VIM 5 d w
     xdotool key --window $WINDOW_ID_OF_VIM colon w Return
     exit 1

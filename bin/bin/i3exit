@@ -33,8 +33,6 @@ lock() {
 }
 
 short_inactive_lock() {
-    #xautolock
-    #kill `ps | grep  xautolock | cut -f 1 --delimiter=\ `
     WATCHDOG_FILE=$(mktemp)
     NUM=0
     active_lock $WATCHDOG_FILE &
@@ -47,8 +45,6 @@ short_inactive_lock() {
     done
 }
 inactive_lock() {
-    #xautolock
-    #kill `ps | grep  xautolock | cut -f 1 --delimiter=\ `
     WATCHDOG_FILE=$(mktemp)
     NUM=0
     active_lock $WATCHDOG_FILE &
@@ -118,13 +114,6 @@ usage() {
    echo "  usage - print this help and exit"
    echo "  help - print this help and exit"
 }
-#262039.png
-
-check_for_i3lock() {
-   if pgrep i3lock && [ $(strings /proc/$(pgrep i3lock)/environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ] ; then return 1 ; else return 0; fi
-}
-
-#check_for_i3lock || exit 4
 
 case "$1" in
     lock)

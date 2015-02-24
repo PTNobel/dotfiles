@@ -7,7 +7,7 @@ def prompt_user(secret_num=0):
         exit(1)
     else:
         try:
-            user_input = input('Do you want to launch pianoctl? ').lower()
+            user_input = input('Do you want to launch pianoctl? ([Y]es|[N]o) ').lower()
         except EOFError:
             exit(0)
         if user_input == 'y' or user_input == "yes":
