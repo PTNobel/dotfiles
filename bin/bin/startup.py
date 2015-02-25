@@ -60,7 +60,7 @@ pids = [pid for pid in os.listdir('/proc') if pid.isdigit() and pid != str(os.ge
 verboseprint(pids)
 verboseprint(str(os.getpid()))
 
-if (os.getpid() in pids:
+if os.getpid() in pids:
     verboseprint('Something\'s weird... pids containts os.getpid()', pids, os.getpid())
 
 for pid in pids:
