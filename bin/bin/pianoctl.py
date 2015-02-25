@@ -12,7 +12,7 @@ def prompt_user(secret_num=0):
             exit(0)
         if user_input == 'y' or user_input == "yes":
             os.system('pianoctl')
-        elif user_input == 'n' or user_input == "no" or user_input == "\n":
+        elif user_input == 'n' or user_input == "no":
             exit(1)
         else:
             prompt_user(secret_num+1)
