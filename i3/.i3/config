@@ -95,7 +95,6 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # define workspace outputs
-workspace 0 output LVDS1
 workspace 1 output HDMI1
 workspace 2 output LVDS1
 workspace 3 output HDMI1
