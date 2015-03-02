@@ -7,6 +7,7 @@ import re
 
 
 # Usage: warning(as, many, objects, as, desired)
+# Will print everything passed to it to stderr with the prefix WARNING:
 def warning(*objs):
     printed_list = 'WARNING: '
     for i in objs:
@@ -31,7 +32,7 @@ def processargs():
 
 arguements = processargs()
 
-# verboseprint() finctions similarly to warning() accepts it only exists if
+# verboseprint() finctions similarly to warning() accept it only exists if
 # arguements["verbose"] is true, or when -v is present. It is intended to dump
 # objects into stdout.
 # Usage: verboseprint(as,  many, objects, as, desired)
@@ -72,17 +73,17 @@ for pid in pids:
         if check_if_pid_is_startuppy(pid):
             warning("Is there another " + sys.argv[0] + " running?")
             exit(4)
-
         else:
             verboseprint(pid + " is not startup.py")
     except IOError: # proc has already terminated
         verboseprint(pid + " has terminated")
         continue
 
-date_log = "/home/parth/.parth/date.log"
-autostart = "/home/parth/.i3/autostart"
-bootstrap = "/home/parth/.i3/bootstrap"
-week = "/home/parth/.i3/weekly_tasks"
+# Variable definitions this should cover everything.
+date_log = os.environ['HOME'] + "/.parth/date.log"
+autostart = os.environ['HOME'] + "/.i3/autostart"
+bootstrap = os.environ['HOME'] + "/.i3/bootstrap"
+week = os.environ['HOME'] + "/.i3/weekly_tasks"
 date_log_file = open(date_log, 'r')
 log_value = date_log_file.read()
 date_log_file.close()
@@ -134,6 +135,7 @@ def success(commands, run_log_str):
 if os.system('urxvt -e exit') != 0:
     warning('Something\'s very wrong with this X server')
     warning('Dazed and confused and quitting now')
+    os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] +'.log')
     exit(5)
 
 elif arguements["force"]:
