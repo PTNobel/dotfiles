@@ -47,9 +47,8 @@ inactive_lock() {
     WATCHDOG_FILE=$(mktemp)
     NUM=0
     active_lock $WATCHDOG_FILE &
-    while [ -f $WATCHDOG_FILE ] ; do
-      sleep 60
-      if [ $NUM == 30 ]; then
+    while sleep 60s && [ -f $WATCHDOG_FILE ] ; do
+      if [ $NUM == 15 ]; then
         systemctl suspend
       fi
       let NUM=1+$NUM
