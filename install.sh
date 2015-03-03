@@ -7,7 +7,7 @@ stow_wrapper(){
             echo stow $1 "$i"
             stow $1 "$i"
         else 
-            echo "$i" is not valid content for $ROOT_DIR/manifest.repos
+            echo "$i" is not valid content for $MANIFEST_FILE
         fi
     done
 }
