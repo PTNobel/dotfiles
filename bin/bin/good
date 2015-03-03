@@ -45,7 +45,7 @@ good_func() {
             ;;
 
         morning)
-            bash /home/parth/bin/update.sh
+            update.sh
             ;;
 
         work)
