@@ -36,8 +36,7 @@ short_inactive_lock() {
     WATCHDOG_FILE=$(mktemp)
     NUM=0
     active_lock $WATCHDOG_FILE &
-    while [ -f $WATCHDOG_FILE ] ; do
-      sleep 60
+    while sleep 60s && [ -f $WATCHDOG_FILE ] ; do
       if [ $NUM == 3 ]; then
         systemctl suspend
       fi
