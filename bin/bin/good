@@ -28,6 +28,9 @@ bad_func() {
         afternoon)
             echo It has sucked.
             ;;
+        " ")
+            echo Was that a backslash?
+            ;;
         "")
             echo What\'s so bad?
             ;;
@@ -69,6 +72,9 @@ good_func() {
             ;;
         afternoon)
             echo Good afternoon kind gentleman.
+            ;;
+        " ")
+            echo Was that a backslash?
             ;;
         "")
             echo What\'s so good?
