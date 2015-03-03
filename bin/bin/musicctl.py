@@ -24,7 +24,7 @@ def processargs():
             output["verbose"] = True
     if len(sys.argv) == 1:
         output = None
-        warning("Not enough argurements")
+        warning("Not enough arguements")
         usage()
         exit(1)
     elif len(sys.argv) >= 2:
