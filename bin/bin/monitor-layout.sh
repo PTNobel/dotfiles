@@ -10,7 +10,7 @@ fi
 xrandr --output VIRTUAL1 --off
 xrandr --output DP1 --off
 xrandr --output VGA1 --off
-#xrandr --setprovideroffloadsink radeon Intel
+xrandr --setprovideroffloadsink radeon Intel
 echo '#!/bin/bash
 
 kill `pidof -x $0 -o %PPID`
