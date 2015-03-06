@@ -6,13 +6,13 @@ stow_wrapper(){
             #echo $i $1
             echo stow $1 "$i"
             stow $1 "$i"
-        else 
+        else
             echo "$i" is not valid content for $MANIFEST_FILE
         fi
     done
 }
 
-cd $(dirname $0) 
+cd $(dirname $0)
 
 export MANIFEST_FILE="$(pwd -P)/manifest.repos"
 if [ "$1" == "-D" ] ; then
@@ -34,5 +34,5 @@ for i in $(cat $(pwd -P)/manifest_build.repos); do
     make test || exit 1
     sudo make install || exit 1
     make clean || exit 1
-    cd $(dirname $0) 
+    cd $(dirname $0)
 done
