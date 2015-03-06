@@ -15,11 +15,14 @@ stow_wrapper(){
 cd $(dirname $0) 
 
 export MANIFEST_FILE="$(pwd -P)/manifest.repos"
-if [ -z "$1" ] ; then
+if [ "$1" == "-D" ] ; then
+    stow_wrapper -D
+    exit 1
+elif [ -z "$1" ] ; then
     stow_wrapper -R
-
-elif [ "$1" == "-D" ] ; then
-    stow_wrapper -D 
+else
+    echo What was that option you passed me?
+    exit 3
 fi
 
 export MANIFEST_FILE="$(pwd -P)/manifest_disabled.repos"
