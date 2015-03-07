@@ -15,6 +15,7 @@ def warning(*objs):
         printed_list += str(i)
     print(printed_list, file=sys.stderr)
 
+
 # processargs() goes through sys.argv and returns a dictionary that specifies
 # whether the associated flag was passed.
 # Usage: processargs() accepts no arguements.
@@ -35,6 +36,7 @@ def processargs():
 
 arguements = processargs()
 
+
 # verboseprint() finctions similarly to warning() accept it only exists if
 # arguements["verbose"] is true, or when -v is present. It is intended to dump
 # objects into stdout.
@@ -46,13 +48,13 @@ if arguements["verbose"]:
         for arg in args:
             print(arg)
 else:
-    verboseprint = lambda *a: None      # do-nothing function
+    def verboseprint(*args):  # do-nothing function
+        return
+
 
 # Begin checking to make sure this is the only version of startup.py to be
 # running. This helps fight issues with multiple instances of startup.py
 # launching processes repeatedly.
-
-
 def check_if_pid_is_startuppy(pidnum):
     python_check = re.findall(
         r"python", str(
@@ -98,6 +100,7 @@ for pid in pids:
         verboseprint(pid + " has terminated")
         continue
 
+
 # Variable definitions this should cover everything.
 date_log = os.environ['HOME'] + "/.parth/date.log"
 autostart = os.environ['HOME'] + "/.i3/autostart"
@@ -112,9 +115,8 @@ bootstrap_file_list = open(bootstrap, 'r')
 weekly_file_list = open(week, 'r')
 run_log_name = "startup." + os.environ["DISPLAY"][1:] + '.log'
 
+
 # removes unnecessary characters from a list.
-
-
 def clean_list(input_list):
     output_list = list()
     for i in input_list:
