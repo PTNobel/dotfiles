@@ -9,16 +9,19 @@ import re
 # Usage: warning(as, many, objects, as, desired)
 # Will print everything passed to it to stderr with the prefix WARNING:
 def warning(*objs):
-    printed_list = 'WARNING: '
+    printed_list = 'WARNING'
     for i in objs:
+        printed_list += ': '
         printed_list += str(i)
     print(printed_list, file=sys.stderr)
 
 # processargs() goes through sys.argv and returns a dictionary that specifies
 # whether the associated flag was passed.
 # Usage: processargs() accepts no arguements.
+
+
 def processargs():
-    output = {"weekly":None, "verbose":None, "bootstrap":None, "force":None}
+    output = {"weekly": None, "verbose": None, "bootstrap": None, "force": None}
     for i in sys.argv:
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
@@ -48,21 +51,37 @@ else:
 # Begin checking to make sure this is the only version of startup.py to be
 # running. This helps fight issues with multiple instances of startup.py
 # launching processes repeatedly.
+
+
 def check_if_pid_is_startuppy(pidnum):
-    python_check = re.findall(r"python", str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read()))
-    startup_check = re.findall(r"startup", str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read()))
+    python_check = re.findall(
+        r"python", str(
+            open(
+                os.path.join(
+                    '/proc', pidnum, 'cmdline'), 'rb').read()))
+    startup_check = re.findall(
+        r"startup", str(
+            open(
+                os.path.join(
+                    '/proc', pidnum, 'cmdline'), 'rb').read()))
     if python_check == [] or startup_check == []:
         return False
     else:
         return True
 
-pids = [pid for pid in os.listdir('/proc') if pid.isdigit() and pid != str(os.getpid())]
+pids = [
+    pid
+    for pid in os.listdir
+    ('/proc') if pid.isdigit() and pid != str(os.getpid())]
 
 verboseprint(pids)
 verboseprint(str(os.getpid()))
 
 if os.getpid() in pids:
-    verboseprint('Something\'s weird... pids containts os.getpid()', pids, os.getpid())
+    verboseprint(
+        'Something\'s weird... pids containts os.getpid()',
+        pids,
+        os.getpid())
 
 for pid in pids:
     try:
@@ -75,7 +94,7 @@ for pid in pids:
             exit(4)
         else:
             verboseprint(pid + " is not startup.py")
-    except IOError: # proc has already terminated
+    except IOError:  # proc has already terminated
         verboseprint(pid + " has terminated")
         continue
 
@@ -91,9 +110,11 @@ today = str(datetime.date.today())
 autostart_file_list = open(autostart, 'r')
 bootstrap_file_list = open(bootstrap, 'r')
 weekly_file_list = open(week, 'r')
-run_log_name = "startup." + os.environ["DISPLAY"][1:] +'.log'
+run_log_name = "startup." + os.environ["DISPLAY"][1:] + '.log'
 
 # removes unnecessary characters from a list.
+
+
 def clean_list(input_list):
     output_list = list()
     for i in input_list:
@@ -111,6 +132,8 @@ bootstrap_commands = clean_list(raw_bootstarp_commands)
 weekly = clean_list(raw_weekly)
 
 # writes today's date to a log file.
+
+
 def update_log(log):
     log_file_writeable = open(log, 'w')
     log_file_writeable.write(today)
@@ -118,6 +141,8 @@ def update_log(log):
 
 # Iterates through the list commands, and executes the commands. It then
 # creates run_log_str in /tmp/
+
+
 def success(commands, run_log_str):
     verboseprint(commands)
     for i in commands:
@@ -125,7 +150,11 @@ def success(commands, run_log_str):
         if os.system('urxvt -e exit') != 0:
             warning('Something\'s very wrong with this X server')
             warning('Dazed and confused and quitting now')
-            os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] +'.log')
+            os.system(
+                'dmesg >/tmp/dmesg.X.' +
+                os.environ['DISPLAY'][
+                    1:] +
+                '.log')
             exit(6)
         os.system(i + ' >/dev/null &')
     run_log = open('/tmp/' + run_log_str, mode='w')
@@ -135,7 +164,7 @@ def success(commands, run_log_str):
 if os.system('urxvt -e exit') != 0:
     warning('Something\'s very wrong with this X server')
     warning('Dazed and confused and quitting now')
-    os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] +'.log')
+    os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] + '.log')
     exit(5)
 
 elif arguements["force"]:
@@ -152,7 +181,10 @@ elif run_log_name in os.listdir('/tmp'):
     warning('Already ran')
     exit(8)
 
-elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
+elif int(str(datetime.datetime.now().time())[0:2]) < 6:
+    success(bootstrap_commands, run_log_name)
+
+elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0 and log_value != today:
     success(bootstrap_commands, run_log_name)
 
 elif log_value != today:
