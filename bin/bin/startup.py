@@ -152,6 +152,7 @@ elif run_log_name in os.listdir('/tmp'):
     warning('Already ran')
     exit(8)
 
+# TODO start using log_value, add time check, before 6 A.M. there's no need for a full boot
 elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
     success(bootstrap_commands, run_log_name)
 
