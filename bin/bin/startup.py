@@ -186,11 +186,11 @@ elif run_log_name in os.listdir('/tmp'):
 elif int(str(datetime.datetime.now().time())[0:2]) < 6:
     success(bootstrap_commands, run_log_name)
 
-elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0 and log_value != today:
+elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
     success(bootstrap_commands, run_log_name)
 
 elif log_value != today:
-    if datetime.date.today().weekday() == 4 or arguements["weekly"]:
+    if datetime.date.today().weekday() == 4:
         command_list += weekly
     update_log(date_log)
     success(command_list, run_log_name)
