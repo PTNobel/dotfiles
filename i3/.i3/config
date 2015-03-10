@@ -178,7 +178,7 @@ bar {
         status_command measure-net-speed-i3status.bash
         position top
         tray_output primary
-
+        mode hide
 }
 
 
