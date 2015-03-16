@@ -4,10 +4,7 @@
 
 import os
 import sys
-import time
 
-def usage():
-    print("Usage: %s {play|pause|back|stop|next|help}" % sys.argv[0])
 
 def warning(*objs):
     printed_list = 'WARNING: '
@@ -15,23 +12,41 @@ def warning(*objs):
         printed_list += i
     print(printed_list, file=sys.stderr)
 
-def processargs():
-    output = {"verbose":None, "input":None}
-    for i in sys.argv:
+
+def usage(exit_code, name_of_program):
+    usage_text = "Usage: " + name_of_program + \
+        " {play|pause|back|stop|next|toggle|usage|help}"
+
+    if exit_code == 0:
+        print(usage_text)
+    elif exit_code > 0:
+        warning(usage_text)
+    else:
+        exit_code = 1
+    exit(exit_code)
+
+
+def processargs(argv):
+    output = {"verbose": None, "input": None, "name": None}
+    output["name"] = argv[0]
+    for i in argv:
         if i == "-h":
-            usage()
+            usage(0, output["name"])
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
-    if len(sys.argv) == 1:
+    if len(argv) == 1:
         output = None
         warning("Not enough arguements")
-        usage()
-        exit(1)
-    elif len(sys.argv) >= 2:
-        output["input"] = sys.argv[len(sys.argv) - 1]
+        usage(1, output["name"])
+    elif len(argv) >= 2:
+        if argv[-1] == "help" or argv[-1] == "usage":
+            usage(0, output["name"])
+
+        else:
+            output["input"] = argv[-1]
     return output
 
-arguements = processargs()
+arguements = processargs(sys.argv)
 
 if arguements["verbose"]:
     def verboseprint(*args):
@@ -40,18 +55,26 @@ if arguements["verbose"]:
         for arg in args:
             print(arg)
 else:
-    verboseprint = lambda *a: None      # do-nothing function
+    def verboseprint(*args):
+        return
+
 
 class musicctl:
-    def __init__(self):
+
+    def __init__(self, arguements):
         self.get_player()
-        try:
-            eval("self." + sys.argv[len(sys.argv) - 1])()
-        except IndexError:
-            verboseprint(sys.argv, len(sys.argv))
-            usage()
-            exit(1)
-        verboseprint(self.player, self)
+        self.program_name = arguements["name"]
+        self.operation = arguements["input"]
+        self.pianobar_dict = {'play': "pianoctl p", 'pause': "pianoctl p",
+                              'back': "pianoctl +", 'next': "pianoctl -",
+                              'quit': "pianoctl q", 'stop': "pianoctl q",
+                              'tired': "pianoctl t"}
+        self.mpd_dict = {'play': "mpc toggle", 'pause': "mpc toggle",
+                         'back': "mpc prev", 'next': "mpc next",
+                         'quit': "mpc stop", 'stop': "mpc stop"}
+        self.commands = {'pianobar': self.pianobar_dict, 'mpd': self.mpd_dict}
+        verboseprint(self.player)
+        self.communicate_with_player()
 
     def get_player(self):
         if os.system("pidof mpd >/dev/null") == 0:
@@ -66,48 +89,15 @@ class musicctl:
             self.player = "pianobar"
         else:
             warning("No music player found")
-            exit(1)
+            usage(-1)
 
-    def play(self):
-        self.pause()
+    def communicate_with_player(self):
+        try:
+            verboseprint('In communicate_with_player')
+            verboseprint(self.commands[self.player][self.operation])
+            os.system(self.commands[self.player][self.operation])
+        except KeyError:
+            warning("Invalid input")
+            usage(1, self.program_name)
 
-    def pause(self):
-        if self.player == "pianobar":
-            exit(os.system("pianoctl p"))
-        elif self.player == "mpd":
-            exit(os.system("mpc toggle >/dev/null"))
-
-    def back(self):
-        if self.player == "pianobar":
-            exit(os.system("pianoctl +"))
-        elif self.player == "mpd":
-            exit(os.system("mpc prev >/dev/null"))
-
-    def next(self):
-        if self.player == "pianobar":
-            exit(os.system("pianoctl -"))
-        elif self.player == "mpd":
-            exit(os.system("mpc next >/dev/null"))
-
-    def stop(self):
-        if self.player == "pianobar":
-            exit_code = os.system("pianoctl q")
-            time.sleep(1)
-            if os.system("pidof pianobar") == 0:
-                exit(os.system("killall pianobar"))
-            else:
-                exit(exit_code)
-        elif self.player == "mpd":
-            exit(os.system("mpc stop >/dev/null"))
-    def tired(self):
-        if self.player == "pianobar":
-            exit(os.system("pianoctl t"))
-        elif self.player == "mpd":
-            exit(os.system("mpc next >/dev/null"))
-
-    def help(self):
-        verboseprint(self.player)
-        usage()
-        exit(0)
-
-music = musicctl()
+music = musicctl(arguements)
