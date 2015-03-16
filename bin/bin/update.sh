@@ -39,8 +39,6 @@ yaourt_wrapper() {
   yaourt "$@"
 }
 
-#TODO trap!
-#trap exit_routine INT HUP TERM
 
 echo "starting backup of $HOME"
 backup &
