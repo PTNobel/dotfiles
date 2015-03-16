@@ -7,7 +7,40 @@ import sys
 import os
 import time
 
+
+def usage():
+    return
+
+
+def warning(*objs):
+    print("WARNING: ", *objs, file=sys.stderr)
+
+
+def processargs(argv):
+    for i in range(1, len(argv)):
+        if i == "-h":
+            usage()
+        if i == "-v" or i == "--verbose":
+            VERBOSE = True
+        elif i == "-l":
+            STATE_l = True
+    return {"VERBOSE": VERBOSE, "l": STATE_l}
+
+arguements = processargs()
+
+if arguements["VERBOSE"]:
+    def verboseprint(*args):
+        # Print each argument separately so caller doesn't need to
+        # stuff everything to be printed into a single string
+        for arg in args:
+            print(arg)
+else:
+    def verboseprint(*args):
+        return
+
+
 user_input = str()
+
 
 if len(sys.argv) == 1:
     user_input = input("What do you want to say? ")
