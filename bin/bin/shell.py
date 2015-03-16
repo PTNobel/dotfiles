@@ -24,6 +24,8 @@
 
 import os
 exit_code = False
+
+
 def shell():
     return os.system("echo -ne \"\033c\" && $SHELL")
 while exit_code != 9472 and exit_code != 10752:

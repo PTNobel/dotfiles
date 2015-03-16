@@ -24,6 +24,8 @@
 
 import os
 exit_code = False
+
+
 def bash():
     return os.system("bash -c 'echo -ne \"\033c\" && bash'")
 while exit_code != 9472 and exit_code != 10752:

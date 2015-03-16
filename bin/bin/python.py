@@ -24,6 +24,8 @@
 
 import os
 exit_code = False
+
+
 def python():
     return os.system("bash -c 'echo -ne \"\033c\" && python'")
 while exit_code != 9472 and exit_code != 10752:
