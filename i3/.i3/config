@@ -237,7 +237,6 @@ bindsym $mod+Shift+v exec --no-startup-id touchpad.sh
 
 # Blur screen
 bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
-bindsym $mod+Shift+s exec --no-startup-id i3exit suspend 
 # Calculator
 bindsym $mod+c exec urxvt -e calc -d
 
