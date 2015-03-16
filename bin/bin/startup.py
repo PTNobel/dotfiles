@@ -19,11 +19,9 @@ def warning(*objs):
 # processargs() goes through sys.argv and returns a dictionary that specifies
 # whether the associated flag was passed.
 # Usage: processargs() accepts no arguements.
-
-
-def processargs():
+def processargs(argv):
     output = {"weekly": None, "verbose": None, "bootstrap": None, "force": None}
-    for i in sys.argv:
+    for i in argv:
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
         elif i == "-b":
@@ -34,7 +32,7 @@ def processargs():
             output["weeky"] = True
     return output
 
-arguements = processargs()
+arguements = processargs(sys.argv)
 
 
 # verboseprint() finctions similarly to warning() accept it only exists if
