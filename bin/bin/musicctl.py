@@ -102,4 +102,9 @@ class musicctl:
             warning("Invalid input")
             usage(1, self.program_name)
 
-music = musicctl(arguments)
+
+def main():
+    musicctl(arguments)
+
+if __name__ == "__main__":
+    main()
