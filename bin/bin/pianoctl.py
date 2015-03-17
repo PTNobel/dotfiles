@@ -12,9 +12,9 @@ def prompt_user(secret_num=0):
                                ).lower()
         except EOFError:
             exit(0)
-        if user_input == 'y' or user_input == "yes":
+        if user_input[0] == 'y':
             os.system('pianoctl')
-        elif user_input == 'n' or user_input == "no":
+        elif user_input[0] == 'n':
             exit(1)
         else:
             prompt_user(secret_num+1)
