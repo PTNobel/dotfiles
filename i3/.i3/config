@@ -195,11 +195,11 @@ bindsym XF86Sleep exec --no-startup-id i3exit short_inactive_lock
 
 
 # Media player controls
-bindsym XF86AudioPlay exec --no-startup-id musicctl.py pause
-bindsym XF86AudioPause exec --no-startup-id musicctl.py pause
-bindsym XF86AudioNext exec --no-startup-id musicctl.py next
-bindsym XF86AudioPrev exec --no-startup-id musicctl.py back
-bindsym XF86AudioStop exec --no-startup-id musicctl.py stop
+bindsym XF86AudioPlay exec --no-startup-id musicctl pause
+bindsym XF86AudioPause exec --no-startup-id musicctl pause
+bindsym XF86AudioNext exec --no-startup-id musicctl next
+bindsym XF86AudioPrev exec --no-startup-id musicctl back
+bindsym XF86AudioStop exec --no-startup-id musicctl stop
 bindsym $mod+n exec urxvt -e ncmpcpp
 bindsym $mod+p exec urxvt -e pianoctl.py
 #bindsym $mod+m exec urxvt -e mpd.status.update
