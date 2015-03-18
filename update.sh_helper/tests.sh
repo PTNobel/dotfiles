@@ -4,8 +4,10 @@
 # If $? at the end is 2 then one of the binaries referenced doesn't exist.
 #
 
-[ -x update_tools_helper ] || echo Where is update_tools_helper? 1>&2
-[ -x update_tools_helper ] || exit 1
+if ! [ -x update_tools_helper ] ; then
+    echo Where is update_tools_helper? 1>&2
+    exit 1
+fi
 
 _test(){
 for i in $(strings update_tools_helper | grep bin); do
