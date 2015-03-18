@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# A python3 port of the bash musicctl program. Should be a drop in replacment.
+# A python3 port of musicctl.sh.
 
 import os
 import sys
@@ -21,7 +21,7 @@ def usage(exit_code, name_of_program):
     elif exit_code > 0:
         warning(usage_text, prefix='')
     else:
-        exit_code = 1
+        exit_code = abs(exit_code)
     exit(exit_code)
 
 
@@ -53,8 +53,8 @@ def processargs(argv, verbose_check=False):
 
 if processargs(sys.argv, verbose_check=True):
     def verboseprint(*args):
-        # Print each argument separately so caller doesn't need to
-        # stuff everything to be printed into a single string
+        # Print each argument separately so caller doesn't need to stuff
+        # everything to be printed into a string.
         for arg in args:
             print(arg)
 else:
@@ -63,9 +63,13 @@ else:
 
 
 def main(raw_argv):
+    # Arguments is being defined here to insure it's available for the first
+    # usage call.
     arguments = processargs(raw_argv)
-    # TODO replace get_player()
+
+    # Figure out what player is running.
     if os.system("pidof mpd >/dev/null") == 0:
+        # pianobar get priority over mpd, unless mpd is playing.
         if os.system("pidof pianobar >/dev/null") == 0:
             if os.system("mpc status | grep playing &>/dev/null") == 0:
                 player = "mpd"
@@ -77,11 +81,15 @@ def main(raw_argv):
         player = "pianobar"
     else:
         warning("No music player found")
-        usage(-1)
+        usage(-1, arguments["name"])
 
-    program_name = arguments["name"]
-    operation = arguments["input"]
+    # Define stuff, begining with processing argv.
     verboseprint(player)
+
+    # Create a two dimensional dictionary. first key specifies player and the
+    # second one is the specific command. It'll be the command to pass to
+    # os.system(). It's possible to define commands that are specific to a
+    # player.
     pianobar_dict = {'play': "pianoctl p", 'pause': "pianoctl p",
                      'back': "pianoctl +", 'next': "pianoctl -",
                      'quit': "pianoctl q", 'stop': "pianoctl q ; " +
@@ -92,12 +100,15 @@ def main(raw_argv):
                 'quit': "mpc stop", 'stop': "mpc stop"}
     commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict}
     verboseprint(commands)
+
+    # Catching a KeyError should prevent it from exploding over the user giving
+    # invalid input
     try:
-        verboseprint(commands[player][operation])
-        os.system(commands[player][operation])
+        verboseprint(commands[player][arguments["input"]])
+        os.system(commands[player][arguments["input"]])
     except KeyError:
         warning("Invalid input")
-        usage(1, program_name)
+        usage(1, arguments["name"])
 
 
 if __name__ == "__main__":
