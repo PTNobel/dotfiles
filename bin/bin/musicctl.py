@@ -82,8 +82,6 @@ def main(raw_argv):
     else:
         warning("No music player found")
         usage(-1, arguments["name"])
-
-    # Define stuff, begining with processing argv.
     verboseprint(player)
 
     # Create a two dimensional dictionary. first key specifies player and the
@@ -101,11 +99,11 @@ def main(raw_argv):
     commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict}
     verboseprint(commands)
 
-    # Catching a KeyError should prevent it from exploding over the user giving
-    # invalid input
+    # Catching a KeyError should prevent this from exploding over the user
+    # giving invalid input
     try:
         verboseprint(commands[player][arguments["input"]])
-        os.system(commands[player][arguments["input"]])
+        os.system(commands[player][arguments["input"]] + ' >/dev/null')
     except KeyError:
         warning("Invalid input")
         usage(1, arguments["name"])
