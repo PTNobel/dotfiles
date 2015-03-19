@@ -18,8 +18,6 @@ active_lock() {
     rm $1
 }
 
-export -f active_lock
-
 lock() {
     if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
        if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
