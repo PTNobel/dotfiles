@@ -16,7 +16,7 @@ def warning(*objs):
     print(printed_list, file=sys.stderr)
 
 
-# processargs() goes through sys.argv and returns a dictionary that specifies
+# processargs() goes through argv and returns a dictionary that specifies
 # whether the associated flag was passed.
 # Usage: processargs() accepts no arguements.
 def processargs(argv):
@@ -151,10 +151,7 @@ def success(commands, run_log_str):
             warning('Something\'s very wrong with this X server')
             warning('Dazed and confused and quitting now')
             os.system(
-                'dmesg >/tmp/dmesg.X.' +
-                os.environ['DISPLAY'][
-                    1:] +
-                '.log')
+                'dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] + '.log')
             exit(6)
         os.system(i + ' >/dev/null &')
     run_log = open('/tmp/' + run_log_str, mode='w')
