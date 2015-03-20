@@ -25,7 +25,7 @@ def usage(exit_code, name_of_program):
     exit(exit_code)
 
 
-def processargs(argv, verbose_check=False):
+def old_processargs(argv, verbose_check=False):
     if verbose_check:
         if '-v' in argv or '--verbose' in argv:
             output = True
@@ -51,6 +51,44 @@ def processargs(argv, verbose_check=False):
     return output
 
 
+def processargs(argv, verbose_check=False):
+    if verbose_check:
+        if '-v' in argv or '--verbose' in argv:
+            output = True
+        else:
+            output = False
+    else:
+        indexes_to_ignore = list()
+        supported_arguments = ['-h', '--help', '-v', '--verbose']
+        output = {"verbose": None, "input": None}
+        output["name"] = argv[0]
+
+        if len(argv) == 1:
+            warning("Not enough arguments")
+            usage(1, output["name"])
+
+        else:
+            for i in range(1, len(argv)):
+                if i in indexes_to_ignore:
+                    continue
+                else:
+                    if argv[i][0] == '-':
+                        verboseprint("Argument found :"+argv[i]+" Index is "+i)
+                        if argv[i] not in supported_arguments:
+                            warning("Invalid argument", prefix='')
+                            usage(1, output["name"])
+
+                        else:
+                            if argv[i] == '-h' or argv[i] == '--help':
+                                usage(0, output["name"])
+                            elif argv[i] == "-v" or argv[i] == "--verbose":
+                                output["verbose"] = True
+
+                    else:
+                        output["input"] = argv[i]
+    return output
+
+
 if processargs(sys.argv, verbose_check=True):
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
@@ -66,6 +104,10 @@ def main(raw_argv):
     # Arguments is being defined here to insure it's available for the first
     # usage call.
     arguments = processargs(raw_argv)
+    verboseprint(arguments)
+    # Handle help and usage correctly:
+    if arguments["input"] == "usage" or arguments["input"] == "help":
+        usage(0, arguments["name"])
 
     # Figure out what player is running.
     if os.system("pidof mpd >/dev/null") == 0:
@@ -80,6 +122,8 @@ def main(raw_argv):
     elif os.system("pidof pianobar >/dev/null") == 0:
         player = "pianobar"
     else:
+        # - vaue for usage, because there's no need to print how to use the
+        # program when there's no player.
         warning("No music player found")
         usage(-1, arguments["name"])
     verboseprint(player)
