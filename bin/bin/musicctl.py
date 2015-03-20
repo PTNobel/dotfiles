@@ -25,32 +25,6 @@ def usage(exit_code, name_of_program):
     exit(exit_code)
 
 
-def old_processargs(argv, verbose_check=False):
-    if verbose_check:
-        if '-v' in argv or '--verbose' in argv:
-            output = True
-        else:
-            output = False
-    else:
-        output = {"verbose": None, "input": None}
-        output["name"] = argv[0]
-        if len(argv) == 1:
-            warning("Not enough arguments")
-            usage(1, output["name"])
-        elif len(argv) >= 2:
-            if argv[-1] == "help" or argv[-1] == "usage":
-                usage(0, output["name"])
-
-            else:
-                output["input"] = argv[-1]
-        for i in argv:
-            if i == "-h":
-                usage(0, output["name"])
-            if i == "-v" or i == "--verbose":
-                output["verbose"] = True
-    return output
-
-
 def processargs(argv, verbose_check=False):
     if verbose_check:
         if '-v' in argv or '--verbose' in argv:
