@@ -18,7 +18,8 @@ def warning(*objs):
 
 # processargs() goes through argv and returns a dictionary that specifies
 # whether the associated flag was passed.
-# Usage: processargs() accepts no arguements.
+# Usage: processargs(argv), where argv is a list() of arguments, example,
+# sys.argv
 def processargs(argv):
     output = {"weekly": None, "verbose": None, "bootstrap": None, "force": None}
     for i in argv:
@@ -185,7 +186,7 @@ elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
     success(bootstrap_commands, run_log_name)
 
 elif log_value != today:
-    if datetime.date.today().weekday() == 4:
+    if datetime.date.today().weekday() == 5:
         command_list += weekly
     update_log(date_log)
     success(command_list, run_log_name)
