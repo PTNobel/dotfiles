@@ -264,10 +264,10 @@ exec --no-startup-id unlock-keyring.py
 exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-active-win
 exec --no-startup-id redshift
 #exec --no-startup-id "devmon --no-gui"
-exec --no-startup-id "pulseaudio --start"
+exec --no-startup-id "pulseaudio"
 exec --no-startup-id xautolock -time 5 -locker 'i3exit inactive_lock' &
 exec_always --no-startup-id feh --bg-scale Pictures/tardis-14940-1920x1080.jpg
-exec --no-startup-id bash -c 'sleep 3 ; dunst.sh'
+exec --no-startup-id bash -c 'sleep 3 ; dunst.sh &'
 exec --no-startup-id linconnect-server
 exec --no-startup-id /usr/share/android-notifier-desktop/run.sh 
 exec --no-startup-id startup
