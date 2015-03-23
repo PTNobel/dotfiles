@@ -59,7 +59,17 @@ def processargs(argv, verbose_check=False):
                                 output["verbose"] = True
 
                     else:
-                        output["input"] = argv[i]
+                        if output["input"] is None:
+                            output["input"] = argv[i]
+                        else:
+                            warning("Error parsing arguments")
+                            verboseprint(
+                                output,
+                                argv,
+                                i,
+                                argv[i],
+                                output["input"])
+                            usage(1, output["name"])
     return output
 
 
@@ -96,7 +106,7 @@ def main(raw_argv):
     elif os.system("pidof pianobar >/dev/null") == 0:
         player = "pianobar"
     else:
-        # - vaue for usage, because there's no need to print how to use the
+        # - value for usage, because there's no need to print how to use the
         # program when there's no player.
         warning("No music player found")
         usage(-1, arguments["name"])
