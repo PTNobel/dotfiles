@@ -47,7 +47,7 @@ def processargs(argv, verbose_check=False):
                     continue
                 else:
                     if argv[i][0] == '-':
-                        verboseprint("Argument found :"+argv[i]+" Index is "+i)
+                        verboseprint("Argument found:", argv[i], "Index is:", i)
                         if argv[i] not in supported_arguments:
                             warning("Invalid argument", prefix='')
                             usage(1, output["name"])
