@@ -15,7 +15,7 @@ def prompt_user(secret_num=0):
         if user_input[0] == 'y':
             os.system('pianoctl')
         elif user_input[0] == 'n':
-            exit(1)
+            exit(0)
         else:
             prompt_user(secret_num+1)
 
