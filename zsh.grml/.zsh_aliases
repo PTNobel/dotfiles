@@ -75,7 +75,7 @@ alias up='cd ..'
 alias pacman='pacman --color=auto'
 alias free='free -h'
 alias suod='sudo'
-alias firefox='setsid firefox'
+alias firefox='setsid /usr/bin/firefox'
 alias icecat='setsid icecat'
 alias geany='setsid geany'
 alias x="setsid env DISPLAY=:0 "
