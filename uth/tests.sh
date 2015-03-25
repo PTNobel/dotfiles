@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # If $? at the end is 1 then the build failed.
-# If $? at the end is 2 then one of the binaries referenced doesn't exist.
+# If $? at the end is 2 then the binarie referenced doesn't exist.
 #
 
 if ! [ -x update_tools_helper ] ; then
