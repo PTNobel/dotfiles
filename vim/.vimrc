@@ -42,3 +42,6 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 let g:pymode_rope_lookup_project = 0
 let g:pymode_rope = 0
+
+set undofile
+set undodir=~/.vim/undodir
