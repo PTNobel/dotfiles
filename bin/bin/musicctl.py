@@ -79,6 +79,8 @@ if processargs(sys.argv, verbose_check=True):
         # everything to be printed into a string.
         for arg in args:
             print(arg)
+
+
 else:
     def verboseprint(*args):
         return
