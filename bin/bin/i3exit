@@ -27,9 +27,12 @@ lock() {
        fi
     else
        i3lock -d -i $HOME/Pictures/262039.png
-    fi 
+    fi
 }
 
+# TODO: Combine the *inactive_lock functions.
+# TODO: After a computer is woken up, give the time value to unlock the
+# computer and then suspend it.
 short_inactive_lock() {
     WATCHDOG_FILE=$(mktemp)
     NUM=0
@@ -71,7 +74,7 @@ blur() {
    file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
    scrot -zd0 "$file1"
    convert "$file1" -blur 0x9 "$file2"
-   i3lock -i "$file2" 
+   i3lock -i "$file2"
    trap "rm '$file1' '$file2'" EXIT
 }
 
@@ -80,7 +83,7 @@ blur_with_sleep() {
    file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
    scrot -zd0 "$file1"
    convert "$file1" -blur 0x9 "$file2"
-   i3lock -di "$file2" 
+   i3lock -di "$file2"
    trap "rm '$file1' '$file2'" EXIT
 
 }
