@@ -25,55 +25,49 @@ def usage(exit_code, name_of_program):
     exit(exit_code)
 
 
-def processargs(argv, verbose_check=False):
-    if verbose_check:
-        if '-v' in argv or '--verbose' in argv:
-            output = True
-        else:
-            output = False
+def processargs(argv):
+    indexes_to_ignore = list()
+    supported_arguments = ['-h', '--help', '-v', '--verbose']
+    output = {"verbose": None, "input": None}
+    output["name"] = argv[0]
+    if len(argv) == 1:
+        warning("Not enough arguments")
+        usage(1, output["name"])
     else:
-        indexes_to_ignore = list()
-        supported_arguments = ['-h', '--help', '-v', '--verbose']
-        output = {"verbose": None, "input": None}
-        output["name"] = argv[0]
+        for i in range(1, len(argv)):
+            if i in indexes_to_ignore:
+                continue
 
-        if len(argv) == 1:
-            warning("Not enough arguments")
-            usage(1, output["name"])
-
-        else:
-            for i in range(1, len(argv)):
-                if i in indexes_to_ignore:
-                    continue
-                else:
-                    if argv[i][0] == '-':
-                        verboseprint("Argument found:", argv[i], "Index is:", i)
-                        if argv[i] not in supported_arguments:
-                            warning("Invalid argument", prefix='')
-                            usage(1, output["name"])
-
-                        else:
-                            if argv[i] == '-h' or argv[i] == '--help':
-                                usage(0, output["name"])
-                            elif argv[i] == "-v" or argv[i] == "--verbose":
-                                output["verbose"] = True
+            else:
+                if argv[i][0] == '-':
+                    verboseprint("Argument found:", argv[i], "Index is:", i)
+                    if argv[i] not in supported_arguments:
+                        warning("Invalid argument", prefix='')
+                        usage(1, output["name"])
 
                     else:
-                        if output["input"] is None:
-                            output["input"] = argv[i]
-                        else:
-                            warning("Error parsing arguments")
-                            verboseprint(
-                                output,
-                                argv,
-                                i,
-                                argv[i],
-                                output["input"])
-                            usage(1, output["name"])
+                        if argv[i] == '-h' or argv[i] == '--help':
+                            usage(0, output["name"])
+                        elif argv[i] == "-v" or argv[i] == "--verbose":
+                            output["verbose"] = True
+
+                else:
+                    if output["input"] is None:
+                        output["input"] = argv[i]
+
+                    else:
+                        warning("Error parsing arguments")
+                        verboseprint(
+                            output,
+                            argv,
+                            i,
+                            argv[i],
+                            output["input"])
+                        usage(1, output["name"])
     return output
 
 
-if processargs(sys.argv, verbose_check=True):
+if '-v' in sys.argv or '--verbose' in sys.argv:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
         # everything to be printed into a string.
@@ -135,7 +129,7 @@ def main(raw_argv):
         verboseprint(commands[player][arguments["input"]])
         os.system(commands[player][arguments["input"]] + ' >/dev/null')
     except KeyError:
-        warning("Invalid input")
+        warning("Invalid input.")
         usage(1, arguments["name"])
 
 
