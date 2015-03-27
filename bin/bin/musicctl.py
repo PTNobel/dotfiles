@@ -15,7 +15,7 @@ def warning(*objs, prefix='WARNING: '):
 
 def usage(exit_code, name_of_program):
     usage_text = "Usage: " + name_of_program + \
-        " {play|pause|back|stop|next|toggle|usage|help}"
+        " {commands|usage|help}"
     if exit_code == 0:
         print(usage_text)
     elif exit_code > 0:
@@ -80,6 +80,14 @@ else:
         return
 
 
+def get_keys(command_dict):
+    for i in list(command_dict):
+        print("For player " + i + " the following commands are available:")
+        for j in list(command_dict[i]):
+            print("   " + j)
+    usage(-1, '')
+
+
 def main(raw_argv):
     # Arguments is being defined here to insure it's available for the first
     # usage call.
@@ -122,7 +130,8 @@ def main(raw_argv):
                 'quit': "mpc stop", 'stop': "mpc stop"}
     commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict}
     verboseprint(commands)
-
+    if arguments["input"] == "commands":
+        get_keys(commands)
     # Catching a KeyError should prevent this from exploding over the user
     # giving invalid input
     try:

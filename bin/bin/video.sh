@@ -2,16 +2,16 @@
 
 if pidof xautolock >/dev/null ; then
     for i in $(pidof xautolock) ; do
-        echo $i
+        echo "$i"
         #cd $i
-        if [ $(strings /proc/$i/environ | grep DISPLAY) = "DISPLAY=${DISPLAY}" ]; then
+        if [ "$(strings /proc/"$i"/environ | grep DISPLAY)" = "DISPLAY=${DISPLAY}" ]; then
             SWITCH_STATES=1
             if [ $SWITCH_STATES == 1 ] ; then
-                kill $i
+                kill "$i"
                 xset -dpms
                 for i in $(pgrep bash); do
-                    cd /proc/$i
-                    if cat cmdline | grep windowdecorations.sh ; then
+                    cd /proc/"$i"
+                    if grep windowdecorations.sh cmdline ; then
                         CHANGE_TRANSPERANCY=0
                     fi
                 done

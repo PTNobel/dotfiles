@@ -5,17 +5,17 @@
 #
 
 active_lock() {
-    echo test > $1
+    echo test > "$1"
     if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
        if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
-          i3lock -n -d -i  $HOME/Pictures/noise-texture.png -t
+          i3lock -n -d -i  "$HOME"/Pictures/noise-texture.png -t
        else
-          i3lock -n -d -i $HOME/Pictures/262039-small.png
+          i3lock -n -d -i "$HOME"/Pictures/262039-small.png
        fi
     else
-       i3lock -n -d -i $HOME/Pictures/262039.png
+       i3lock -n -d -i "$HOME"/Pictures/262039.png
     fi
-    rm $1
+    rm "$1"
 }
 
 lock() {

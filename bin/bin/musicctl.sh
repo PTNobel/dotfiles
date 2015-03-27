@@ -25,7 +25,7 @@ self.pause() {
    if [ "$player" == "pianobar" ]
    then pianoctl p
    elif [ "$player" == "mpd" ]
-   then mpc toggle
+   then mpc toggle >/dev/null
    else exit 1
    fi
 }
@@ -39,7 +39,7 @@ self.back() {
    if [ "$player" == "pianobar" ]
    then pianoctl +
    elif [ "$player" == "mpd" ]
-   then mpc prev
+   then mpc prev >/dev/null
    else exit 1
    fi
 }
@@ -47,9 +47,9 @@ self.back() {
 self.next() {
    get_player
    if [ "$player" == "pianobar" ]
-   then pianoctl \-
+   then pianoctl -
    elif [ "$player" == "mpd" ]
-   then mpc next
+   then mpc next >/dev/null
    else exit 1
    fi
 }
@@ -59,7 +59,7 @@ self.stop() {
    if [ "$player" == "pianobar" ]
    then pianoctl q
    elif [ "$player" == "mpd" ]
-   then mpc stop
+   then mpc stop >/dev/null
    else exit 1
    fi
 }
@@ -70,12 +70,12 @@ self.quit() {
 
 self.usage() {
    printf "Usage:
-   $0 pause
-   $0 play
-   $0 back 
-   $0 next
-   $0 stop
-   $0 quit\n"
+   %s pause
+   %s play
+   %s back 
+   %s next
+   %s stop
+   %s quit\n" "$0" "$0" "$0" "$0" "$0" "$0"
 }
 
 self.help() {

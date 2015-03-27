@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if cat /proc/$(pgrep compton)/cmdline | grep transperancy ; then
+if grep transperancy /proc/"$(pgrep compton)"/cmdline; then
   killall compton
   compton --config "$HOME/.i3/compton.conf" &
   i3-msg '[ class=".*" ] border pixel'
@@ -14,7 +14,7 @@ i3-msg '[ class=".*" ] border normal'
 # Quick and dirty hack until I figure out how to change new_window.
 fi
 for i in $(pgrep bash); do
-    cd /proc/$i
-    cat cmdline | grep windowdecorations.sh && kill $i
+    cd /proc/"$i"
+    grep windowdecorations.sh cmdline && kill "$i"
 done
 bash -c "while true ; do sleep 1 && windowdecorations.sh &>/dev/null ; done" &

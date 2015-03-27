@@ -31,6 +31,6 @@
 INPUT_FILE="$1"
 #echo INPUT_FILE: $INPUT_FILE
 #exit
-LIST=`cat "$INPUT_FILE" | tr '\n' '"'  | sed 's/\"/,/g'`
-LIST_2=`echo ${LIST:0:-1}`
-echo $LIST_2
+LIST=$(tr '\n' '"' < "$INPUT_FILE" | sed 's/\"/,/g')
+LIST_2="${LIST:0:-1}"
+echo "$LIST_2"

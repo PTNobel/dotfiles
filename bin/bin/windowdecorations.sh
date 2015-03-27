@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if cat /proc/$(pgrep compton)/cmdline | grep transperancy ; then
+if grep transperancy /proc/"$(pgrep compton)"/cmdline ; then
   i3-msg '[ class=".*" ] border normal'
 else
-  echo nothing to do
+  echo "nothing to do"
 fi

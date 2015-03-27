@@ -11,15 +11,15 @@ bad_func() {
             ;;
 
         work)
-            echo I\'m sorry...I\'ll try to do be better next time.
+            echo "I\'m sorry...I\'ll try to do be better next time."
             ;;
 
         computer)
-            echo I\'ll do better next time.
+            echo "I\'ll do better next time."
             ;;
 
         ana)
-            echo That\'s not my name! I\'m sure she didn\'t do anything wrong.
+            echo "That\'s not my name! I\'m sure she didn\'t do anything wrong."
             ;;
 
         day)
@@ -44,7 +44,7 @@ bad_func() {
 good_func() {
     case "$1" in
         night)
-            echo 'Powering down' ; sleep 5 && systemctl poweroff -i $2
+            echo 'Powering down' ; sleep 5 && systemctl poweroff -i "$2"
             ;;
 
         morning)
