@@ -1,11 +1,11 @@
 #!/bin/bash
 
 get_pa_sink() {
-    echo `pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#// | tail -n1`
+    echo "$(pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#// | tail -n1)"
 }
 
 pa_down() {
-    pactl set-sink-volume `get_pa_sink` -5%
+    pactl set-sink-volume $(get_pa_sink) -5%
 }
 
 pa_up() {
