@@ -2,17 +2,17 @@
 
 stow_wrapper(){
     for i in $(cat "$MANIFEST_FILE"); do
-        if [ -d $i ] || true ; then
+        if [ -d "$i" ] || true ; then
             #echo $i $1
-            echo stow $1 "$i"
-            stow $1 "$i"
+            echo stow "$1" "$i"
+            stow "$1" "$i"
         else
-            echo "$i" is not valid content for $MANIFEST_FILE
+            echo "$i" is not valid content for "$MANIFEST_FILE"
         fi
     done
 }
 
-cd $(dirname $0)
+cd "$(dirname "$0")"
 
 export MANIFEST_FILE="$(pwd -P)/manifest.repos"
 if [ "$1" == "-D" ] ; then
@@ -28,11 +28,11 @@ fi
 export MANIFEST_FILE="$(pwd -P)/manifest_disabled.repos"
 stow_wrapper -D
 
-for i in $(cat $(pwd -P)/manifest_build.repos); do
-    cd $i
+for i in $(cat "$(pwd -P)"/manifest_build.repos); do
+    cd "$i"
     make || exit 1
     make test || exit 1
     sudo make install || exit 1
     make clean || exit 1
-    cd $(dirname $0)
+    cd "$(dirname "$0")"
 done
