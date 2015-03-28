@@ -355,7 +355,7 @@ wd() {
     . ~/bin/wd.sh
 }
 
-fpath=(~/.dotfiles/zsh.completions $fpath)
+fpath=(~/.zsh.completions $fpath)
 compinit
 
 autoload -z edit-command-line
