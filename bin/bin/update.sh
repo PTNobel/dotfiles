@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export OUTPUT_FILE=$(mktemp)
+OUTPUT_FILE=$(mktemp)
+export OUTPUT_FILE
 #echo OUTPUT_FILE=$OUTPUT_FILE
 
 exit_routine() {
@@ -42,17 +43,14 @@ yaourt_wrapper() {
 
 echo "starting backup of $HOME"
 backup &
-PID[1]=$!
 
 setsid yaourt -S &>/dev/null &
 
 echo "starting update of pkgfile database"
 pkgfile_u &
-PID[2]=$!
 
 echo "starting update of abs database"
 abs_u &
-PID[5]=$!
 
 echo "starting update of alpm database"
 alpm
@@ -61,24 +59,15 @@ yaourt_wrapper -Sua
 
 echo "starting update of mlocate database"
 mlocate &
-PID[3]=$!
 
 echo "starting update of man database"
 man_u &
-PID[4]=$!
 
 yaourt_wrapper -C
 
 tail -n"$( wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
 
-echo "$PID"
-for i in $PID; do
-  echo "$i"
-  while [ -d /proc/"$i" ] ; do
-    sleep 1
-  done
-done
-
+wait
 echo All PIDS dead.
 sleep 5
 exit_routine
