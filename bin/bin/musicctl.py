@@ -81,9 +81,9 @@ else:
 
 
 def get_keys(command_dict):
-    for i in list(command_dict):
+    for i in sorted(list(command_dict)):
         print("For player " + i + " the following commands are available:")
-        for j in list(command_dict[i]):
+        for j in sorted(list(command_dict[i])):
             print("   " + j)
     usage(-1, '')
 
