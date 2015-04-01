@@ -339,6 +339,7 @@ extract() {
 export VISUAL=vim
 export EDITOR=vim
 export BROWSER=icecat
+export PAGER=vimpager
 #source ~/.config/beets/completion
 setopt HIST_IGNORE_DUPS
 setopt completealiases
@@ -367,3 +368,4 @@ alias ga='git add'
 compdef _git ga=git-add
 alias ppwd='cd `pwd -P` ; pwd'
 source /home/parth/.zsh-dwim/init.zsh
+alias man='env PAGER=less /usr/bin/man'
