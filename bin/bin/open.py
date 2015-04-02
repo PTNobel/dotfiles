@@ -26,7 +26,7 @@ def usage(exit_code, name_of_program):
 def processargs(argv):
     indexes_to_ignore = list()
     supported_arguments = ['-h', '--help', '-v', '--verbose']
-    output = {"verbose": None, "input": None}
+    output = {"verbose": None, "file": list()}
     output["name"] = argv[0]
     if len(argv) == 1:
         warning("Not enough arguments")
@@ -50,18 +50,18 @@ def processargs(argv):
                             output["verbose"] = True
 
                 else:
-                    if output["input"] is None:
-                        output["input"] = argv[i]
+                    output["file"].append(argv[i])
 
-                    else:
-                        warning("Error parsing arguments")
-                        verboseprint(
-                            output,
-                            argv,
-                            i,
-                            argv[i],
-                            output["input"])
-                        usage(1, output["name"])
+    if output["file"] == []:
+        warning("Error parsing arguments")
+        verboseprint(
+            output,
+            argv,
+            i,
+            argv[i],
+            output["file"])
+        usage(1, output["name"])
+
     return output
 
 
@@ -86,8 +86,12 @@ def x_is_not_running():
     return
 
 
-if "DISPLAY" in os.environ:
-    x_is_running()
+def main(raw_argv):
+    arguments = processargs(raw_argv)
+    verboseprint(arguments)
 
-else:
-    x_is_not_running()
+    if "DISPLAY" in os.environ:
+        x_is_running()
+
+    else:
+        x_is_not_running()
