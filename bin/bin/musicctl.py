@@ -15,7 +15,7 @@ def warning(*objs, prefix='WARNING: '):
 
 def usage(exit_code, name_of_program):
     usage_text = "Usage: " + name_of_program + \
-        " {commands|usage|help}"
+        " {[a command]|commands|usage|help}"
     if exit_code == 0:
         print(usage_text)
     elif exit_code > 0:
