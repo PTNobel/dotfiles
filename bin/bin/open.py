@@ -2,6 +2,7 @@
 
 import os
 import sys
+import mimetypes
 
 
 def warning(*objs, prefix='WARNING: '):
@@ -78,11 +79,20 @@ else:
         return
 
 
-def x_is_running():
+def get_file_type(file):
+    type = mimetypes.guess_type(file, strict=True)
+    return type
+
+
+def x_is_running(file):
+    type = get_file_type(file)
+    verboseprint(type)
     return
 
 
-def x_is_not_running():
+def x_is_not_running(file):
+    type = get_file_type(file)
+    verboseprint(type)
     return
 
 
@@ -91,7 +101,13 @@ def main(raw_argv):
     verboseprint(arguments)
 
     if "DISPLAY" in os.environ:
-        x_is_running()
+        for i in arguments["files"]:
+            x_is_running(i)
 
     else:
-        x_is_not_running()
+        for i in arguments["files"]:
+            x_is_not_running(i)
+
+
+if __name__ == "__main__":
+    main(sys.argv)
