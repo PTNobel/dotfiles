@@ -339,7 +339,6 @@ extract() {
 export VISUAL=vim
 export EDITOR=vim
 export BROWSER=icecat
-export PAGER=vimpager
 #source ~/.config/beets/completion
 setopt HIST_IGNORE_DUPS
 setopt completealiases

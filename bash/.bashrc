@@ -89,5 +89,4 @@ export VISUAL=vim
 export EDITOR=vim
 shopt -s cdspell autocd
 export BROWSER=firefox
-export PAGER=vimpager
 eval "$(beet completion)"
