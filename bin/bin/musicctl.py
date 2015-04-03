@@ -25,9 +25,14 @@ def usage(exit_code, name_of_program):
     exit(exit_code)
 
 
+def verboseprint(*args):
+    return
+
+
 def processargs(argv):
     indexes_to_ignore = list()
-    supported_arguments = ['-h', '--help', '-v', '--verbose', '-t', '--trial']
+    supported_long_arguments = ['--help', '--verbose', '--trial']
+    supported_short_arguments = ['h', 'v', 't']
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null'}
     output["name"] = argv[0]
@@ -40,20 +45,35 @@ def processargs(argv):
                 continue
 
             else:
-                if argv[i][0] == '-':
-                    verboseprint("Argument found:", argv[i], "Index is:", i)
-                    if argv[i] not in supported_arguments:
-                        warning("Invalid argument", prefix='')
-                        usage(1, output["name"])
+                if argv[i] == '-':
+                    break
 
-                    else:
-                        if argv[i] == '-h' or argv[i] == '--help':
+                elif argv[i][0] == '-':
+                    verboseprint("Argument found:", argv[i], "Index is:", i)
+                    if argv[i][0:1] == '--':
+                        if argv[i] not in supported_long_arguments:
+                            warning("Invalid argument", prefix='')
+                            usage(1, output["name"])
+                        elif argv[i] == '--help':
                             usage(0, output["name"])
-                        elif argv[i] == "-v" or argv[i] == "--verbose":
+                        elif argv[i] == "--verbose":
                             output["verbose"] = True
-                        elif argv[i] == "-t" or argv[i] == "--trial":
+                        elif argv[i] == "--trial":
                             output["test_mode_prefix"] = 'echo '
                             output["test_mode_suffix"] = ''
+
+                    else:
+                        for j in range(1, len(argv[i])):
+                            if argv[i][j] not in supported_short_arguments:
+                                warning("Invalid argument", prefix='')
+                                usage(1, output["name"])
+                            elif argv[i][j] == 'h':
+                                usage(0, output["name"])
+                            elif argv[i][j] == "v":
+                                output["verbose"] = True
+                            elif argv[i][j] == "t":
+                                output["test_mode_prefix"] = 'echo '
+                                output["test_mode_suffix"] = ''
 
                 else:
                     if output["input"] is None:
@@ -70,13 +90,17 @@ def processargs(argv):
                         usage(1, output["name"])
     return output
 
-
-if '-v' in sys.argv or '--verbose' in sys.argv:
+# processargs() supports combined long options, however this does not. Options I
+# see: 1) processargs() is stripped of all verboseprint calls and is used
+# here. 2) verboseprint() gets defined before processargs() as a null function
+# and then is redifined here.
+if processargs(sys.argv)["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
         # everything to be printed into a string.
         for arg in args:
             print(arg)
+    verboseprint("Defining verboseprint")
 
 
 else:
