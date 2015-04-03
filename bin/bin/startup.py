@@ -159,6 +159,7 @@ def success(commands, run_log_str):
     run_log.write('We finished.\n')
     run_log.close()
 
+
 if os.system('urxvt -e exit') != 0:
     warning('Something\'s very wrong with this X server')
     warning('Dazed and confused and quitting now')
