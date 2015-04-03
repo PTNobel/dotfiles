@@ -355,6 +355,9 @@ wd() {
     . ~/bin/wd.sh
 }
 
+bininfo() {
+    yaourt -Si "$(pkgfile -b "$1")"
+}
 fpath=(~/.zsh.completions $fpath)
 compinit
 
