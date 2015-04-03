@@ -15,7 +15,7 @@ def warning(*objs, prefix='WARNING: '):
 
 def usage(exit_code, name_of_program):
     usage_text = "Usage: " + name_of_program + \
-        " {[a command]|commands|usage|help}"
+        " {[a command]|player|commands|usage|help}"
     if exit_code == 0:
         print(usage_text)
     elif exit_code > 0:
@@ -27,8 +27,9 @@ def usage(exit_code, name_of_program):
 
 def processargs(argv):
     indexes_to_ignore = list()
-    supported_arguments = ['-h', '--help', '-v', '--verbose']
-    output = {"verbose": None, "input": None}
+    supported_arguments = ['-h', '--help', '-v', '--verbose', '-t', '--trial']
+    output = {"verbose": None, "input": None, 'test_mode_prefix': '',
+              'test_mode_suffix': ' >/dev/null'}
     output["name"] = argv[0]
     if len(argv) == 1:
         warning("Not enough arguments")
@@ -50,6 +51,9 @@ def processargs(argv):
                             usage(0, output["name"])
                         elif argv[i] == "-v" or argv[i] == "--verbose":
                             output["verbose"] = True
+                        elif argv[i] == "-t" or argv[i] == "--trial":
+                            output["test_mode_prefix"] = 'echo '
+                            output["test_mode_suffix"] = ''
 
                 else:
                     if output["input"] is None:
@@ -115,7 +119,9 @@ def main(raw_argv):
         warning("No music player found")
         usage(-1, arguments["name"])
     verboseprint(player)
-
+    if arguments["input"] == "player":
+        print(player)
+        usage(-1, arguments['name'])
     # Create a two dimensional dictionary. first key specifies player and the
     # second one is the specific command. It'll be the command to pass to
     # os.system(). It's possible to define commands that are specific to a
@@ -133,10 +139,14 @@ def main(raw_argv):
     if arguments["input"] == "commands":
         get_keys(commands)
     # Catching a KeyError should prevent this from exploding over the user
-    # giving invalid input
+    # giving invalid input, though it also prevents bad players from being
+    # spotted. So make sure all new players are followed by thorough testing, or
+    # just make sure you use the same spelling everywhere.
     try:
         verboseprint(commands[player][arguments["input"]])
-        os.system(commands[player][arguments["input"]] + ' >/dev/null')
+        os.system(arguments['test_mode_prefix']
+                  + commands[player][arguments["input"]]
+                  + arguments['test_mode_suffix'])
     except KeyError:
         warning("Invalid input.")
         usage(1, arguments["name"])
