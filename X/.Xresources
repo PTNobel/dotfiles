@@ -262,10 +262,10 @@ URxvt.keysym.M-s:           perl:keyboard-select:search
 ! URxvt*answerbackString: string
 
 ! Turn on/off secondary screen (default enabled).
-! URxvt*secondaryScreen: boolean
+ URxvt*secondaryScreen: 1
 
 ! Turn on/off secondary screen scroll (default enabled). If this option is enabled, scrolls on the secondary screen will change the scrollback buffer and, when secondaryScreen
-! URxvt*secondaryScroll: boolean
+ URxvt*secondaryScroll: 0
 
 ! Turn on/off hold window after exit support. If enabled, urxvt will not immediately destroy its window when the program executed within it exits. Instead, it will wait till it
 ! URxvt*hold: boolean
