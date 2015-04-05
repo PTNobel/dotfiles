@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os
+from os import system
 
 
 def prompt_user(secret_num=0):
@@ -15,15 +15,15 @@ def prompt_user(secret_num=0):
         if len(user_input) == 0:
             prompt_user(secret_num+1)
         if user_input[0] == 'y':
-            os.system('mpd.sh ; ncmpcpp')
+            system('mpd.sh ; ncmpcpp')
         elif user_input[0] == 'n':
             exit(0)
         else:
             prompt_user(secret_num+1)
 
 
-if os.system('pidof mpd >/dev/null') == 0:
-    os.system('ncmpcpp')
+if system('pidof mpd >/dev/null') == 0:
+    system('ncmpcpp')
 
 else:
     prompt_user()
