@@ -2,15 +2,15 @@
 
 # A python3 port of musicctl.sh.
 
-import os
-import sys
+from os import system
+from sys import argv, stderr
 
 
 def warning(*objs, prefix='WARNING: '):
     printed_list = str(prefix)
     for i in objs:
         printed_list += i
-    print(printed_list, file=sys.stderr)
+    print(printed_list, file=stderr)
 
 
 def usage(exit_code, name_of_program):
@@ -29,63 +29,64 @@ def verboseprint(*args):
     return
 
 
-def processargs(argv):
+def processargs(in_argv):
     indexes_to_ignore = list()
     supported_long_arguments = ['--help', '--verbose', '--trial']
     supported_short_arguments = ['h', 'v', 't']
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null'}
-    output["name"] = argv[0]
-    if len(argv) == 1:
+    output["name"] = in_argv[0]
+    if len(in_argv) == 1:
         warning("Not enough arguments")
         usage(1, output["name"])
     else:
-        for i in range(1, len(argv)):
+        for i in range(1, len(in_argv)):
             if i in indexes_to_ignore:
                 continue
 
             else:
-                if argv[i] == '-':
+                if in_argv[i] == '-':
                     break
 
-                elif argv[i][0] == '-':
-                    verboseprint("Argument found:", argv[i], "Index is:", i)
-                    if argv[i][0:1] == '--':
-                        if argv[i] not in supported_long_arguments:
+                elif in_argv[i][0] == '-':
+                    verboseprint("Argument found:", in_argv[i],
+                                 "Index is:", i)
+                    if in_argv[i][0:1] == '--':
+                        if in_argv[i] not in supported_long_arguments:
                             warning("Invalid argument", prefix='')
                             usage(1, output["name"])
-                        elif argv[i] == '--help':
+                        elif in_argv[i] == '--help':
                             usage(0, output["name"])
-                        elif argv[i] == "--verbose":
+                        elif in_argv[i] == "--verbose":
                             output["verbose"] = True
-                        elif argv[i] == "--trial":
+                        elif in_argv[i] == "--trial":
                             output["test_mode_prefix"] = 'echo '
                             output["test_mode_suffix"] = ''
 
                     else:
-                        for j in range(1, len(argv[i])):
-                            if argv[i][j] not in supported_short_arguments:
+                        for j in range(1, len(in_argv[i])):
+                            if in_argv[i][j] not in supported_short_arguments:
                                 warning("Invalid argument", prefix='')
                                 usage(1, output["name"])
-                            elif argv[i][j] == 'h':
+                            elif in_argv[i][j] == 'h':
                                 usage(0, output["name"])
-                            elif argv[i][j] == "v":
+                            elif in_argv[i][j] == "v":
                                 output["verbose"] = True
-                            elif argv[i][j] == "t":
+                            elif in_argv[i][j] == "t":
                                 output["test_mode_prefix"] = 'echo '
                                 output["test_mode_suffix"] = ''
 
                 else:
                     if output["input"] is None:
-                        output["input"] = argv[i]
+                        output["input"] = in_argv[i]
 
                     else:
                         warning("Error parsing arguments")
                         verboseprint(
                             output,
-                            argv,
+                            in_argv,
                             i,
-                            argv[i],
+                            in_argv[i],
                             output["input"])
                         usage(1, output["name"])
     return output
@@ -94,7 +95,7 @@ def processargs(argv):
 # see: 1) processargs() is stripped of all verboseprint calls and is used
 # here. 2) verboseprint() gets defined before processargs() as a null function
 # and then is redifined here.
-if processargs(sys.argv)["verbose"]:
+if processargs(argv)["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
         # everything to be printed into a string.
@@ -126,16 +127,16 @@ def main(raw_argv):
         usage(0, arguments["name"])
 
     # Figure out what player is running.
-    if os.system("pidof mpd >/dev/null") == 0:
+    if system("pidof mpd >/dev/null") == 0:
         # pianobar get priority over mpd, unless mpd is playing.
-        if os.system("pidof pianobar >/dev/null") == 0:
-            if os.system("mpc status | grep playing &>/dev/null") == 0:
+        if system("pidof pianobar >/dev/null") == 0:
+            if system("mpc status | grep playing &>/dev/null") == 0:
                 player = "mpd"
             else:
                 player = "pianobar"
         else:
             player = "mpd"
-    elif os.system("pidof pianobar >/dev/null") == 0:
+    elif system("pidof pianobar >/dev/null") == 0:
         player = "pianobar"
     else:
         # - value for usage, because there's no need to print how to use the
@@ -148,7 +149,7 @@ def main(raw_argv):
         usage(-1, arguments['name'])
     # Create a two dimensional dictionary. first key specifies player and the
     # second one is the specific command. It'll be the command to pass to
-    # os.system(). It's possible to define commands that are specific to a
+    # system(). It's possible to define commands that are specific to a
     # player.
     pianobar_dict = {'play': "pianoctl p", 'pause': "pianoctl p",
                      'back': "pianoctl +", 'next': "pianoctl -",
@@ -168,13 +169,13 @@ def main(raw_argv):
     # just make sure you use the same spelling everywhere.
     try:
         verboseprint(commands[player][arguments["input"]])
-        os.system(arguments['test_mode_prefix']
-                  + commands[player][arguments["input"]]
-                  + arguments['test_mode_suffix'])
+        system(arguments['test_mode_prefix']
+               + commands[player][arguments["input"]]
+               + arguments['test_mode_suffix'])
     except KeyError:
         warning("Invalid input.")
         usage(1, arguments["name"])
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main(argv)
