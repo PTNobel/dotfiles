@@ -43,31 +43,38 @@ yaourt_wrapper() {
 
 echo "starting backup of $HOME"
 backup &
+PID1=$!
 
-setsid yaourt -S &>/dev/null &
+setsid yaourt -S &>/dev/null
 
 echo "starting update of pkgfile database"
 pkgfile_u &
+PID2=$!
 
 echo "starting update of abs database"
 abs_u &
+PID3=$!
 
 echo "starting update of alpm database"
 alpm
 
 yaourt_wrapper -Sua
+PID4=$!
 
 echo "starting update of mlocate database"
 mlocate &
+PID5=$!
 
 echo "starting update of man database"
 man_u &
+PID6=$!
 
 yaourt_wrapper -C
+PID7=$!
 
 tail -n"$( wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
 
-wait
+wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7
 echo All PIDS dead.
 sleep 5
 exit_routine
