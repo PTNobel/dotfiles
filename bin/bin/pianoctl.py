@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os
+from os import system
 
 
 def prompt_user(secret_num=0):
@@ -15,20 +15,15 @@ def prompt_user(secret_num=0):
         if len(user_input) == 0:
             prompt_user(secret_num+1)
         if user_input[0] == 'y':
-            os.system('pianoctl')
+            system('pianoctl')
         elif user_input[0] == 'n':
             exit(0)
         else:
             prompt_user(secret_num+1)
 
-if os.system('pidof pianobar >/dev/null') == 0:
-    os.system('pianoctl')
 
-elif True:
-    prompt_user()
-
-elif 'ctl' in os.listdir(os.environ['HOME'] + '/.config/pianobar/'):
-    None
+if system('pidof pianobar >/dev/null') == 0:
+    system('pianoctl')
 
 else:
     prompt_user()
