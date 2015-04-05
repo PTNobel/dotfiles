@@ -1,4 +1,3 @@
-URxvt.urlLauncher: icecat
 !URxvt*background: Black
 !URxvt*foreground: White
 URxvt*scrollBar_right: true
@@ -34,8 +33,8 @@ URxvt*color13: #e151ff
 URxvt*color14: #57ffec
 URxvt*color15: #ffffff
 
-URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
-URxvt.url-select.launcher:  icecat
+URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select,matcher
+URxvt.url-select.launcher:  /usr/bin/icecat
 URxvt.url-select.underline: true
 URxvt.keysym.M-u:           perl:url-select:select_next
 URxvt.keysym.M-Escape:      perl:keyboard-select:activate
