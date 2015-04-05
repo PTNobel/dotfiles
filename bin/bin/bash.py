@@ -22,17 +22,17 @@
 #
 #
 
-import os
+from os import system
 exit_code = False
 
 
 def bash():
-    return os.system("bash -c 'echo -ne \"\033c\" && bash'")
+    return system("bash -c 'echo -ne \"\033c\" && bash'")
 
 
 while exit_code != 9472 and exit_code != 10752:
-    os.system('echo -ne "\033c"')
+    system('echo -ne "\033c"')
     exit_code = bash()
 
-os.system('echo -ne "\033c"')
+system('echo -ne "\033c"')
 exit(0)

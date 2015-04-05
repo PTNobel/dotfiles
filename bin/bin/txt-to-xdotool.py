@@ -4,7 +4,7 @@
 #
 
 import sys
-import os
+from os import system
 import time
 
 
@@ -79,4 +79,4 @@ print("Warning xdotool will be launched in 30 seconds")
 time.sleep(30)
 xdotool_call = "xdotool key " + final_output
 for i in range(0, 5):
-    os.system(xdotool_call)
+    system(xdotool_call)
