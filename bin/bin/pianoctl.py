@@ -13,7 +13,7 @@ def prompt_user(secret_num=0):
         except EOFError:
             exit(0)
         if len(user_input) == 0:
-            prompt_user(secret_num+1)
+            prompt_user(secret_num + 1)
         if user_input[0] == 'y':
             system('pianoctl')
         elif user_input[0] == 'n':
