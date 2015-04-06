@@ -65,7 +65,12 @@ def check_if_pid_is_startuppy(pidnum):
             open(
                 os.path.join(
                     '/proc', pidnum, 'cmdline'), 'rb').read()))
-    if python_check == [] or startup_check == []:
+    hp_systray_check = re.findall(
+        r"hp-systray", str(
+            open(
+                os.path.join(
+                    '/proc', pidnum, 'cmdline'), 'rb').read()))
+    if python_check == [] or startup_check == [] or hp_systray_check != []:
         return False
     else:
         return True
@@ -100,21 +105,6 @@ for pid in pids:
         continue
 
 
-# Variable definitions this should cover everything.
-date_log = os.environ['HOME'] + "/.parth/date.log"
-autostart = os.environ['HOME'] + "/.i3/autostart"
-bootstrap = os.environ['HOME'] + "/.i3/bootstrap"
-week = os.environ['HOME'] + "/.i3/weekly_tasks"
-date_log_file = open(date_log, 'r')
-log_value = date_log_file.read()
-date_log_file.close()
-today = str(datetime.date.today())
-autostart_file_list = open(autostart, 'r')
-bootstrap_file_list = open(bootstrap, 'r')
-weekly_file_list = open(week, 'r')
-run_log_name = "startup." + os.environ["DISPLAY"][1:] + '.log'
-
-
 # removes unnecessary characters from a list.
 def clean_list(input_list):
     output_list = list()
@@ -123,27 +113,17 @@ def clean_list(input_list):
         output_list.append(var)
     return output_list
 
-raw_commands = autostart_file_list.readlines()
-raw_bootstarp_commands = bootstrap_file_list.readlines()
-raw_weekly = weekly_file_list.readlines()
-raw_commands += raw_bootstarp_commands
-
-command_list = clean_list(raw_commands)
-bootstrap_commands = clean_list(raw_bootstarp_commands)
-weekly = clean_list(raw_weekly)
 
 # writes today's date to a log file.
-
-
 def update_log(log):
+    today = str(datetime.date.today())
     log_file_writeable = open(log, 'w')
     log_file_writeable.write(today)
     log_file_writeable.close()
 
+
 # Iterates through the list commands, and executes the commands. It then
 # creates run_log_str in /tmp/
-
-
 def success(commands, run_log_str):
     verboseprint(commands)
     for i in commands:
@@ -160,39 +140,66 @@ def success(commands, run_log_str):
     run_log.close()
 
 
-if os.system('urxvt -e exit') != 0:
-    warning('Something\'s very wrong with this X server')
-    warning('Dazed and confused and quitting now')
-    os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] + '.log')
-    exit(5)
+def main():
+    # Variable definitions this should cover everything.
+    date_log = os.environ['HOME'] + "/.parth/date.log"
+    autostart = os.environ['HOME'] + "/.i3/autostart"
+    bootstrap = os.environ['HOME'] + "/.i3/bootstrap"
+    week = os.environ['HOME'] + "/.i3/weekly_tasks"
+    date_log_file = open(date_log, 'r')
+    log_value = date_log_file.read()
+    date_log_file.close()
+    today = str(datetime.date.today())
+    autostart_file_list = open(autostart, 'r')
+    bootstrap_file_list = open(bootstrap, 'r')
+    weekly_file_list = open(week, 'r')
+    run_log_name = "startup." + os.environ["DISPLAY"][1:] + '.log'
 
-elif arguements["force"]:
-    success(command_list, run_log_name)
+    raw_commands = autostart_file_list.readlines()
+    raw_bootstarp_commands = bootstrap_file_list.readlines()
+    raw_weekly = weekly_file_list.readlines()
+    raw_commands += raw_bootstarp_commands
 
-elif arguements["bootstrap"]:
-    success(bootstrap_commands, run_log_name)
+    command_list = clean_list(raw_commands)
+    bootstrap_commands = clean_list(raw_bootstarp_commands)
+    weekly = clean_list(raw_weekly)
 
-elif arguements["weekly"]:
-    command_list += weekly
-    success(command_list, run_log_name)
+    if os.system('urxvt -e exit') != 0:
+        warning('Something\'s very wrong with this X server')
+        warning('Dazed and confused and quitting now')
+        os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] + '.log')
+        exit(5)
 
-elif run_log_name in os.listdir('/tmp'):
-    warning('Already ran')
-    exit(8)
+    elif arguements["force"]:
+        success(command_list, run_log_name)
 
-elif int(str(datetime.datetime.now().time())[0:2]) < 6:
-    success(bootstrap_commands, run_log_name)
+    elif arguements["bootstrap"]:
+        success(bootstrap_commands, run_log_name)
 
-elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
-    success(bootstrap_commands, run_log_name)
-
-elif log_value != today:
-    if datetime.date.today().weekday() == 5:
+    elif arguements["weekly"]:
         command_list += weekly
-    update_log(date_log)
-    success(command_list, run_log_name)
+        success(command_list, run_log_name)
 
-else:
-    success(bootstrap_commands, run_log_name)
+    elif run_log_name in os.listdir('/tmp'):
+        warning('Already ran')
+        exit(8)
 
-exit(0)
+    elif int(str(datetime.datetime.now().time())[0:2]) < 6:
+        success(bootstrap_commands, run_log_name)
+
+    elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
+        success(bootstrap_commands, run_log_name)
+
+    elif log_value != today:
+        if datetime.date.today().weekday() == 5:
+            command_list += weekly
+        update_log(date_log)
+        success(command_list, run_log_name)
+
+    else:
+        success(bootstrap_commands, run_log_name)
+
+    exit(0)
+
+if __name__ == "__main__":
+    main()
