@@ -19,7 +19,7 @@ def prompt_user(secret_num=0):
         elif user_input[0] == 'n':
             exit(0)
         else:
-            prompt_user(secret_num+1)
+            prompt_user(secret_num + 1)
 
 
 if system('pidof pianobar >/dev/null') == 0:
