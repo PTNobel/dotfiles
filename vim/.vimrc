@@ -1,5 +1,7 @@
 set nocompatible
 
+set ruler
+set number
 set vb
 filetype plugin indent on 
 set nocp
