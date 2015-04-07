@@ -45,3 +45,6 @@ let g:pymode_rope = 0
 
 set undofile
 set undodir=~/.vim/undodir
+
+let g:pymode_rope=0
+
