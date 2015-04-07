@@ -29,63 +29,63 @@ def verboseprint(*args):
     return
 
 
-def processargs(in_argv):
+def processargs(input_argv):
     indexes_to_ignore = list()
-    supported_long_arguments = ['--help', '--verbose', '--trial']
-    supported_short_arguments = ['h', 'v', 't']
+    valid_long_args = ['--help', '--verbose', '--trial']
+    valid_short_args = ['h', 'v', 't']
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null'}
     discovered_args = list()
-    output["name"] = in_argv[0]
-    if len(in_argv) == 1:
+    output["name"] = input_argv[0]
+    if len(input_argv) == 1:
         warning("Not enough arguments")
         usage(1, output["name"])
     else:
-        for i in range(1, len(in_argv)):
+        for i in range(1, len(input_argv)):
             if i in indexes_to_ignore:
                 continue
 
             else:
-                if in_argv[i] == '-':
+                if input_argv[i] == '-':
                     break
 
-                elif in_argv[i][0] == '-':
-                    verboseprint("Argument found:", in_argv[i],
+                elif input_argv[i][0] == '-':
+                    verboseprint("Argument found:", input_argv[i],
                                  "Index is:", i)
-                    if in_argv[i][0:1] == '--':
-                        if in_argv[i] not in supported_long_arguments:
+                    if input_argv[i][0:1] == '--':
+                        if input_argv[i] not in valid_long_args:
                             warning("Invalid argument", prefix='')
                             usage(1, output["name"])
-                        elif in_argv[i] == '--help':
+                        elif input_argv[i] == '--help':
                             discovered_args.append('help')
-                        elif in_argv[i] == "--verbose":
+                        elif input_argv[i] == "--verbose":
                             discovered_args.append('verbose')
-                        elif in_argv[i] == "--trial":
+                        elif input_argv[i] == "--trial":
                             discovered_args.append('trial')
 
                     else:
-                        for j in range(1, len(in_argv[i])):
-                            if in_argv[i][j] not in supported_short_arguments:
+                        for j in range(1, len(input_argv[i])):
+                            if input_argv[i][j] not in valid_short_args:
                                 warning("Invalid argument", prefix='')
                                 usage(1, output["name"])
-                            elif in_argv[i][j] == 'h':
+                            elif input_argv[i][j] == 'h':
                                 discovered_args.append('help')
-                            elif in_argv[i][j] == "v":
+                            elif input_argv[i][j] == "v":
                                 discovered_args.append('verbose')
-                            elif in_argv[i][j] == "t":
+                            elif input_argv[i][j] == "t":
                                 discovered_args.append('trial')
 
                 else:
                     if output["input"] is None:
-                        output["input"] = in_argv[i]
+                        output["input"] = input_argv[i]
 
                     else:
                         warning("Error parsing arguments")
                         verboseprint(
                             output,
-                            in_argv,
+                            input_argv,
                             i,
-                            in_argv[i],
+                            input_argv[i],
                             output["input"])
                         usage(1, output["name"])
     for i in discovered_args:
