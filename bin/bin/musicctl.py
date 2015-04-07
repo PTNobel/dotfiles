@@ -35,6 +35,7 @@ def processargs(in_argv):
     supported_short_arguments = ['h', 'v', 't']
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null'}
+    discovered_args = list()
     output["name"] = in_argv[0]
     if len(in_argv) == 1:
         warning("Not enough arguments")
@@ -56,13 +57,11 @@ def processargs(in_argv):
                             warning("Invalid argument", prefix='')
                             usage(1, output["name"])
                         elif in_argv[i] == '--help':
-                            usage(0, output["name"])
+                            discovered_args.append('help')
                         elif in_argv[i] == "--verbose":
-                            output["verbose"] = True
-                            output["test_mode_suffix"] = ''
+                            discovered_args.append('verbose')
                         elif in_argv[i] == "--trial":
-                            output["test_mode_prefix"] = 'echo '
-                            output["test_mode_suffix"] = ''
+                            discovered_args.append('trial')
 
                     else:
                         for j in range(1, len(in_argv[i])):
@@ -70,13 +69,11 @@ def processargs(in_argv):
                                 warning("Invalid argument", prefix='')
                                 usage(1, output["name"])
                             elif in_argv[i][j] == 'h':
-                                usage(0, output["name"])
+                                discovered_args.append('help')
                             elif in_argv[i][j] == "v":
-                                output["verbose"] = True
-                                output["test_mode_suffix"] = ''
+                                discovered_args.append('verbose')
                             elif in_argv[i][j] == "t":
-                                output["test_mode_prefix"] = 'echo '
-                                output["test_mode_suffix"] = ''
+                                discovered_args.append('trial')
 
                 else:
                     if output["input"] is None:
@@ -91,6 +88,15 @@ def processargs(in_argv):
                             in_argv[i],
                             output["input"])
                         usage(1, output["name"])
+    for i in discovered_args:
+        if i == 'help':
+            usage(0, output["name"])
+        elif i == "verbose":
+            output["verbose"] = True
+            output["test_mode_suffix"] = ''
+        elif i == "trial":
+            output["test_mode_prefix"] = 'echo '
+            output["test_mode_suffix"] = ''
     return output
 
 # processargs() supports combined long options, however this does not. Options I
