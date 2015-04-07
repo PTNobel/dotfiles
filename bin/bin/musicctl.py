@@ -13,7 +13,7 @@ def warning(*objs, prefix='WARNING: '):
     print(printed_list, file=stderr)
 
 
-def usage(exit_code, name_of_program):
+def usage(exit_code, name_of_program='musicctl.py'):
     usage_text = "Usage: " + name_of_program + \
         " {[a command]|player|commands|usage|help}"
     if exit_code == 0:
