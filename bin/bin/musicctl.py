@@ -59,6 +59,7 @@ def processargs(in_argv):
                             usage(0, output["name"])
                         elif in_argv[i] == "--verbose":
                             output["verbose"] = True
+                            output["test_mode_suffix"] = ''
                         elif in_argv[i] == "--trial":
                             output["test_mode_prefix"] = 'echo '
                             output["test_mode_suffix"] = ''
@@ -72,6 +73,7 @@ def processargs(in_argv):
                                 usage(0, output["name"])
                             elif in_argv[i][j] == "v":
                                 output["verbose"] = True
+                                output["test_mode_suffix"] = ''
                             elif in_argv[i][j] == "t":
                                 output["test_mode_prefix"] = 'echo '
                                 output["test_mode_suffix"] = ''
