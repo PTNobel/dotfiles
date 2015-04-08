@@ -1,31 +1,31 @@
 #!/bin/bash
 
 get_pa_sink() {
-    echo "$(pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#// | tail -n1)"
+    pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#// | tail -n1
 }
 
 pa_down() {
-    pactl set-sink-volume $(get_pa_sink) -5%
+    pactl set-sink-volume "$(get_pa_sink)" -5%
 }
 
 pa_up() {
-    VOLUME=`pacmd list-sinks|grep -A 15 '* index'| awk '/volume: front/{ print $5 }' | sed 's/%//g'`
-    END=$(($VOLUME + 5))
+    VOLUME=$(pacmd list-sinks|grep -A 15 '* index'| awk '/volume: front/{ print $5 }' | sed 's/%//g')
+    END=$((VOLUME + 5))
     if [ $END -gt 100 ]
         then if [ $END -lt 105 ] ; then
-                  pactl set-sink-volume `get_pa_sink` +$((100 - $VOLUME))%
+                  pactl set-sink-volume "$(get_pa_sink)" +$((100 - VOLUME))%
          else exit 2 ; fi
     else
-        pactl set-sink-volume `get_pa_sink` +5%
+        pactl set-sink-volume "$(get_pa_sink)" +5%
     fi
 }
 
 pa_force_up() {
-    pactl set-sink-volume `get_pa_sink` +5%
+    pactl set-sink-volume "$(get_pa_sink)" +5%
 }
 
 pa_mute() {
-    pactl set-sink-mute `get_pa_sink` toggle
+    pactl set-sink-mute "$(get_pa_sink)" toggle
 }
 
 case "$1" in
