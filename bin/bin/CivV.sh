@@ -7,11 +7,14 @@
 steam steam://rungameid/8930 &
 #env DRI_PRIME=1 glxinfo|grep OpenGL\ renderer
 echo "steam started"
-wait
+until [ "$(pidof steam | wc -w)" -ge 3 ]
+do sleep 5
+done
+until [ "$(pidof steam | wc -w)" -le 2 ]
+do sleep 30
+done
 #cp $HOME/Code/core/monitors.xml.dual.screen $HOME/.config/monitors.xml
 #setsid gnome-shell --replace 2>/dev/null &
-i3-msg restart
-sleep 1
 i3-msg restart
 #sleep 3
 #reload-conky.sh
