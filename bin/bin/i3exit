@@ -6,8 +6,8 @@
 
 active_lock() {
     printf "Do I have write permission?\n%s\n" "$$" > "$1"
-    if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
-       if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
+    if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
+       if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
           i3lock -n -d -i  "$HOME"/Pictures/noise-texture.png -t
        else
           i3lock -n -d -i "$HOME"/Pictures/262039-small.png
@@ -19,8 +19,8 @@ active_lock() {
 }
 
 lock() {
-    if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
-       if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
+    if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
+       if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
           i3lock -d -i  "$HOME"/Pictures/noise-texture.png -t
        else
           i3lock -d -i "$HOME"/Pictures/262039-small.png
@@ -45,8 +45,8 @@ watchdog_lock() {
 }
 
 lock_without_sleep() {
-    if xrandr | grep '*' | grep '^   1366x768' >/dev/null ; then
-       if xrandr | grep '*' | grep '^   1920x1080' >/dev/null ; then
+    if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
+       if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
           i3lock -i  "$HOME"/Pictures/noise-texture.png -t
        else
           i3lock -i "$HOME"/Pictures/262039-small.png
@@ -63,7 +63,7 @@ blur() {
    scrot -zd0 "$file1"
    convert "$file1" -blur 0x9 "$file2"
    i3lock -i "$file2"
-   trap "rm '$file1' '$file2'" EXIT
+   trap 'rm "$file1" "$file2"' EXIT
 }
 
 blur_with_sleep() {
@@ -72,7 +72,7 @@ blur_with_sleep() {
    scrot -zd0 "$file1"
    convert "$file1" -blur 0x9 "$file2"
    i3lock -di "$file2"
-   trap "rm '$file1' '$file2'" EXIT
+   trap 'rm "$file1" "$file2"' EXIT
 
 }
 
@@ -80,7 +80,7 @@ freeze() {
    file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
    scrot -d1 -z "$file1"
    i3lock -i "$file1"
-   trap "rm '$file1'" EXIT
+   trap 'rm "$file1"' EXIT
 }
 
 usage() {
