@@ -99,10 +99,7 @@ def processargs(input_argv):
             output["test_mode_suffix"] = ''
     return output
 
-# processargs() supports combined long options, however this does not. Options I
-# see: 1) processargs() is stripped of all verboseprint calls and is used
-# here. 2) verboseprint() gets defined before processargs() as a null function
-# and then is redifined here.
+
 if processargs(argv)["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
