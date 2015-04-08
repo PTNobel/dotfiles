@@ -27,8 +27,11 @@ def usage(exit_code, name_of_program='musicctl.py'):
 
 def verboseprint(*args):
     return
+verboseprint('Is null')
 
 
+# Try to lower the mccabe of this function, perhaps a switch-case hack? Or a
+# dictionary?
 def processargs(input_argv):
     indexes_to_ignore = list()
     valid_long_args = ['--help', '--verbose', '--trial']
