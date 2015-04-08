@@ -11,7 +11,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
   unset f
 fi
 export $(dbus-launch)
-[[ -f ~/.config/Xresources ]] && xrdb -merge ~/.config/Xresources
+[ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
 monitor-layout.sh
 exec i3
 # exec gnome-session

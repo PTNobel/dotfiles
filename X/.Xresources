@@ -153,7 +153,7 @@ URxvt.keysym.M-s:           perl:keyboard-select:search
  URxvt*scrollstyle: plain
 
 ! Set the scrollbar width in pixels.
- URxvt*thickness: 0
+ URxvt*thickness: 1
 
 ! True: enable the scrollbar [default]; option -sb. False: disable the scrollbar; option +sb.
  URxvt*scrollBar: False
