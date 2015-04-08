@@ -177,6 +177,9 @@ def main(raw_argv):
     # just make sure you use the same spelling everywhere.
     try:
         verboseprint(commands[player][arguments["input"]])
+        verboseprint(arguments['test_mode_prefix']
+                     + commands[player][arguments["input"]]
+                     + arguments['test_mode_suffix'])
         system(arguments['test_mode_prefix']
                + commands[player][arguments["input"]]
                + arguments['test_mode_suffix'])
