@@ -34,8 +34,10 @@ verboseprint('Is null')
 # dictionary?
 def processargs(input_argv):
     indexes_to_ignore = list()
-    valid_long_args = ['--help', '--verbose', '--trial']
-    valid_short_args = ['h', 'v', 't']
+    long_args_to_disc = {'--help': 'help', '--verbose': 'verbose',
+                         '--trial': 'trial'}
+    short_args_to_disc = {'h': 'help', 'v': 'verbose',
+                          't': 'trial'}
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null'}
     discovered_args = list()
@@ -48,49 +50,41 @@ def processargs(input_argv):
             if i in indexes_to_ignore:
                 continue
 
-            else:
-                if input_argv[i] == '-':
+            elif input_argv[i] == '-':
                     break
 
-                elif input_argv[i][0] == '-':
-                    verboseprint("Argument found:", input_argv[i],
-                                 "Index is:", i)
-                    if input_argv[i][0:1] == '--':
-                        if input_argv[i] not in valid_long_args:
-                            warning("Invalid argument", prefix='')
-                            usage(1, output["name"])
-                        elif input_argv[i] == '--help':
-                            discovered_args.append('help')
-                        elif input_argv[i] == "--verbose":
-                            discovered_args.append('verbose')
-                        elif input_argv[i] == "--trial":
-                            discovered_args.append('trial')
+            elif input_argv[i][0] == '-':
+                verboseprint("Argument found:", input_argv[i],
+                             "Index is:", i)
+            elif input_argv[i][0:1] == '--':
+                try:
+                    discovered_args.append(
+                        long_args_to_disc[input_argv[i]])
+                except KeyError:
+                    warning("Invalid argument", prefix='')
+                    usage(1, output["name"])
 
-                    else:
-                        for j in range(1, len(input_argv[i])):
-                            if input_argv[i][j] not in valid_short_args:
-                                warning("Invalid argument", prefix='')
-                                usage(1, output["name"])
-                            elif input_argv[i][j] == 'h':
-                                discovered_args.append('help')
-                            elif input_argv[i][j] == "v":
-                                discovered_args.append('verbose')
-                            elif input_argv[i][j] == "t":
-                                discovered_args.append('trial')
-
-                else:
-                    if output["input"] is None:
-                        output["input"] = input_argv[i]
-
-                    else:
-                        warning("Error parsing arguments")
-                        verboseprint(
-                            output,
-                            input_argv,
-                            i,
-                            input_argv[i],
-                            output["input"])
+            elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
+                for j in range(1, len(input_argv[i])):
+                    try:
+                        discovered_args.append(
+                            short_args_to_disc[input_argv[i][j]])
+                    except KeyError:
+                        warning("Invalid argument", prefix='')
                         usage(1, output["name"])
+
+            elif output["input"] is None:
+                output["input"] = input_argv[i]
+
+            else:
+                warning("Error parsing arguments")
+                verboseprint(
+                    output,
+                    input_argv,
+                    i,
+                    input_argv[i],
+                    output["input"])
+                usage(1, output["name"])
     for i in discovered_args:
         if i == 'help':
             usage(0, output["name"])

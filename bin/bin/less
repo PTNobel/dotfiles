@@ -1,4 +1,4 @@
 #!/bin/bash
 
-/usr/bin/less --quiet "$@"
+/usr/bin/less --QUIET "$@"
 exit $?
