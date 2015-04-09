@@ -1,5 +1,5 @@
 ## Modified commands ## {{{
-alias less='less --quiet'
+alias less='less --QUIET'
 alias diff='colordiff'              # requires colordiff package
 alias grep='grep --color=auto'
 alias more='less'
