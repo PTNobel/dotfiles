@@ -33,7 +33,6 @@ verboseprint('Is null')
 # Try to lower the mccabe of this function, perhaps a switch-case hack? Or a
 # dictionary?
 def processargs(input_argv):
-    indexes_to_ignore = list()
     long_args_to_disc = {'--help': 'help', '--verbose': 'verbose',
                          '--trial': 'trial'}
     short_args_to_disc = {'h': 'help', 'v': 'verbose',
@@ -47,16 +46,7 @@ def processargs(input_argv):
         usage(1, output["name"])
     else:
         for i in range(1, len(input_argv)):
-            if i in indexes_to_ignore:
-                continue
-
-            elif input_argv[i] == '-':
-                    break
-
-            elif input_argv[i][0] == '-':
-                verboseprint("Argument found:", input_argv[i],
-                             "Index is:", i)
-            elif input_argv[i][0:1] == '--':
+            if len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
                 try:
                     discovered_args.append(
                         long_args_to_disc[input_argv[i]])
@@ -85,15 +75,27 @@ def processargs(input_argv):
                     input_argv[i],
                     output["input"])
                 usage(1, output["name"])
+
+    def act_on_help(input_dict):
+        usage(0, input_dict["name"])
+        return input_dict
+
+    def act_on_verbose(input_dict):
+        input_dict["verbose"] = True
+        input_dict["test_mode_suffix"] = ''
+        return input_dict
+
+    def act_on_trial(input_dict):
+        input_dict["test_mode_prefix"] = 'echo '
+        input_dict["test_mode_suffix"] = ''
+        return input_dict
+    act_on_discovered_args = {'help': act_on_help, 'verbose': act_on_verbose,
+                              'trial': act_on_trial}
+    print(discovered_args)
     for i in discovered_args:
-        if i == 'help':
-            usage(0, output["name"])
-        elif i == "verbose":
-            output["verbose"] = True
-            output["test_mode_suffix"] = ''
-        elif i == "trial":
-            output["test_mode_prefix"] = 'echo '
-            output["test_mode_suffix"] = ''
+        output = act_on_discovered_args[i](output)
+        print(output)
+
     return output
 
 
