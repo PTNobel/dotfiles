@@ -91,10 +91,8 @@ def processargs(input_argv):
         return input_dict
     act_on_discovered_args = {'help': act_on_help, 'verbose': act_on_verbose,
                               'trial': act_on_trial}
-    print(discovered_args)
     for i in discovered_args:
         output = act_on_discovered_args[i](output)
-        print(output)
 
     return output
 
@@ -121,6 +119,48 @@ def get_keys(command_dict):
     usage(-1, '')
 
 
+class mpd:
+    def __init__(self, processed_args):
+        self.system_prefix = processed_args['test_mode_prefix']
+        self.system_suffix = processed_args['test_mode_suffix']
+
+    def pause(self):
+        system(self.system_prefix + 'mpc toggle' + self.system_suffix)
+
+    def back(self):
+        system(self.system_prefix + 'mpc prev' + self.system_suffix)
+
+    def next(self):
+        system(self.system_prefix + 'mpc next' + self.system_suffix)
+
+    def stop(self):
+        system(self.system_prefix + 'mpc stop' + self.system_suffix)
+
+
+class pianobar:
+    def __init__(self, processed_args):
+        self.system_prefix = processed_args['test_mode_prefix']
+        self.system_suffix = processed_args['test_mode_suffix']
+
+    def pause(self):
+        system(self.system_prefix + 'pianoctl p' + self.system_suffix)
+
+    def back(self):
+        system(self.system_prefix + 'pianoctl +' + self.system_suffix)
+
+    def next(self):
+        system(self.system_prefix + 'pianoctl -' + self.system_suffix)
+
+    def stop(self):
+        system(self.system_prefix + 'pianoctl q' + self.system_suffix)
+        system('sleep 1')
+        if system("pidof pianobar") == 0:
+            system("killall pianobar")
+
+    def tired(self):
+        system(self.system_prefix + 'pianoctl t' + self.system_suffix)
+
+
 def main(raw_argv):
     # Arguments is being defined here to insure it's available for the first
     # usage call.
@@ -136,18 +176,23 @@ def main(raw_argv):
         if system("pidof pianobar >/dev/null") == 0:
             if system("mpc status | grep playing &>/dev/null") == 0:
                 player = "mpd"
+
             else:
                 player = "pianobar"
+
         else:
             player = "mpd"
+
     elif system("pidof pianobar >/dev/null") == 0:
         player = "pianobar"
+
     else:
         # - value for usage, because there's no need to print how to use the
         # program when there's no player.
         warning("No music player found")
         usage(-1, arguments["name"])
     verboseprint(player)
+
     if arguments["input"] == "player":
         print(player)
         usage(-1, arguments['name'])
@@ -155,14 +200,15 @@ def main(raw_argv):
     # second one is the specific command. It'll be the command to pass to
     # system(). It's possible to define commands that are specific to a
     # player.
-    pianobar_dict = {'play': "pianoctl p", 'pause': "pianoctl p",
-                     'back': "pianoctl +", 'next': "pianoctl -",
-                     'quit': "pianoctl q", 'stop': "pianoctl q ; " +
-                     "sleep 3 ; pidof pianobar && killall pianobar",
-                     'tired': "pianoctl t"}
-    mpd_dict = {'play': "mpc toggle", 'pause': "mpc toggle",
-                'back': "mpc prev", 'next': "mpc next",
-                'quit': "mpc stop", 'stop': "mpc stop"}
+    piano = pianobar(arguments)
+    pianobar_dict = {'play': piano.pause, 'pause': piano.pause,
+                     'back': piano.back, 'next': piano.next,
+                     'quit': piano.stop, 'stop': piano.stop,
+                     'tired': piano.tired}
+    mpd_class = mpd(arguments)
+    mpd_dict = {'play': mpd_class.pause, 'pause': mpd_class.pause,
+                'back': mpd_class.back, 'next': mpd_class.next,
+                'quit': mpd_class.stop, 'stop': mpd_class.stop}
     commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict}
     verboseprint(commands)
     if arguments["input"] == "commands":
@@ -172,13 +218,7 @@ def main(raw_argv):
     # spotted. So make sure all new players are followed by thorough testing, or
     # just make sure you use the same spelling everywhere.
     try:
-        verboseprint(commands[player][arguments["input"]])
-        verboseprint(arguments['test_mode_prefix']
-                     + commands[player][arguments["input"]]
-                     + arguments['test_mode_suffix'])
-        system(arguments['test_mode_prefix']
-               + commands[player][arguments["input"]]
-               + arguments['test_mode_suffix'])
+        commands[player][arguments["input"]]()
     except KeyError:
         warning("Invalid input.")
         usage(1, arguments["name"])
