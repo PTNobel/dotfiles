@@ -1,10 +1,10 @@
 #!/bin/bash
 
-setsid dunst -config ~/.i3/dunstrc 2>&1
+dunst -config ~/.i3/dunstrc 2>&1 &
 
 sleep 10
 
-killall dunst
+kill $!
 
 
-setsid dunst -config ~/.i3/dunstrc 2>&1
+setsid dunst -config ~/.i3/dunstrc 2>&1 &
