@@ -33,13 +33,26 @@ verboseprint('Is null')
 # Try to lower the mccabe of this function, perhaps a switch-case hack? Or a
 # dictionary?
 def processargs(input_argv):
-    long_args_to_disc = {'--help': 'help', '--verbose': 'verbose',
-                         '--trial': 'trial'}
-    short_args_to_disc = {'h': 'help', 'v': 'verbose',
-                          't': 'trial'}
+    def help(input_dict):
+        usage(0, input_dict["name"])
+        return input_dict
+
+    def verbose(input_dict):
+        input_dict["verbose"] = True
+        input_dict["test_mode_suffix"] = ''
+        return input_dict
+
+    def trial(input_dict):
+        input_dict["test_mode_prefix"] = 'echo '
+        input_dict["test_mode_suffix"] = ''
+        return input_dict
+
+    long_args_to_disc = {'--help': help, '--verbose': verbose,
+                         '--trial': trial}
+    short_args_to_disc = {'h': help, 'v': verbose,
+                          't': trial}
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null'}
-    discovered_args = list()
     output["name"] = input_argv[0]
     if len(input_argv) == 1:
         warning("Not enough arguments")
@@ -48,8 +61,7 @@ def processargs(input_argv):
         for i in range(1, len(input_argv)):
             if len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
                 try:
-                    discovered_args.append(
-                        long_args_to_disc[input_argv[i]])
+                    output = long_args_to_disc[input_argv[i]](output)
                 except KeyError:
                     warning("Invalid argument", prefix='')
                     usage(1, output["name"])
@@ -57,8 +69,7 @@ def processargs(input_argv):
             elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
                 for j in range(1, len(input_argv[i])):
                     try:
-                        discovered_args.append(
-                            short_args_to_disc[input_argv[i][j]])
+                        output = short_args_to_disc[input_argv[i]](output)
                     except KeyError:
                         warning("Invalid argument", prefix='')
                         usage(1, output["name"])
@@ -75,24 +86,6 @@ def processargs(input_argv):
                     input_argv[i],
                     output["input"])
                 usage(1, output["name"])
-
-    def act_on_help(input_dict):
-        usage(0, input_dict["name"])
-        return input_dict
-
-    def act_on_verbose(input_dict):
-        input_dict["verbose"] = True
-        input_dict["test_mode_suffix"] = ''
-        return input_dict
-
-    def act_on_trial(input_dict):
-        input_dict["test_mode_prefix"] = 'echo '
-        input_dict["test_mode_suffix"] = ''
-        return input_dict
-    act_on_discovered_args = {'help': act_on_help, 'verbose': act_on_verbose,
-                              'trial': act_on_trial}
-    for i in discovered_args:
-        output = act_on_discovered_args[i](output)
 
     return output
 
