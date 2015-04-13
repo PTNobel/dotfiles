@@ -2,7 +2,7 @@
 
 # A python3 port of musicctl.sh.
 
-from os import system
+from os import system, getenv
 from sys import argv, stderr
 
 
@@ -25,9 +25,19 @@ def usage(exit_code, name_of_program='musicctl.py'):
     exit(exit_code)
 
 
-def verboseprint(*args):
-    return
-verboseprint('Is null')
+if getenv('VERBOSE') == '1':
+    def verboseprint(*args):
+        # Print each argument separately so caller doesn't need to stuff
+        # everything to be printed into a string.
+        for arg in args:
+            print(arg)
+
+
+else:
+    def verboseprint(*args):
+        return
+
+verboseprint("Defining verboseprint")
 
 
 # Try to lower the mccabe of this function, perhaps a switch-case hack? Or a
@@ -59,6 +69,7 @@ def processargs(input_argv):
         usage(1, output["name"])
     else:
         for i in range(1, len(input_argv)):
+            verboseprint(i, input_argv)
             if len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
                 try:
                     output = long_args_to_disc[input_argv[i]](output)
@@ -69,7 +80,7 @@ def processargs(input_argv):
             elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
                 for j in range(1, len(input_argv[i])):
                     try:
-                        output = short_args_to_disc[input_argv[i]](output)
+                        output = short_args_to_disc[input_argv[i][j]](output)
                     except KeyError:
                         warning("Invalid argument", prefix='')
                         usage(1, output["name"])
