@@ -4,22 +4,22 @@
 # I made it for fun.
 #
 
-import sys
+from sys import argv
 
-if len(sys.argv) != 2:
+if len(argv) != 2:
     exit(1)
 i = 2
 factors = list()
 try:
-    orig_num_to_factor = int(sys.argv[1])
-    if float(sys.argv[1]) != float(orig_num_to_factor):
-        print("factor: ‘" + sys.argv[1] + "’ is not a valid positive integer")
+    orig_num_to_factor = int(argv[1])
+    if float(argv[1]) != float(orig_num_to_factor):
+        print("factor: ‘" + argv[1] + "’ is not a valid positive integer")
         exit(1)
     elif orig_num_to_factor < 0:
-        print("factor: ‘" + sys.argv[1] + "’ is not a valid positive integer")
+        print("factor: ‘" + argv[1] + "’ is not a valid positive integer")
         exit(1)
 except ValueError:
-    print("factor: ‘" + sys.argv[1] + "’ is not a valid positive integer")
+    print("factor: ‘" + argv[1] + "’ is not a valid positive integer")
     exit(1)
 num_to_factor = orig_num_to_factor
 
