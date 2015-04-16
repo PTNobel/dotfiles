@@ -3,6 +3,7 @@
 import os
 import sys
 import datetime
+import time
 import re
 
 
@@ -95,9 +96,9 @@ for pid in pids:
         if pid == str(os.getpid()):
             print('This script')
         verboseprint(open(os.path.join('/proc/', pid, 'cmdline'), 'rb').read())
-        if check_if_pid_is_startuppy(pid):
+        while check_if_pid_is_startuppy(pid):
             warning("Is there another " + sys.argv[0] + " running?")
-            exit(4)
+            time.sleep(60)
         else:
             verboseprint(pid + " is not startup.py")
     except IOError:  # proc has already terminated
