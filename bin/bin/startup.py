@@ -185,7 +185,7 @@ def main():
         warning('Already ran')
         exit(8)
 
-    elif current_hour > 21 or current_hour < 6:
+    elif current_hour >= 22 or current_hour <= 6:
         success(bootstrap_commands, run_log_name)
 
     elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
