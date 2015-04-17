@@ -135,43 +135,54 @@ def get_keys(command_dict):
 
 class mpd:
     def __init__(self, processed_args):
+        verboseprint('mpd is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
 
     def pause(self):
+        verboseprint('mpd.pause has been called')
         system(self.system_prefix + 'mpc toggle' + self.system_suffix)
 
     def back(self):
+        verboseprint('mpd.back has been called')
         system(self.system_prefix + 'mpc prev' + self.system_suffix)
 
     def next(self):
+        verboseprint('mpd.next has been called')
         system(self.system_prefix + 'mpc next' + self.system_suffix)
 
     def stop(self):
+        verboseprint('mpd.stop has been called')
         system(self.system_prefix + 'mpc stop' + self.system_suffix)
 
 
 class pianobar:
     def __init__(self, processed_args):
+        verboseprint('pianobar is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
 
     def pause(self):
+        verboseprint('pianobarll.pause has been called')
         system(self.system_prefix + 'pianoctl p' + self.system_suffix)
 
     def back(self):
+        verboseprint('pianobar.back has been called')
         system(self.system_prefix + 'pianoctl +' + self.system_suffix)
 
     def next(self):
+        verboseprint('pianobar.next has been called')
         system(self.system_prefix + 'pianoctl -' + self.system_suffix)
 
     def stop(self):
+        verboseprint('pianobar.stop has been called')
         system(self.system_prefix + 'pianoctl q' + self.system_suffix)
         system('sleep 1')
         if system("pidof pianobar") == 0:
             system("killall pianobar")
 
     def tired(self):
+        verboseprint('pianobar.tired has been called')
         system(self.system_prefix + 'pianoctl t' + self.system_suffix)
 
 
