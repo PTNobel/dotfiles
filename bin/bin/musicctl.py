@@ -14,6 +14,7 @@ def warning(*objs, prefix='WARNING: '):
 
 
 def usage(exit_code, name_of_program='musicctl.py'):
+    verboseprint('usage() starting', exit_code, name_of_program)
     usage_text = "Usage: " + name_of_program + \
         " {[a command]|player|commands|usage|help}"
     if exit_code == 0:
@@ -43,6 +44,8 @@ verboseprint("Defining verboseprint")
 # Try to lower the mccabe of this function, perhaps a switch-case hack? Or a
 # dictionary?
 def processargs(input_argv):
+    verboseprint('start proccessargs')
+
     def help(input_dict):
         usage(0, input_dict["name"])
         return input_dict
@@ -69,10 +72,12 @@ def processargs(input_argv):
         usage(1, output["name"])
     else:
         for i in range(1, len(input_argv)):
-            verboseprint(i, input_argv)
+            verboseprint("Index:", i, input_argv, output)
             if len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
                 try:
+                    verboseprint(long_args_to_disc[input_argv[i]])
                     output = long_args_to_disc[input_argv[i]](output)
+                    verboseprint(output)
                 except KeyError:
                     warning("Invalid argument", prefix='')
                     usage(1, output["name"])
@@ -80,7 +85,9 @@ def processargs(input_argv):
             elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
                 for j in range(1, len(input_argv[i])):
                     try:
+                        verboseprint(short_args_to_disc[input_argv[i][j]])
                         output = short_args_to_disc[input_argv[i][j]](output)
+                        verboseprint(output)
                     except KeyError:
                         warning("Invalid argument", prefix='')
                         usage(1, output["name"])
@@ -98,10 +105,13 @@ def processargs(input_argv):
                     output["input"])
                 usage(1, output["name"])
 
+    verboseprint('returning', output)
+    verboseprint('end processargs')
     return output
 
 
-if processargs(argv)["verbose"]:
+processed_args = processargs(argv)
+if processed_args["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
         # everything to be printed into a string.
@@ -165,10 +175,8 @@ class pianobar:
         system(self.system_prefix + 'pianoctl t' + self.system_suffix)
 
 
-def main(raw_argv):
-    # Arguments is being defined here to insure it's available for the first
-    # usage call.
-    arguments = processargs(raw_argv)
+def main(arguments):
+    verboseprint('main() starting')
     verboseprint(arguments)
     # Handle help and usage correctly:
     if arguments["input"] == "usage" or arguments["input"] == "help":
@@ -199,7 +207,7 @@ def main(raw_argv):
 
     if arguments["input"] == "player":
         print(player)
-        usage(-1, arguments['name'])
+        usage(-256, arguments['name'])
     # Create a two dimensional dictionary. first key specifies player and the
     # second one is the specific command. It'll be the command to pass to
     # system(). It's possible to define commands that are specific to a
@@ -222,6 +230,7 @@ def main(raw_argv):
     # spotted. So make sure all new players are followed by thorough testing, or
     # just make sure you use the same spelling everywhere.
     try:
+        verboseprint(commands[player][arguments["input"]])
         commands[player][arguments["input"]]()
     except KeyError:
         warning("Invalid input.")
@@ -229,4 +238,4 @@ def main(raw_argv):
 
 
 if __name__ == "__main__":
-    main(argv)
+    main(processed_args)
