@@ -1,4 +1,5 @@
 transmission.sh
+zenity --warning --text='Do\ your\ exercises.'
 skype
 pidgin
 /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
