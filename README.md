@@ -5,7 +5,7 @@ My dotfiles
 
 Pretty self explanatory.....
 
-DISCLAIMER: I did not write the code in `contrib/`  
+DISCLAIMER: I did not write the code in `contrib/`
 I wrote all the code in `bin/bin/` except part of `bin/bin/i3exit`,
   however I have extended it.
 I have not put any copyright notices on any code I do not have copyright for.
