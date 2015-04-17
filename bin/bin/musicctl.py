@@ -41,8 +41,6 @@ else:
 verboseprint("Defining verboseprint")
 
 
-# Try to lower the mccabe of this function, perhaps a switch-case hack? Or a
-# dictionary?
 def processargs(input_argv):
     verboseprint('start proccessargs')
 
