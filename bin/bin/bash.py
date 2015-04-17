@@ -30,9 +30,9 @@ def bash():
     return system("bash -c 'echo -ne \"\033c\" && bash'")
 
 
-while exit_code != 9472 and exit_code != 10752:
+while exit_code != 37 and exit_code != 42:
     system('echo -ne "\033c"')
-    exit_code = bash()
+    exit_code = bash() % 255
 
 system('echo -ne "\033c"')
 exit(0)
