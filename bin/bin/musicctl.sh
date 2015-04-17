@@ -34,7 +34,7 @@ self.pause() {
 }
 
 self.play() {
-    pause
+    self.pause
 }
 
 self.back() {
