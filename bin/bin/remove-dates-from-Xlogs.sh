@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 #
 # Usage: $0 Xorg.*.log
 # So to use this script, take a copy of Xorg.#.log (where # is a number)
