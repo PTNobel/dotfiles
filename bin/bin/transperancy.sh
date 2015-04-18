@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# switches the window transperancy and window decorations.
 
 if grep transperancy /proc/"$(pgrep compton)"/cmdline; then
   killall compton

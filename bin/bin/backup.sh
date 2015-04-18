@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# backups the home dir to $PRIMARY_DIRECTORY/Backups
 
 set -e
 set -u

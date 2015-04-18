@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Sets only one monitor on 25xi if availble, otherwise the laptop.
+
 xrandr --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --primary
 if [ $? -eq 1 ]; then
     xrandr --output LVDS1 --mode 1366x768 --pos 0x809 --rotate normal --primary

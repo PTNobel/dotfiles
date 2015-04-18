@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Updates my system.
 
 OUTPUT_FILE=$(mktemp)
 export OUTPUT_FILE

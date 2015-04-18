@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# switches between my two keyboard layouts.
 
 VARIANT=$(setxkbmap -query | awk '/variant/{print $2}')
 

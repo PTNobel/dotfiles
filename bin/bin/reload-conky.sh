@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Gets conky running.
 
 killall -q conky
 

@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# starts mpd.
 
 killall mpd &>/dev/null
 

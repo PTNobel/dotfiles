@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#
+# Launches CivV.
 
 CivV() {
     steam steam://rungameid/8930 &

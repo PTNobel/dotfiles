@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#
+# swithces through Weeping Angel photos.
 
 angels() {
 feh --bg-scale ~/Pictures/Weeping\ Angel/1.JPG

@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# minimizes computers locking.
 
 if pidof xautolock >/dev/null ; then
     for i in $(pidof xautolock) ; do

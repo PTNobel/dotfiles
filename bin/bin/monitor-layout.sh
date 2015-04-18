@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Turns the monitors on as needed.
 
 if ! xrandr | grep "^HDMI" | grep disconnected; then
     xrandr --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --primary

@@ -1,6 +1,8 @@
 #!/bin/bash
+#
+# keeps urxvtd running.
 
-for i in $(pidof -x firefox.sh -o %PPID) ; do
+for i in $(pidof -x urxvtd.sh -o %PPID) ; do
     if strings /proc/"$i"/environ | grep DISPLAY | grep "${DISPLAY}" >/dev/null ; then
         kill "$i"
     fi

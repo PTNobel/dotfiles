@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Switches between redshift confs.
 
 if pidof redshift; then
     echo redshift is running

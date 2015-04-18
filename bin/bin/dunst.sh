@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# starts dunst.
 
 dunst -config ~/.i3/dunstrc 2>&1 &
 

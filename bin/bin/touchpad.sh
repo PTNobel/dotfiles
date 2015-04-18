@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Turns the TouchpadOff off.
+
 eval "$(synclient | grep TouchpadOff | sed s/\ //g)"
 #synclient  | grep TouchpadOff | grep 0 >/dev/null
 #STATE=$?
