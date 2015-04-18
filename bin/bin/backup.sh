@@ -14,15 +14,15 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
   if [ -f $DESTINATION/"$USER" ]; then
 
 # No files/directories should be hardcoded
-    echo starting backup.
-    chmod -R +w $DESTINATION
-    echo pwd="$PWD"
-    ls
-    mv $DESTINATION $PRIMARY_DIRECTORY/"$USER"
-    sh -c "rsync -apv --delete --exclude=.cache $HOME $PRIMARY_DIRECTORY ; true"
-    mv $PRIMARY_DIRECTORY/"$USER" $DESTINATION
-    echo "$USER" > $DESTINATION/"$USER"
-    chmod -R a-w $DESTINATION
+  echo starting backup.
+  chmod -R +w $DESTINATION
+  echo pwd="$PWD"
+  ls
+  mv $DESTINATION $PRIMARY_DIRECTORY/"$USER"
+  sh -c "rsync -apv --delete --exclude=.cache $HOME $PRIMARY_DIRECTORY ; true"
+  mv $PRIMARY_DIRECTORY/"$USER" $DESTINATION
+  echo "$USER" > $DESTINATION/"$USER"
+  chmod -R a-w $DESTINATION
   else echo $DESTINATION not authorized for write by current user ; exit 2
   fi
   echo starting duplicity #; notify-send duplicity started
