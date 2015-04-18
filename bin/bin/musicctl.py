@@ -162,7 +162,7 @@ class pianobar:
         self.system_suffix = processed_args['test_mode_suffix']
 
     def pause(self):
-        verboseprint('pianobarll.pause has been called')
+        verboseprint('pianobar.pause has been called')
         system(self.system_prefix + 'pianoctl p' + self.system_suffix)
 
     def back(self):
@@ -213,7 +213,7 @@ def main(arguments):
         # program when there's no player.
         warning("No music player found")
         usage(-1, arguments["name"])
-    verboseprint(player)
+        verboseprint('Player', player)
 
     if arguments["input"] == "player":
         print(player)
