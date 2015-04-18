@@ -9,3 +9,4 @@ bin:/home/parth/.dotfiles/bin/bin
 dot:/home/parth/.dotfiles
 vim:/home/parth/.dotfiles/vim/.vim
 tmp:/tmp
+media:/media
