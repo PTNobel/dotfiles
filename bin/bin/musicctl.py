@@ -109,6 +109,7 @@ def processargs(input_argv):
 
 
 processed_args = processargs(argv)
+
 if processed_args["verbose"]:
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
