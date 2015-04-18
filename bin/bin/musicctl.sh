@@ -22,7 +22,7 @@ get_player() {
     export $player
 }
 
-self.pause() {
+self_pause() {
    get_player
    if [ "$player" == "pianobar" ]; then
       pianoctl p
@@ -33,11 +33,11 @@ self.pause() {
    fi
 }
 
-self.play() {
-    self.pause
+self_play() {
+    self_pause
 }
 
-self.back() {
+self_back() {
    get_player
    if [ "$player" == "pianobar" ]; then
       pianoctl +
@@ -48,7 +48,7 @@ self.back() {
    fi
 }
 
-self.next() {
+self_next() {
    get_player
    if [ "$player" == "pianobar" ]; then
       pianoctl -
@@ -59,7 +59,7 @@ self.next() {
    fi
 }
 
-self.stop() {
+self_stop() {
    get_player
    if [ "$player" == "pianobar" ]; then
       pianoctl q
@@ -70,11 +70,11 @@ self.stop() {
    fi
 }
 
-self.quit() {
-   self.stop
+self_quit() {
+   self_stop
 }
 
-self.usage() {
+self_usage() {
    printf "Usage:
    %s pause
    %s play
@@ -84,17 +84,17 @@ self.usage() {
    %s quit\n" "$0" "$0" "$0" "$0" "$0" "$0"
 }
 
-self.help() {
-   self.usage
+self_help() {
+   self_usage
 }
 
-self.-h() {
-   self.usage
+self_-h() {
+   self_usage
 }
 
-self.() {
-   self.usage
+self_() {
+   self_usage
    exit 1
 }
 
-self."$1" || exit 1
+self_"$1" || exit 1
