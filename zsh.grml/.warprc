@@ -10,3 +10,4 @@ dot:/home/parth/.dotfiles
 vim:/home/parth/.dotfiles/vim/.vim
 tmp:/tmp
 media:/media
+cache:/var/cache/pacman/pkg
