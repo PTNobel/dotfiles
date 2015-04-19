@@ -187,6 +187,10 @@ bar {
 bindsym XF86AudioRaiseVolume exec --no-startup-id pulsectl up #increase sound volume
 bindsym XF86AudioLowerVolume exec --no-startup-id pulsectl down #decrease sound volume
 bindsym XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
+bindsym $mod+XF86AudioRaiseVolume exec --no-startup-id pulsectl up #increase sound volume
+bindsym $mod+XF86AudioLowerVolume exec --no-startup-id pulsectl down #decrease sound volume
+bindsym $mod+XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
+bindsym $mod+o exec pavucontrol
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10 # increase screen brightness
