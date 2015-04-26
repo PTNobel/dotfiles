@@ -10,7 +10,7 @@ set expandtab
 set softtabstop=4
 set shiftwidth=4
 set cindent
-set ts=4
+set ts=2
 set scrolloff=2
 set clipboard=unnamedplus
 execute pathogen#infect()
@@ -30,6 +30,7 @@ let g:syntastic_check_on_wq = 0
 set grepprg=grep\ -nH\ $*
 let g:tex_flavor = "latex"
 map <F6> :setlocal spell! spelllang=en_us<CR>
+map <F8> :setlocal spell! spelllang=es<CR>
 
 set incsearch
 set hlsearch
