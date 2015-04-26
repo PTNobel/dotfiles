@@ -31,5 +31,4 @@ os.chmod('/tmp/rsh', stat.S_IRWXU)
 os.chdir('/tmp/rsh/cwd')
 for i in binaries:
     os.symlink("/usr/bin/" + i, '/tmp/rsh/bin/' + i)
-
 exit(os.system('env -i PATH=/tmp/rsh/bin /bin/sh -r'))
