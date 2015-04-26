@@ -7,7 +7,7 @@ check_for_changes() {
     while diff "$1" /tmp/"$(basename "$1")"; do 
         sleep 10
         if ! [[ -f "$(dirname "$1")"/."$(basename "$1")".swp ]]; then
-            exit 1
+            exit 0
         fi
     done
     yes '' | pdflatex "$1"
