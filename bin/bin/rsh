@@ -1,0 +1,35 @@
+#!/usr/bin/python3
+
+import os
+import stat
+import sys
+
+binaries = ['ls', 'env'] + sys.argv[1:]
+
+
+def delete_dir(dir_to_rm):
+    for i in os.listdir(dir_to_rm):
+        try:
+            os.remove(dir_to_rm + '/' + i)
+        except IsADirectoryError:
+            delete_dir(dir_to_rm + '/' + i)
+    os.rmdir(dir_to_rm)
+
+try:
+    delete_dir('/tmp/rsh/')
+except FileNotFoundError:
+    True
+
+os.mkdir('/tmp/rsh')
+os.mkdir('/tmp/rsh/bin')
+os.mkdir('/tmp/rsh/cwd')
+os.chmod('/tmp/rsh', stat.S_IRUSR)
+os.chmod('/tmp/rsh', stat.S_IWUSR)
+os.chmod('/tmp/rsh', stat.S_IXUSR)
+os.chmod('/tmp/rsh', stat.S_IRWXG)
+os.chmod('/tmp/rsh', stat.S_IRWXU)
+os.chdir('/tmp/rsh/cwd')
+for i in binaries:
+    os.symlink("/usr/bin/" + i, '/tmp/rsh/bin/' + i)
+
+exit(os.system('env -i PATH=/tmp/rsh/bin /bin/sh -r'))
