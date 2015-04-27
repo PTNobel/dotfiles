@@ -56,22 +56,12 @@ else:
 # running. This helps fight issues with multiple instances of startup.py
 # launching processes repeatedly.
 def check_if_pid_is_startuppy(pidnum):
-    python_check = re.findall(
-        r"python", str(
-            open(
-                os.path.join(
-                    '/proc', pidnum, 'cmdline'), 'rb').read()))
-    startup_check = re.findall(
+    comm_check = re.findall(
         r"startup", str(
             open(
                 os.path.join(
                     '/proc', pidnum, 'cmdline'), 'rb').read()))
-    hp_systray_check = re.findall(
-        r"hp-systray", str(
-            open(
-                os.path.join(
-                    '/proc', pidnum, 'cmdline'), 'rb').read()))
-    if python_check == [] or startup_check == [] or hp_systray_check != []:
+    if comm_check == []:
         return False
     else:
         return True
