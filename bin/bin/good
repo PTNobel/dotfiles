@@ -95,4 +95,3 @@ case "$0" in
     *)
         echo what are you calling this script?
 esac
-
