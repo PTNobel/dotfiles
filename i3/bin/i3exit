@@ -18,16 +18,22 @@ active_lock() {
   rm "$1"
 }
 
-lock() {
+generic_lock() {
   if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
     if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
-      i3lock -d -i  "$HOME"/Pictures/noise-texture.png -t
+      i3lock $I3LOCK_OPTIONS -i  "$HOME"/Pictures/noise-texture.png -t
     else
-      i3lock -d -i "$HOME"/Pictures/262039-small.png
+      i3lock $I3LOCK_OPTIONS -i "$HOME"/Pictures/262039-small.png
     fi
   else
-    i3lock -d -i "$HOME"/Pictures/262039.png
+    i3lock $I3LOCK_OPTIONS -i "$HOME"/Pictures/262039.png
   fi
+}
+
+lock() {
+  I3LOCK_OPTIONS=-d
+  export I3LOCK_OPTIONS
+  generic_lock
 }
 
 # TODO: After a computer is woken up, give the time value to unlock the
@@ -45,15 +51,8 @@ watchdog_lock() {
 }
 
 lock_without_sleep() {
-  if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
-    if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
-      i3lock -i  "$HOME"/Pictures/noise-texture.png -t
-    else
-      i3lock -i "$HOME"/Pictures/262039-small.png
-    fi
-  else
-    i3lock -i "$HOME"/Pictures/262039.png
-  fi
+  export I3LOCK_OPTIONS
+  generic_lock
 }
 
 
