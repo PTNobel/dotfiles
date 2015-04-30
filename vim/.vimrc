@@ -7,8 +7,8 @@ filetype plugin indent on
 set nocp
 set autoindent
 set expandtab
-set softtabstop=4
-set shiftwidth=4
+set softtabstop=2
+set shiftwidth=2
 set cindent
 set ts=2
 set scrolloff=2
@@ -51,3 +51,10 @@ set undodir=~/.vim/undodir
 
 let g:pymode_rope=0
 
+set backspace=indent,eol,start
+set complete-=i
+set smarttab
+
+if &t_Co == 8 && $TERM !~# '^linux'
+  set t_Co=16
+endif
