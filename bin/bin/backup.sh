@@ -22,10 +22,13 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
     sh -c "rsync -apv --delete --exclude=.cache $HOME $PRIMARY_DIRECTORY ; true"
     echo "$USER" > $PRIMARY_DIRECTORY/"$USER"/"$USER"
     chmod -R a-w $PRIMARY_DIRECTORY/"$USER"
-  else echo $DESTINATION not authorized for write by current user ; exit 2
+  else
+    echo $DESTINATION not authorized for write by current user ; exit 2
   fi
+
   echo starting duplicity #; notify-send duplicity started
   duplicity incremental --allow-source-mismatch --no-encryption "$HOME" $DUPLICITY_DESTINATION
   mv $PRIMARY_DIRECTORY/"$USER" $DESTINATION
-else echo $DESTINATION is not found ; exit 1
+else
+  echo $DESTINATION is not found ; exit 1
 fi
