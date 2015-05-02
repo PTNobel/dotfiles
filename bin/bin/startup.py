@@ -60,8 +60,14 @@ def check_if_pid_is_startuppy(pidnum):
         r"startup", str(
             open(
                 os.path.join(
+                    '/proc', pidnum, 'comm'), 'rb').read()))
+    python_check = re.findall(
+        r"python", str(
+            open(
+                os.path.join(
                     '/proc', pidnum, 'cmdline'), 'rb').read()))
-    if comm_check == []:
+
+    if comm_check == [] or python_check == []:
         return False
     else:
         return True
