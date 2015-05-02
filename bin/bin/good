@@ -5,23 +5,18 @@ bad_func() {
         night)
             echo Shall we stay up a bit later then?
             ;;
-
         morning)
             echo Let\'s not risk an update then?
             ;;
-
         work)
             echo "I\'m sorry...I\'ll try to do be better next time."
             ;;
-
         computer)
             echo "I\'ll do better next time."
             ;;
-
         ana)
             echo "That\'s not my name! I\'m sure she didn\'t do anything wrong."
             ;;
-
         day)
             echo It has been hasn\'t it?
             ;;
@@ -34,10 +29,8 @@ bad_func() {
         "")
             echo What\'s so bad?
             ;;
-
         *)
             echo How should I respond?
-
     esac
 }
 
@@ -46,27 +39,21 @@ good_func() {
         night)
             echo 'Powering down' ; sleep 5 && systemctl poweroff -i "$2"
             ;;
-
         morning)
             update.sh
             ;;
-
         work)
             echo Thank you!
             ;;
-
         computer)
             echo Thank you!
             ;;
-
         ana)
             echo That\'s not my name!
             ;;
-
         luck)
             echo Thanks! I hope I won\'t need it!
             ;;
-
         day)
             echo Good day to you too!
             ;;
@@ -79,7 +66,6 @@ good_func() {
         "")
             echo What\'s so good?
             ;;
-        
         *)
             echo How should I respond?
     esac
