@@ -2,15 +2,16 @@
 
 # A python3 port of musicctl.sh.
 
-from os import system, getenv
-from sys import argv, stderr
+import time
+import os
+import sys
 
 
 def warning(*objs, prefix='WARNING: '):
     printed_list = str(prefix)
     for i in objs:
         printed_list += i
-    print(printed_list, file=stderr)
+    print(printed_list, file=sys.stderr)
 
 
 def usage(exit_code, name_of_program='musicctl.py'):
@@ -26,7 +27,7 @@ def usage(exit_code, name_of_program='musicctl.py'):
     exit(exit_code)
 
 
-if getenv('VERBOSE') == '1':
+if os.getenv('VERBOSE') == '1':
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
         # everything to be printed into a string.
@@ -108,7 +109,7 @@ def processargs(input_argv):
     return output
 
 
-processed_args = processargs(argv)
+processed_args = processargs(sys.argv)
 
 if processed_args["verbose"]:
     def verboseprint(*args):
@@ -140,19 +141,19 @@ class mpd:
 
     def pause(self):
         verboseprint('mpd.pause has been called')
-        system(self.system_prefix + 'mpc toggle' + self.system_suffix)
+        os.system(self.system_prefix + 'mpc toggle' + self.system_suffix)
 
     def back(self):
         verboseprint('mpd.back has been called')
-        system(self.system_prefix + 'mpc prev' + self.system_suffix)
+        os.system(self.system_prefix + 'mpc prev' + self.system_suffix)
 
     def next(self):
         verboseprint('mpd.next has been called')
-        system(self.system_prefix + 'mpc next' + self.system_suffix)
+        os.system(self.system_prefix + 'mpc next' + self.system_suffix)
 
     def stop(self):
         verboseprint('mpd.stop has been called')
-        system(self.system_prefix + 'mpc stop' + self.system_suffix)
+        os.system(self.system_prefix + 'mpc stop' + self.system_suffix)
 
 
 class pianobar:
@@ -163,26 +164,26 @@ class pianobar:
 
     def pause(self):
         verboseprint('pianobar.pause has been called')
-        system(self.system_prefix + 'pianoctl p' + self.system_suffix)
+        os.system(self.system_prefix + 'pianoctl p' + self.system_suffix)
 
     def back(self):
         verboseprint('pianobar.back has been called')
-        system(self.system_prefix + 'pianoctl +' + self.system_suffix)
+        os.system(self.system_prefix + 'pianoctl +' + self.system_suffix)
 
     def next(self):
         verboseprint('pianobar.next has been called')
-        system(self.system_prefix + 'pianoctl -' + self.system_suffix)
+        os.system(self.system_prefix + 'pianoctl -' + self.system_suffix)
 
     def stop(self):
         verboseprint('pianobar.stop has been called')
-        system(self.system_prefix + 'pianoctl q' + self.system_suffix)
-        system('sleep 1')
-        if system("pidof pianobar") == 0:
-            system("killall pianobar")
+        os.system(self.system_prefix + 'pianoctl q' + self.system_suffix)
+        time.sleep(1)
+        if os.system("pidof pianobar") == 0:
+            os.system("killall pianobar")
 
     def tired(self):
         verboseprint('pianobar.tired has been called')
-        system(self.system_prefix + 'pianoctl t' + self.system_suffix)
+        os.system(self.system_prefix + 'pianoctl t' + self.system_suffix)
 
 
 def main(arguments):
@@ -193,10 +194,10 @@ def main(arguments):
         usage(0, arguments["name"])
 
     # Figure out what player is running.
-    if system("pidof mpd >/dev/null") == 0:
+    if os.system("pidof mpd >/dev/null") == 0:
         # pianobar get priority over mpd, unless mpd is playing.
-        if system("pidof pianobar >/dev/null") == 0:
-            if system("mpc status | grep playing &>/dev/null") == 0:
+        if os.system("pidof pianobar >/dev/null") == 0:
+            if os.system("mpc status | grep playing &>/dev/null") == 0:
                 player = "mpd"
 
             else:
@@ -205,7 +206,7 @@ def main(arguments):
         else:
             player = "mpd"
 
-    elif system("pidof pianobar >/dev/null") == 0:
+    elif os.system("pidof pianobar >/dev/null") == 0:
         player = "pianobar"
 
     else:
