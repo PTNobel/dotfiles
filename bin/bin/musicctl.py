@@ -134,6 +134,7 @@ def get_keys(command_dict):
 
 
 class mpd:
+
     def __init__(self, processed_args):
         verboseprint('mpd is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
@@ -157,6 +158,7 @@ class mpd:
 
 
 class pianobar:
+
     def __init__(self, processed_args):
         verboseprint('pianobar is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
@@ -186,6 +188,32 @@ class pianobar:
         os.system(self.system_prefix + 'pianoctl t' + self.system_suffix)
 
 
+class playerctl:
+
+    def __init__(self, processed_args):
+        verboseprint('playerctl is being inited')
+        self.system_prefix = processed_args['test_mode_prefix']
+        self.system_suffix = processed_args['test_mode_suffix']
+
+    def pause(self):
+        verboseprint('playerctl.pause has been called')
+        os.system(self.system_prefix + 'playerctl play-pause'
+                  + self.system_suffix)
+
+    def back(self):
+        verboseprint('playerctl.back has been called')
+        os.system(self.system_prefix + 'playerctl previous'
+                  + self.system_suffix)
+
+    def next(self):
+        verboseprint('playerctl.next has been called')
+        os.system(self.system_prefix + 'playerctl next' + self.system_suffix)
+
+    def stop(self):
+        verboseprint('playerctl.stop has been called')
+        os.system(self.system_prefix + 'playerctl stop' + self.system_suffix)
+
+
 def main(arguments):
     verboseprint('main() starting')
     verboseprint(arguments)
@@ -210,11 +238,7 @@ def main(arguments):
         player = "pianobar"
 
     else:
-        # - value for usage, because there's no need to print how to use the
-        # program when there's no player.
-        warning("No music player found")
-        usage(-1, arguments["name"])
-        verboseprint('Player', player)
+        player = 'playerctl'
 
     if arguments["input"] == "player":
         print(player)
@@ -232,7 +256,13 @@ def main(arguments):
     mpd_dict = {'play': mpd_class.pause, 'pause': mpd_class.pause,
                 'back': mpd_class.back, 'next': mpd_class.next,
                 'quit': mpd_class.stop, 'stop': mpd_class.stop}
-    commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict}
+    generic_player = playerctl(arguments)
+    playerctl_dict = {'play': generic_player.pause,
+                      'pause': generic_player.pause,
+                      'back': generic_player.back, 'next': generic_player.next,
+                      'quit': generic_player.stop, 'stop': generic_player.stop}
+    commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict,
+                'playerctl': playerctl_dict}
     verboseprint(commands)
     if arguments["input"] == "commands":
         get_keys(commands)
