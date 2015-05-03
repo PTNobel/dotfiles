@@ -11,13 +11,14 @@ done
 launch_firefox() {
   FIRE=$(pidof firefox | wc -w)
   if [ "$FIRE" -lt "1" ]; then
-    echo "launching firefox" ;
+    echo "launching firefox"
     firefox
   else
     echo "firefox is running"
   fi
 }
 
-while true
-do launch_firefox ; sleep 5
+while true; do
+  launch_firefox
+  sleep 5
 done

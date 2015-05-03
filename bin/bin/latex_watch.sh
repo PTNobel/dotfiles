@@ -4,7 +4,7 @@
 # Exits whenever there is no longer a .swp file.
 
 check_for_changes() {
-    while diff "$1" /tmp/"$(basename "$1")"; do 
+    while diff "$1" /tmp/"$(basename "$1")"; do
         sleep 10
         if ! [[ -f "$(dirname "$1")"/."$(basename "$1")".swp ]]; then
             exit 0
