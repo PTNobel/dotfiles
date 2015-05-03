@@ -1,5 +1,5 @@
 #!/bin/bash
-# 
+#
 # This code is poorly written just an FYI.
 # It should work. However musicctl.py is much better.
 # This code is probably insecure if someone really tries to exploit it.
@@ -78,7 +78,7 @@ self_usage() {
    printf "Usage:
    %s pause
    %s play
-   %s back 
+   %s back
    %s next
    %s stop
    %s quit\n" "$0" "$0" "$0" "$0" "$0" "$0"
