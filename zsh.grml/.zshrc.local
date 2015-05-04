@@ -297,7 +297,7 @@ fi
 
 #cd and ls in one
 cl() {
-    \cd "$@" && ls
+    builtin cd "$@" && ls
 }
 
 # extract files
