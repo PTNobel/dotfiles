@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Turns the TouchpadOff off.
-
+TouchpadOff=''
 eval "$(synclient | grep TouchpadOff | sed s/\ //g)"
 #synclient  | grep TouchpadOff | grep 0 >/dev/null
 #STATE=$?
@@ -9,9 +9,9 @@ eval "$(synclient | grep TouchpadOff | sed s/\ //g)"
 #declare -i STATE
 #STATE=`xinput list-props $ID|grep 'Device Enabled'|awk '{print $4}'`
 if [ "$TouchpadOff" -eq 1 ] ; then
-   synclient TouchpadOff=0
-   echo Touchpad Enabled
+  synclient TouchpadOff=0
+  echo Touchpad Enabled
 else
-   synclient TouchpadOff=1
-   echo Touchpad Disabled
+  synclient TouchpadOff=1
+  echo Touchpad Disabled
 fi
