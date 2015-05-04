@@ -71,11 +71,11 @@ good_func() {
     esac
 }
 
-case "$0" in
-    *bad)
+case $(basename "$0") in
+    *bad*)
         bad_func "$1"
         ;;
-    *good)
+    *good*)
         good_func "$1"
         ;;
     *)
