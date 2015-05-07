@@ -1,83 +1,83 @@
 #!/bin/sh
 
 bad_func() {
-    case "$1" in
-        night)
-            echo Shall we stay up a bit later then?
-            ;;
-        morning)
-            echo Let\'s not risk an update then?
-            ;;
-        work)
-            echo "I\'m sorry...I\'ll try to do be better next time."
-            ;;
-        computer)
-            echo "I\'ll do better next time."
-            ;;
-        ana)
-            echo "That\'s not my name! I\'m sure she didn\'t do anything wrong."
-            ;;
-        day)
-            echo It has been hasn\'t it?
-            ;;
-        afternoon)
-            echo It has sucked.
-            ;;
-        " ")
-            echo Was that a backslash?
-            ;;
-        "")
-            echo What\'s so bad?
-            ;;
-        *)
-            echo How should I respond?
-    esac
+  case "$1" in
+    night)
+      echo Shall we stay up a bit later then?
+      ;;
+    morning)
+      echo Let\'s not risk an update then?
+      ;;
+    work)
+      echo "I\'m sorry...I\'ll try to do be better next time."
+      ;;
+    computer)
+      echo "I\'ll do better next time."
+      ;;
+    ana)
+      echo "That\'s not my name! I\'m sure she didn\'t do anything wrong."
+      ;;
+    day)
+      echo It has been hasn\'t it?
+      ;;
+    afternoon)
+      echo It has sucked.
+      ;;
+    " ")
+      echo Was that a backslash?
+      ;;
+    "")
+      echo What\'s so bad?
+      ;;
+    *)
+      echo How should I respond?
+  esac
 }
 
 good_func() {
-    case "$1" in
-        night)
-            echo 'Powering down' ; sleep 5 && systemctl poweroff -i "$2"
-            ;;
-        morning)
-            update.sh
-            ;;
-        work)
-            echo Thank you!
-            ;;
-        computer)
-            echo Thank you!
-            ;;
-        ana)
-            echo That\'s not my name!
-            ;;
-        luck)
-            echo Thanks! I hope I won\'t need it!
-            ;;
-        day)
-            echo Good day to you too!
-            ;;
-        afternoon)
-            echo Good afternoon kind gentleman.
-            ;;
-        " ")
-            echo Was that a backslash?
-            ;;
-        "")
-            echo What\'s so good?
-            ;;
-        *)
-            echo How should I respond?
-    esac
+  case "$1" in
+    night)
+      echo 'Powering down' ; sleep 5 && systemctl poweroff -i "$2"
+      ;;
+    morning)
+      update.sh
+      ;;
+    work)
+      echo Thank you!
+      ;;
+    computer)
+      echo Thank you!
+      ;;
+    ana)
+      echo That\'s not my name!
+      ;;
+    luck)
+      echo Thanks! I hope I won\'t need it!
+      ;;
+    day)
+      echo Good day to you too!
+      ;;
+    afternoon)
+      echo Good afternoon kind gentleman.
+      ;;
+    " ")
+      echo Was that a backslash?
+      ;;
+    "")
+      echo What\'s so good?
+      ;;
+    *)
+      echo How should I respond?
+  esac
 }
 
 case $(basename "$0") in
-    *bad*)
-        bad_func "$1"
-        ;;
-    *good*)
-        good_func "$1"
-        ;;
-    *)
-        echo what are you calling this script?
+  *bad*)
+    bad_func "$1"
+    ;;
+  *good*)
+    good_func "$1"
+    ;;
+  *)
+    echo what are you calling this script?
 esac
