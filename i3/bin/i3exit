@@ -19,6 +19,7 @@ active_lock() {
 }
 
 generic_lock() {
+  # I3LOCK_OPTIONS MUST not not be quote to insure word splitting.
   if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
     if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
       i3lock $I3LOCK_OPTIONS -i  "$HOME"/Pictures/noise-texture.png -t
