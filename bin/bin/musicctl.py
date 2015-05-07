@@ -197,13 +197,15 @@ class playerctl:
 
     def pause(self):
         verboseprint('playerctl.pause has been called')
-        os.system(self.system_prefix + 'playerctl play-pause'
-                  + self.system_suffix)
+        os.system(self.system_prefix + 'playerctl play-pause' +
+                  self.system_suffix)
 
     def back(self):
         verboseprint('playerctl.back has been called')
-        os.system(self.system_prefix + 'playerctl previous'
-                  + self.system_suffix)
+        os.system(
+            self.system_prefix +
+            'playerctl previous' +
+            self.system_suffix)
 
     def next(self):
         verboseprint('playerctl.next has been called')
@@ -244,8 +246,8 @@ def main(arguments):
         print(player)
         usage(-256, arguments['name'])
     # Create a two dimensional dictionary. first key specifies player and the
-    # second one is the specific command. It'll be the command to pass to
-    # system(). It's possible to define commands that are specific to a
+    # second one is the specific command. It'll be the function to call. It's
+    # possible to define commands that are specific to a
     # player.
     piano = pianobar(arguments)
     pianobar_dict = {'play': piano.pause, 'pause': piano.pause,
@@ -268,8 +270,8 @@ def main(arguments):
         get_keys(commands)
     # Catching a KeyError should prevent this from exploding over the user
     # giving invalid input, though it also prevents bad players from being
-    # spotted. So make sure all new players are followed by thorough testing, or
-    # just make sure you use the same spelling everywhere.
+    # spotted. So make sure all new players are followed by thorough testing,
+    # or just make sure you use the same spelling everywhere.
     try:
         verboseprint(commands[player][arguments["input"]])
         commands[player][arguments["input"]]()
