@@ -8,7 +8,7 @@ export latex
 
 check_for_changes() {
   while diff "$1" /tmp/"$(basename "$1")"; do
-    sleep 10
+    sleep 5
     if ! [[ -f "$(dirname "$1")"/."$(basename "$1")".swp ]]; then
       exit 0
 
