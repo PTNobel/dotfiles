@@ -202,10 +202,8 @@ class playerctl:
 
     def back(self):
         verboseprint('playerctl.back has been called')
-        os.system(
-            self.system_prefix +
-            'playerctl previous' +
-            self.system_suffix)
+        os.system(self.system_prefix + 'playerctl previous' +
+                  self.system_suffix)
 
     def next(self):
         verboseprint('playerctl.next has been called')
