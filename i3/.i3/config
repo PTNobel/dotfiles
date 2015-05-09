@@ -96,15 +96,15 @@ bindsym $mod+a focus parent
 
 # define workspace outputs
 workspace 1 output HDMI1
-workspace 12 output LVDS1
+workspace 2 output LVDS1
 workspace 3 output HDMI1
-workspace 14 output LVDS1
+workspace 4 output LVDS1
 workspace 5 output HDMI1
-workspace 16 output LVDS1
+workspace 6 output LVDS1
 workspace 7 output HDMI1
-workspace 18 output LVDS1
+workspace 8 output LVDS1
 workspace 9 output HDMI1
-workspace 20 output LVDS1
+workspace 10 output LVDS1
 workspace 11 output HDMI1
 
 # switch to workspace
@@ -121,7 +121,6 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 bindsym $mod+Tab workspace next_on_output
-bindsym $mod+Shift+Tab 
 bindsym $mod+Shift+Tab workspace prev_on_output
 
 # move focused container to workspace
