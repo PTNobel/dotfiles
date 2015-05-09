@@ -4,14 +4,23 @@ get_pa_sink() {
     pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#//
 }
 
+fix_puse() {
+  
+  ORIG_VOLUME=$(pacmd list-sinks|grep -A 15 "* index: "| \
+                awk '/volume: front/{ print $5 }' | sed 's/%//g')
+  for i in $SINKS; do
+    pactl set-sink-volume "$i" "${ORIG_VOLUME}%"
+  done
+}
+
 pa_down() {
-    for i in $(get_pa_sink); do
+    for i in $SINKS; do
         pactl set-sink-volume "$i" -5%
     done
 }
 
 pa_up() {
-    for i in $(get_pa_sink); do
+    for i in $SINKS; do
         VOLUME=$(pacmd list-sinks|grep -A 15 "index: $i"| \
             awk '/volume: front/{ print $5 }' | sed 's/%//g')
         END=$((VOLUME + 5))
@@ -28,16 +37,23 @@ pa_up() {
 }
 
 pa_force_up() {
-    for i in $(get_pa_sink); do 
+    for i in $SINKS; do 
         pactl set-sink-volume "$i" +5%
     done
 }
 
 pa_mute() {
-    for i in $(get_pa_sink); do
+    for i in $SINKS; do
        pactl set-sink-mute "$i" toggle
    done
 }
+
+SINKS=$(get_pa_sink)
+export SINKS
+
+if [[ $(echo "$SINKS" | wc -l) -gt 1 ]]; then 
+  fix_pulse
+fi
 
 case "$1" in
     down)
