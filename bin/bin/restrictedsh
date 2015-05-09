@@ -4,7 +4,17 @@ import os
 import stat
 import sys
 
-binaries = ['ls', 'env'] + sys.argv[1:]
+
+def processargs():
+    output = list()
+    argv = sys.argv[1:]
+    for i in argv:
+        if i == '-b':
+            os.system('/usr/bin/busybox --install -s /tmp/rsh/bin')
+            os.remove('/tmp/rsh/bin/ash')
+        else:
+            output.append(i)
+    return output
 
 
 def delete_dir(dir_to_rm):
@@ -20,6 +30,7 @@ try:
 except FileNotFoundError:
     True
 
+
 os.mkdir('/tmp/rsh')
 os.mkdir('/tmp/rsh/bin')
 os.mkdir('/tmp/rsh/cwd')
@@ -29,6 +40,8 @@ os.chmod('/tmp/rsh', stat.S_IXUSR)
 os.chmod('/tmp/rsh', stat.S_IRWXG)
 os.chmod('/tmp/rsh', stat.S_IRWXU)
 os.chdir('/tmp/rsh/cwd')
+
+binaries = processargs()
 for i in binaries:
     os.symlink("/usr/bin/" + i, '/tmp/rsh/bin/' + i)
 exit(os.system('env -i PATH=/tmp/rsh/bin /bin/sh -r'))
