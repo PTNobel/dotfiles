@@ -4,8 +4,7 @@ get_pa_sink() {
     pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#//
 }
 
-fix_puse() {
-  
+fix_pulse() {
   ORIG_VOLUME=$(pacmd list-sinks|grep -A 15 "* index: "| \
                 awk '/volume: front/{ print $5 }' | sed 's/%//g')
   for i in $SINKS; do
