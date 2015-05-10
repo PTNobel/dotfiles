@@ -29,6 +29,11 @@ let g:syntastic_check_on_wq = 0
 
 set grepprg=grep\ -nH\ $*
 let g:tex_flavor = "latex"
+" use pdflatex
+let g:Tex_DefaultTargetFormat='pdf'
+let g:Tex_MultipleCompileFormats='pdf,dvi'
+let g:Tex_CompileRule_pdf = 'mkdir -p tmp; pdflatex -output-directory tmp \ -interaction=nonstopmode $*; cp tmp/*.pdf .'
+
 map <F6> :setlocal spell! spelllang=en_us<CR>
 map <F8> :setlocal spell! spelllang=es<CR>
 
