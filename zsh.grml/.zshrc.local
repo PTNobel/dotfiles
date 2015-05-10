@@ -358,6 +358,11 @@ wd() {
 bininfo() {
     yaourt -Si "$(pkgfile -b "$1")"
 }
+
+cat_cmdline() {
+    strings cmdline | tr '\n' '"' | sed 's/\"/\ /g' ; echo
+}
+
 fpath=(~/.zsh.completions $fpath)
 compinit
 
