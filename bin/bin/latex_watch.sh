@@ -3,7 +3,8 @@
 # Watches a latex file for changes and rebuilds it whenever it changes.
 # Exits whenever there is no longer a .swp file.
 
-latex="pdflatex -interaction=batchmode"
+#latex="pdflatex -interaction=batchmode -output-directory /tmp"
+latex="xelatex -interaction=batchmode -output-directory /tmp"
 export latex
 
 check_for_changes() {
