@@ -35,7 +35,8 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
   # Cleaning up.
   cd /media
   if udevil umount $PRIMARY_DIRECTORY && udevil umount $PRIMARY_DIRECTORY_ntfs; then
-    udisksctl power-off --no-user-interaction -b '/dev/disk/by-id/usb-TOSHIBA_External_USB_3.0_20140730015698-0:0'
+    echo "Disks unmouned successfully, powering down backup drive."
+    udisksctl power-off --no-user-interaction -b '/dev/disk/by-id/usb-TOSHIBA_External_USB_3.0_20140730015698-0:0' && echo "Disk powered down."
   fi
 else
   echo $DESTINATION is not found ; exit 1
