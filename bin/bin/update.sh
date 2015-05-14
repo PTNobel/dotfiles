@@ -2,13 +2,19 @@
 #
 # Updates my system.
 
+if [[ -f /tmp/update.lock ]] ; then exit ; else touch /tmp/update.lock ; fi
+
 OUTPUT_FILE=$(mktemp)
 export OUTPUT_FILE
 #echo OUTPUT_FILE=$OUTPUT_FILE
 
+keep_computer_awake() {
+  systemd-inhibit bash -c "while [[ -f $OUTPUT_FILE ]] ; do sleep 60 ; done"
+}
+
 exit_routine() {
   #echo deleting OUTPUT_FILE and WATCHDOG_FILE
-  rm "$OUTPUT_FILE"
+  rm "$OUTPUT_FILE" /tmp/update.lock
   exit $?
 }
 
@@ -42,6 +48,7 @@ yaourt_wrapper() {
   yaourt "$@"
 }
 
+keep_computer_awake &
 
 echo "starting backup of $HOME"
 backup &
