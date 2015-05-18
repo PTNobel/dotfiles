@@ -13,6 +13,7 @@ fi
 export $(dbus-launch)
 [ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
 monitor-layout.sh
+setxkbmap -option caps:escape
 exec i3
 # exec gnome-session
 # exec startkde
