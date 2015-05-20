@@ -12,6 +12,8 @@ check_for_changes() {
   while diff "$1" /tmp/"$(basename "$1")"; do
     sleep 5
     if ! [[ -f "$(dirname "$1")"/."$(basename "$1")".swp ]]; then
+      $latex "$1"
+      $latex "$1"
       exit 0
     fi
   done
