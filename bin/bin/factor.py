@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # A python port of factor from coreutils.
-# I made it for fun.
+# I made it for fun. It performs horribly.
 #
 
 from sys import argv
