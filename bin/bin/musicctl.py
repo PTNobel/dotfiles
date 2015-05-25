@@ -109,85 +109,6 @@ def processargs(input_argv):
     return output
 
 
-def make_generic_processargs_dict():
-    def bootstrap_args(argv):
-        return {"verbose": None, "input": None, 'test_mode_prefix': '',
-                'test_mode_suffix': ' >/dev/null', 'name': argv[0]}
-
-    def help(input_dict):
-        usage(0, input_dict["name"])
-        return input_dict
-
-    def verbose(input_dict):
-        input_dict["verbose"] = True
-        input_dict["test_mode_suffix"] = ''
-        return input_dict
-
-    def trial(input_dict):
-        input_dict["test_mode_prefix"] = 'echo '
-        input_dict["test_mode_suffix"] = ''
-        return input_dict
-
-    def not_arg(input_dict, key):
-        if input_dict["input"] is None:
-            input_dict["input"] = key
-        return input_dict
-
-    long_args_to_disc = {'--help': help, '--verbose': verbose,
-                         '--trial': trial}
-    short_args_to_disc = {'h': help, 'v': verbose,
-                          't': trial}
-    return {'output': bootstrap_args, 'long': long_args_to_disc,
-            'short': short_args_to_disc}
-
-
-def generic_processargs(input_argv, instruction):
-    verboseprint('starting generic_proccessargs')
-
-    output = instruction["output"](input_argv)
-    if len(input_argv) == 1:
-        warning("Not enough arguments")
-        usage(1, output["name"])
-    else:
-        for i in range(1, len(input_argv)):
-            verboseprint("Index:", i, input_argv, output)
-            if len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
-                try:
-                    verboseprint(instruction["long"][input_argv[i]])
-                    output = instruction["long"][input_argv[i]](output)
-                    verboseprint(output)
-                except KeyError:
-                    warning("Invalid argument", prefix='')
-                    usage(1, output["name"])
-
-            elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
-                for j in range(1, len(input_argv[i])):
-                    try:
-                        verboseprint(instruction["short"][input_argv[i][j]])
-                        output = instruction["short"][input_argv[i][j]](output)
-                        verboseprint(output)
-                    except KeyError:
-                        warning("Invalid argument", prefix='')
-                        usage(1, output["name"])
-
-            elif output["input"] is None:
-                output["input"] = input_argv[i]
-
-            else:
-                warning("Error parsing arguments")
-                verboseprint(
-                    output,
-                    input_argv,
-                    i,
-                    input_argv[i],
-                    output["input"])
-                usage(1, output["name"])
-
-    verboseprint('returning', output)
-    verboseprint('end processargs')
-    return output
-
-
 processed_args = processargs(sys.argv)
 
 if processed_args["verbose"]:
@@ -218,6 +139,9 @@ class mpd:
         verboseprint('mpd is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
+        self.dictionary = {'play': self.pause, 'pause': self.pause,
+                           'back': self.back, 'next': self.next,
+                           'quit': self.stop, 'stop': self.stop}
 
     def pause(self):
         verboseprint('mpd.pause has been called')
@@ -242,6 +166,10 @@ class pianobar:
         verboseprint('pianobar is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
+        self.dictionary = {'play': self.pause, 'pause': self.pause,
+                           'back': self.back, 'next': self.next,
+                           'quit': self.stop, 'stop': self.stop,
+                           'tired': self.tired}
 
     def pause(self):
         verboseprint('pianobar.pause has been called')
@@ -273,6 +201,9 @@ class playerctl:
         verboseprint('playerctl is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
+        self.dictionary = {'play': self.pause, 'pause': self.pause,
+                           'back': self.back, 'next': self.next,
+                           'quit': self.stop, 'stop': self.stop}
 
     def pause(self):
         verboseprint('playerctl.pause has been called')
@@ -326,22 +257,12 @@ def main(arguments):
     # second one is the specific command. It'll be the function to call. It's
     # possible to define commands that are specific to a
     # player.
-    piano = pianobar(arguments)
-    pianobar_dict = {'play': piano.pause, 'pause': piano.pause,
-                     'back': piano.back, 'next': piano.next,
-                     'quit': piano.stop, 'stop': piano.stop,
-                     'tired': piano.tired}
+    pianobar_class = pianobar(arguments)
     mpd_class = mpd(arguments)
-    mpd_dict = {'play': mpd_class.pause, 'pause': mpd_class.pause,
-                'back': mpd_class.back, 'next': mpd_class.next,
-                'quit': mpd_class.stop, 'stop': mpd_class.stop}
-    generic_player = playerctl(arguments)
-    playerctl_dict = {'play': generic_player.pause,
-                      'pause': generic_player.pause,
-                      'back': generic_player.back, 'next': generic_player.next,
-                      'quit': generic_player.stop, 'stop': generic_player.stop}
-    commands = {'pianobar': pianobar_dict, 'mpd': mpd_dict,
-                'playerctl': playerctl_dict}
+    playerctl_class = playerctl(arguments)
+    commands = {'pianobar': pianobar_class.dictionary,
+                'mpd': mpd_class.dictionary,
+                'playerctl': playerctl_class.dictionary}
     verboseprint(commands)
     if arguments["input"] == "commands":
         get_keys(commands)
