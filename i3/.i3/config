@@ -266,6 +266,7 @@ bindsym $mod+Shift+p exec --no-startup-id redshift.sh
 # Startup Applications autostart
 
 exec_always --no-startup-id monitor-layout.sh
+exec --no-startup-id setxkbmap -option caps:escape
 exec --no-startup-id urxvtd.sh
 exec --no-startup-id unlock-keyring.py
 exec_always --no-startup-id compton --config ~/.i3/compton.conf --use-ewmh-active-win
