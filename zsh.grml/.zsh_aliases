@@ -29,6 +29,7 @@ if [ $UID -ne 0 ]; then
     alias reboot='systemctl reboot'
     alias poweroff='systemctl poweroff'
     alias update='update.sh'
+    alias backup='screen backup.sh'
     alias netctl='sudo netctl'
     alias wifi-menu='sudo wifi-menu'
 fi
