@@ -181,7 +181,7 @@ class pianobar:
 
     def next(self):
         verboseprint('pianobar.next has been called')
-        os.system(self.system_prefix + 'pianoctl -' + self.system_suffix)
+        os.system(self.system_prefix + 'pianoctl n' + self.system_suffix)
 
     def stop(self):
         verboseprint('pianobar.stop has been called')
@@ -266,6 +266,7 @@ def main(arguments):
     verboseprint(commands)
     if arguments["input"] == "commands":
         get_keys(commands)
+
     # Catching a KeyError should prevent this from exploding over the user
     # giving invalid input, though it also prevents bad players from being
     # spotted. So make sure all new players are followed by thorough testing,
