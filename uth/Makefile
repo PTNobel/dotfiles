@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= 
+CFLAGS=-Wall
 SOURCES=main.c
 EXECUTABLE=update_tools_helper
 
