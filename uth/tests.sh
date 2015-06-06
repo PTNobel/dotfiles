@@ -10,14 +10,12 @@ if ! [ -x update_tools_helper ] ; then
 fi
 
 _test(){
-for i in $(strings update_tools_helper | grep bin); do
-    if echo $i | grep \- >/dev/null; then
-        true
-    else
-        [ -x $i ] || echo can\'t find $i. 1>&2
-        [ -x $i ] || exit 1
+  while read line; do
+    if ! [[ -x "$(echo "$line" | cut -f 1 -d ' ')" ]]; then
+      echo can\'t find "$(echo "$line" | cut -f 1 -d ' ')" 1>&2
+      exit 1
     fi
-done
+  done  < <(strings update_tools_helper | grep bin)
 }
 
 _test || exit 2
