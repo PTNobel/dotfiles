@@ -39,6 +39,10 @@ man_u() {
   /usr/local/bin/update_tools_helper man &>> "$OUTPUT_FILE"
 }
 
+units_cur_u() {
+  /usr/local/bin/update_tools_helper units &>> "$OUTPUT_FILE"
+}
+
 alpm() {
   until /usr/local/bin/update_tools_helper alpm ; do sleep 1 ; done
 }
@@ -78,10 +82,14 @@ echo "starting update of man database"
 man_u &
 PID6=$!
 
-yaourt_wrapper -C
+echo "starting update of units database"
+units_cur_u &
 PID7=$!
+
+yaourt_wrapper -C
+PID8=$!
 
 tail -n"$( wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
 
-wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7
+wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8
 exit_routine
