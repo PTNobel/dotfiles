@@ -7,7 +7,7 @@
 int usage(char *argv[] ) 
 {
     printf(argv[0]);
-    printf(": update_tools_helper {abs|alpm|man|mlocate|pkgfile}\n");
+    printf(": update_tools_helper {abs|alpm|man|mlocate|pkgfile|units}\n");
     return 0;
 }
 
@@ -17,6 +17,7 @@ int main( int argc, char *argv[] )
         usage(argv);
         return 1;
     }
+
     else if( strcmp(argv[1],"abs") == 0 )
     {
         setuid( 0 );
@@ -49,6 +50,13 @@ int main( int argc, char *argv[] )
     {
       setuid( 0 );
       system( "/usr/bin/pkgfile -u" );
+      return 0;
+    }
+
+    else if( strcmp(argv[1],"units") == 0 )
+    {
+      setuid( 0 );
+      system( "/usr/bin/units_cur" );
       return 0;
     }
 
