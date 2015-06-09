@@ -2,7 +2,7 @@
 #
 # keeps icecat running.
 
-for i in $(pidof -x firefox.sh -o %PPID) ; do
+for i in $(pidof -x icecat.sh -o %PPID) ; do
   if strings /proc/"$i"/environ | grep DISPLAY | grep "${DISPLAY}" >/dev/null ; then
     kill "$i"
   fi

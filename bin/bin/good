@@ -37,7 +37,7 @@ bad_func() {
 good_func() {
   case "$1" in
     night)
-      echo 'Powering down' ; sleep 5 && systemctl poweroff -i "$2"
+      echo 'Powering down' ; sleep 5 && systemctl poweroff -i
       ;;
     morning)
       update.sh
