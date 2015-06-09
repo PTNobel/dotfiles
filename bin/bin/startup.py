@@ -4,7 +4,6 @@ import os
 import sys
 import datetime
 import time
-import re
 
 
 # Usage: warning(as, many, objects, as, desired)
@@ -22,7 +21,8 @@ def warning(*objs):
 # Usage: processargs(argv), where argv is a list() of arguments, example,
 # sys.argv
 def processargs(argv):
-    output = {"weekly": None, "verbose": None, "bootstrap": None, "force": None}
+    output = {"weekly": None, "verbose": None,
+              "bootstrap": None, "force": None}
     for i in argv:
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
@@ -56,21 +56,19 @@ else:
 # running. This helps fight issues with multiple instances of startup.py
 # launching processes repeatedly.
 def check_if_pid_is_startuppy(pidnum):
-    comm_check = re.findall(
-        r"startup", str(
-            open(
-                os.path.join(
-                    '/proc', pidnum, 'comm'), 'rb').read()))
-    python_check = re.findall(
-        r"python", str(
-            open(
-                os.path.join(
-                    '/proc', pidnum, 'cmdline'), 'rb').read()))
-
-    if comm_check == [] or python_check == []:
-        return False
-    else:
-        return True
+    return "startup" in str(
+        open(
+            os.path.join(
+                '/proc',
+                pidnum,
+                'comm'),
+            'rb').read()) and "python" in str(
+        open(
+            os.path.join(
+                '/proc',
+                pidnum,
+                'cmdline'),
+            'rb').read())
 
 pids = [
     pid
@@ -85,6 +83,7 @@ if os.getpid() in pids:
         'Something\'s weird... pids containts os.getpid()',
         pids,
         os.getpid())
+    exit(255)
 
 for pid in pids:
     try:
