@@ -6,7 +6,7 @@ set -e
 set -u
 
 keep_computer_awake() {
-  systemd-inhibit bash -c "while [[ -f /tmp/backup.lock ]] ; do sleep 60 ; done"
+  setsid systemd-inhibit bash -c "while [[ -f /tmp/backup.lock ]] ; do sleep 60 ; done" &
 }
 
 exit() {
@@ -20,21 +20,24 @@ DESTINATION=$PRIMARY_DIRECTORY_ntfs/Backups
 DUPLICITY_DESTINATION=file://${PRIMARY_DIRECTORY}/Duplicity
 export PRIMARY_DIRECTORY PRIMARY_DIRECTORY_ntfs DESTINATION DUPLICITY_DESTINATION
 
-touch /tmp/backup.lock
-keep_computer_awake &
+if [[ -f /tmp/backup.lock ]] ; then echo lock file is present ; builtin exit ;
+else touch /tmp/backup.lock; fi
+echo "Made lock file"
+keep_computer_awake
 
 backup_home() {
   # No files/directories should be hardcoded
   echo starting backup.
+  mv $DESTINATION $PRIMARY_DIRECTORY_ntfs/"$USER"
   sh -c "rsync -apv --delete --exclude=.cache $HOME $PRIMARY_DIRECTORY_ntfs; true"
   echo "$USER" > $PRIMARY_DIRECTORY_ntfs/"$USER"/"$USER"
+  mv $PRIMARY_DIRECTORY_ntfs/"$USER" $DESTINATION
 }
+
 main() {
 if [ -d "$PRIMARY_DIRECTORY/" ]; then
   if [ -f $DESTINATION/"$USER" ]; then
-    mv $DESTINATION $PRIMARY_DIRECTORY_ntfs/"$USER"
     backup_home &
-
   else
     echo $DESTINATION not authorized for write by current user ; exit 2
   fi
@@ -42,7 +45,6 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
   echo starting duplicity #; notify-send duplicity started
   bash -c 'duplicity incremental --allow-source-mismatch --no-encryption "$HOME" $DUPLICITY_DESTINATION ; true' &
   wait
-  mv $PRIMARY_DIRECTORY_ntfs/"$USER" $DESTINATION
   # Cleaning up.
   cd /media
   if udevil umount $PRIMARY_DIRECTORY && udevil umount $PRIMARY_DIRECTORY_ntfs; then
