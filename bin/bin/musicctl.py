@@ -226,15 +226,9 @@ class playerctl:
 
 def which_player():
     output = str()
-    pids = [pid for pid in os.listdir
-            ('/proc') if pid.isdigit()]
-    processes = list()
-    for pid in pids:
-        verboseprint(pid)
-        # [:-1] to remove the '\n' at the end of every comm file.
-        processes.append(open(os.path.join
-                              ('/proc', pid, 'comm'),
-                              'r').read()[:-1])
+    processes = [open(os.path.join('/proc', pid, 'comm'), 'r').read()[:-1]
+                 for pid in os.listdir('/proc') if pid.isdigit()]
+
     verboseprint(processes)
 
     if 'mpd' in processes:
