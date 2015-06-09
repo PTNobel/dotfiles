@@ -126,11 +126,11 @@ else:
 
 
 def get_keys(command_dict):
-    for i in sorted(list(command_dict)):
+    for i in sorted(command_dict.keys()):
         print("For player " + i + " the following commands are available:")
-        for j in sorted(list(command_dict[i])):
+        for j in sorted(command_dict[i].keys()):
             print("   " + j)
-    usage(-1, '')
+    usage(-256, '')
 
 
 class mpd:
@@ -139,9 +139,9 @@ class mpd:
         verboseprint('mpd is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
-        self.dictionary = {'play': self.pause, 'pause': self.pause,
-                           'back': self.back, 'next': self.next,
-                           'quit': self.stop, 'stop': self.stop}
+        self.commands = {'mpd': {'play': self.pause, 'pause': self.pause,
+                                 'back': self.back, 'next': self.next,
+                                 'quit': self.stop, 'stop': self.stop}}
 
     def pause(self):
         verboseprint('mpd.pause has been called')
@@ -166,16 +166,16 @@ class pianobar:
         verboseprint('pianobar is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
-        self.dictionary = {'play': self.pause, 'pause': self.pause,
-                           'back': self.back, 'next': self.next,
-                           'quit': self.stop, 'stop': self.stop,
-                           'tired': self.tired}
+        self.commands = {'pianobar': {'play': self.pause, 'pause': self.pause,
+                                      'back': self.like, 'next': self.next,
+                                      'quit': self.stop, 'stop': self.stop,
+                                      'tired': self.tired, 'like': self.like}}
 
     def pause(self):
         verboseprint('pianobar.pause has been called')
         os.system(self.system_prefix + 'pianoctl p' + self.system_suffix)
 
-    def back(self):
+    def like(self):
         verboseprint('pianobar.back has been called')
         os.system(self.system_prefix + 'pianoctl +' + self.system_suffix)
 
@@ -201,9 +201,9 @@ class playerctl:
         verboseprint('playerctl is being inited')
         self.system_prefix = processed_args['test_mode_prefix']
         self.system_suffix = processed_args['test_mode_suffix']
-        self.dictionary = {'play': self.pause, 'pause': self.pause,
-                           'back': self.back, 'next': self.next,
-                           'quit': self.stop, 'stop': self.stop}
+        self.commands = {'playerctl': {'play': self.pause, 'pause': self.pause,
+                                       'back': self.back, 'next': self.next,
+                                       'quit': self.stop, 'stop': self.stop}}
 
     def pause(self):
         verboseprint('playerctl.pause has been called')
@@ -224,6 +224,35 @@ class playerctl:
         os.system(self.system_prefix + 'playerctl stop' + self.system_suffix)
 
 
+def which_player():
+    output = str()
+    pids = [pid for pid in os.listdir
+            ('/proc') if pid.isdigit()]
+    processes = list()
+    for pid in pids:
+        verboseprint(pid)
+        # [:-1] to remove the '\n' at the end of every comm file.
+        processes.append(open(os.path.join
+                              ('/proc', pid, 'comm'),
+                              'r').read()[:-1])
+    verboseprint(processes)
+
+    if 'mpd' in processes:
+        # pianobar get priority over mpd, unless mpd is playing.
+        if 'pianobar' in processes:
+            if os.system("mpc status | grep playing &>/dev/null") == 0:
+                output = "mpd"
+            else:
+                output = "pianobar"
+        else:
+            output = "mpd"
+    elif 'pianobar' in processes:
+        output = "pianobar"
+    else:
+        output = 'playerctl'
+    return output
+
+
 def main(arguments):
     verboseprint('main() starting')
     verboseprint(arguments)
@@ -232,37 +261,18 @@ def main(arguments):
         usage(0, arguments["name"])
 
     # Figure out what player is running.
-    if os.system("pidof mpd >/dev/null") == 0:
-        # pianobar get priority over mpd, unless mpd is playing.
-        if os.system("pidof pianobar >/dev/null") == 0:
-            if os.system("mpc status | grep playing &>/dev/null") == 0:
-                player = "mpd"
-
-            else:
-                player = "pianobar"
-
-        else:
-            player = "mpd"
-
-    elif os.system("pidof pianobar >/dev/null") == 0:
-        player = "pianobar"
-
-    else:
-        player = 'playerctl'
-
+    player = which_player()
     if arguments["input"] == "player":
         print(player)
         usage(-256, arguments['name'])
+
     # Create a two dimensional dictionary. first key specifies player and the
     # second one is the specific command. It'll be the function to call. It's
-    # possible to define commands that are specific to a
-    # player.
-    pianobar_class = pianobar(arguments)
-    mpd_class = mpd(arguments)
-    playerctl_class = playerctl(arguments)
-    commands = {'pianobar': pianobar_class.dictionary,
-                'mpd': mpd_class.dictionary,
-                'playerctl': playerctl_class.dictionary}
+    # possible to define commands that are specific to a player.
+    commands = dict()
+    for i in [pianobar(arguments), mpd(arguments), playerctl(arguments)]:
+        commands.update(i.commands)
+
     verboseprint(commands)
     if arguments["input"] == "commands":
         get_keys(commands)
