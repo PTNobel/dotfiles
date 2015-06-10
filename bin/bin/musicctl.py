@@ -226,8 +226,9 @@ class playerctl:
 
 def which_player():
     output = str()
-    processes = [open(os.path.join('/proc', pid, 'comm'), 'r').read()[:-1]
-                 for pid in os.listdir('/proc') if pid.isdigit()]
+    processes = [
+        open(os.path.join('/proc', pid, 'comm'), 'r').read().strip('\n')
+        for pid in os.listdir('/proc') if pid.isdigit()]
 
     verboseprint(processes)
 
