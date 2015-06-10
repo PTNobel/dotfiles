@@ -64,8 +64,9 @@ def processargs(input_argv):
     short_args_to_disc = {'h': help, 'v': verbose,
                           't': trial}
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
-              'test_mode_suffix': ' >/dev/null'}
-    output["name"] = input_argv[0]
+              'test_mode_suffix': ' >/dev/null', 'argv': input_argv,
+              "name": os.path.basename(input_argv[0]),
+              }
     if len(input_argv) == 1:
         warning("Not enough arguments")
         usage(1, output["name"])
