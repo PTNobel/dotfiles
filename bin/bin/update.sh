@@ -2,7 +2,7 @@
 #
 # Updates my system.
 
-if [[ -f /tmp/update.lock ]] ; then exit ; else touch /tmp/update.lock ; fi
+if [[ -f /tmp/update.lock ]] ; then exit 1 ; else touch /tmp/update.lock ; fi
 
 OUTPUT_FILE=$(mktemp)
 export OUTPUT_FILE
@@ -15,36 +15,45 @@ keep_computer_awake() {
 exit_routine() {
   #echo deleting OUTPUT_FILE and WATCHDOG_FILE
   rm "$OUTPUT_FILE" /tmp/update.lock
+  kill "$TAILPID"
+  sleep 5
   exit $?
 }
 
 backup() {
   backup.sh &>> "$OUTPUT_FILE" || notify-send "backup.sh failed"
+  echo backup >> /tmp/update.lock
 }
 
 mlocate() {
   /usr/local/bin/update_tools_helper mlocate &>> "$OUTPUT_FILE"
+  echo mlocate >> /tmp/update.lock
 }
 
 abs_u() {
   /usr/local/bin/update_tools_helper abs &>> "$OUTPUT_FILE"
+  echo abs >> /tmp/update.lock
 }
 
 pkgfile_u() {
   /usr/local/bin/update_tools_helper pkgfile &>> "$OUTPUT_FILE"
+  echo pkgfile >> /tmp/update.lock
 
 }
 
 man_u() {
   /usr/local/bin/update_tools_helper man &>> "$OUTPUT_FILE"
+  echo man >> /tmp/update.lock
 }
 
 units_cur_u() {
   /usr/local/bin/update_tools_helper units &>> "$OUTPUT_FILE"
+  echo units_cur >> /tmp/update.lock
 }
 
 alpm() {
   until /usr/local/bin/update_tools_helper alpm ; do sleep 1 ; done
+  echo alpm >> /tmp/update.lock
 }
 
 yaourt_wrapper() {
@@ -89,7 +98,9 @@ PID7=$!
 yaourt_wrapper -C
 PID8=$!
 
-tail -n"$( wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
+tail -n"$(wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
+export TAILPID=$!
 
 wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8
+echo wait finished.
 exit_routine
