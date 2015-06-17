@@ -1,9 +1,12 @@
 set nocompatible
-
+filetype off
+execute pathogen#infect()
+execute pathogen#helptags()
+filetype plugin indent on
+syntax on
 set ruler
 set number
 set vb
-filetype plugin indent on 
 set nocp
 set autoindent
 set expandtab
@@ -13,8 +16,6 @@ set cindent
 set ts=2
 set scrolloff=2
 set clipboard=unnamedplus
-execute pathogen#infect()
-"syntax on
 let g:SuperTabDefaultCompletionType = "context"
 let g:jedi#popup_on_dot = 0  " disables the autocomplete to popup whenever you press .
 au BufRead /tmp/mutt-* set tw=72
@@ -51,7 +52,7 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 let g:pymode_rope_lookup_project = 0
 let g:pymode_rope = 0
 let g:pymode_python = 'python3'
-
+let g:pymode_lint_options_mccabe = {'complexity': 30}
 set undofile
 set undodir=~/.vim/undodir
 
