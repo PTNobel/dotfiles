@@ -177,8 +177,8 @@ function! s:SetUpKeyMappings()
     let invoke_key = g:ycm_key_invoke_completion
 
     " Inside the console, <C-Space> is passed as <Nul> to Vim
-    if invoke_key ==# '<C-Space>' && !has('gui_running')
-      let invoke_key = '<Nul>'
+    if invoke_key ==# '<C-Space>'
+      imap <Nul> <C-Space>
     endif
 
     " <c-x><c-o> trigger omni completion, <c-p> deselects the first completion
@@ -423,7 +423,10 @@ endfunction
 function! s:SetCompleteFunc()
   let &completefunc = 'youcompleteme#Complete'
   let &l:completefunc = 'youcompleteme#Complete'
+endfunction
 
+
+function! s:SetOmnicompleteFunc()
   if pyeval( 'ycm_state.NativeFiletypeCompletionUsable()' )
     let &omnifunc = 'youcompleteme#OmniComplete'
     let &l:omnifunc = 'youcompleteme#OmniComplete'
@@ -505,6 +508,11 @@ function! s:OnInsertEnter()
     return
   endif
 
+  if get( b:, 'ycm_omnicomplete', 0 )
+    let b:ycm_omnicomplete = 1
+    call s:SetOmnicompleteFunc()
+  endif
+
   let s:old_cursor_position = []
 endfunction
 
@@ -559,8 +567,7 @@ endfunction
 
 function! s:UpdateDiagnosticNotifications()
   let should_display_diagnostics = g:ycm_show_diagnostics_ui &&
-        \ s:DiagnosticUiSupportedForCurrentFiletype() &&
-        \ pyeval( 'ycm_state.NativeFiletypeCompletionUsable()' )
+        \ s:DiagnosticUiSupportedForCurrentFiletype()
 
   if !should_display_diagnostics
     return
