@@ -55,50 +55,53 @@ else:
 # Begin checking to make sure this is the only version of startup.py to be
 # running. This helps fight issues with multiple instances of startup.py
 # launching processes repeatedly.
-def check_if_pid_is_startuppy(pidnum):
-    return "startup" in str(
-        open(
-            os.path.join(
-                '/proc',
-                pidnum,
-                'comm'),
-            'rb').read()) and "python" in str(
-        open(
-            os.path.join(
-                '/proc',
-                pidnum,
-                'cmdline'),
-            'rb').read())
+def are_there_other_startuppy():
+    def check_if_pid_is_startuppy(pidnum):
+        return "startup" in str(
+            open(
+                os.path.join(
+                    '/proc',
+                    pidnum,
+                    'comm'),
+                'rb').read()) and "python" in str(
+            open(
+                os.path.join(
+                    '/proc',
+                    pidnum,
+                    'cmdline'),
+                'rb').read())
 
-pids = [
-    pid
-    for pid in os.listdir
-    ('/proc') if pid.isdigit() and pid != str(os.getpid())]
+    pids = [
+        pid
+        for pid in os.listdir
+        ('/proc') if pid.isdigit() and pid != str(os.getpid())]
 
-verboseprint(pids)
-verboseprint(str(os.getpid()))
+    verboseprint(pids)
+    verboseprint(str(os.getpid()))
 
-if os.getpid() in pids:
-    verboseprint(
-        'Something\'s weird... pids containts os.getpid()',
-        pids,
-        os.getpid())
-    exit(255)
+    if os.getpid() in pids:
+        verboseprint(
+            'Something\'s weird... pids containts os.getpid()',
+            pids,
+            os.getpid())
+        exit(255)
 
-for pid in pids:
-    try:
-        verboseprint(pid)
-        if pid == str(os.getpid()):
-            print('This script')
-        verboseprint(open(os.path.join('/proc/', pid, 'cmdline'), 'rb').read())
-        while check_if_pid_is_startuppy(pid):
-            warning("Is there another " + sys.argv[0] + " running?")
-            time.sleep(60)
-        else:
-            verboseprint(pid + " is not startup.py")
-    except IOError:  # proc has already terminated
-        verboseprint(pid + " has terminated")
-        continue
+    for pid in pids:
+        try:
+            verboseprint(pid)
+            if pid == str(os.getpid()):
+                print('This script')
+            verboseprint(open(os.path.join('/proc/', pid, 'cmdline'), 'rb')
+                         .read())
+            while check_if_pid_is_startuppy(pid):
+                warning("Is there another " + os.path.basename(sys.argv[0]) +
+                        " running?")
+                time.sleep(60)
+            else:
+                verboseprint(pid + " is not startup.py")
+        except IOError:  # proc has already terminated
+            verboseprint(pid + " has terminated")
+            continue
 
 
 # removes unnecessary characters from a list.
@@ -136,7 +139,9 @@ def success(commands, run_log_str):
     run_log.close()
 
 
-def main():
+def main(arguements):
+    are_there_other_startuppy()
+
     # Variable definitions this should cover everything.
     date_log = os.environ['HOME'] + "/.parth/date.log"
     autostart = os.environ['HOME'] + "/.i3/autostart"
@@ -200,4 +205,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(arguements)
