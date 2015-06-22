@@ -22,7 +22,7 @@ def warning(*objs):
 # sys.argv
 def processargs(argv):
     output = {"weekly": None, "verbose": None,
-              "bootstrap": None, "force": None}
+              "bootstrap": None, "force": None, 'try-full-boot': False}
     for i in argv:
         if i == "-v" or i == "--verbose":
             output["verbose"] = True
@@ -32,6 +32,8 @@ def processargs(argv):
             output["force"] = True
         elif i == "-w":
             output["weeky"] = True
+        elif i == "-a":
+            output["try-full-boot"] = True
     return output
 
 arguements = processargs(sys.argv)
@@ -182,7 +184,7 @@ def main(arguements):
         command_list += weekly
         success(command_list, run_log_name)
 
-    elif run_log_name in os.listdir('/tmp'):
+    elif run_log_name in os.listdir('/tmp')and not arguements["try-full-boot"]:
         warning('Already ran')
         exit(8)
 
