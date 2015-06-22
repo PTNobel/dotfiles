@@ -59,15 +59,22 @@ def processargs(input_argv):
         output["test_mode_suffix"] = ''
 
     def player():
-        output["player"] = input_argv[i].split('=')[1]
+        if '=' in input_argv[i]:
+            output["player"] = input_argv[i].split('=')[1]
+        else:
+            output["player"] = input_argv[i + 1]
+            indexes_to_ignore.append(i + 1)
 
     long_args_to_disc = {'--help': help, '--verbose': verbose,
                          '--trial': trial, '--player': player}
-    short_args_to_disc = {'h': help, 'v': verbose, 't': trial}
+    short_args_to_disc = {'h': help, 'v': verbose, 't': trial,
+                          'p': player}
     output = {"verbose": None, "input": None, 'test_mode_prefix': '',
               'test_mode_suffix': ' >/dev/null',
               "name": os.path.basename(input_argv[0]), "player": None,
               }
+    indexes_to_ignore = list()
+
     if len(input_argv) == 1:
         warning("Not enough arguments")
         usage(1, output['name'])
@@ -75,7 +82,10 @@ def processargs(input_argv):
         # range() starts at 1 to prevent the name from being processed.
         for i in range(1, len(input_argv)):
             verboseprint("Index:", i, input_argv, output)
-            if len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
+            if i in indexes_to_ignore:
+                continue
+
+            elif len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
                 try:
                     verboseprint(long_args_to_disc[
                         input_argv[i].split('=')[0]])
