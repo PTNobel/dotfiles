@@ -7,10 +7,12 @@ import os
 import sys
 
 
+# warning() functions like print, except it prefixes everything and prints to
+# stderr.
 def warning(*objs, prefix='WARNING: '):
     printed_list = str(prefix)
     for i in objs:
-        printed_list += i
+        printed_list += str(i)
     print(printed_list, file=sys.stderr)
 
 
@@ -29,13 +31,14 @@ def usage(exit_code, name):
     exit(exit_code)
 
 
+# setting VERBOSE to 1 in environ, will turn verbose mode on, during
+# processargs().
 if os.getenv('VERBOSE') == '1':
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
         # everything to be printed into a string.
         for arg in args:
             print(arg)
-
 
 else:
     def verboseprint(*args):
@@ -47,6 +50,8 @@ verboseprint("Defining verboseprint")
 def processargs(input_argv):
     verboseprint('start proccessargs')
 
+    # All of these run in the same scope as processargs(). They make canges to
+    # output.
     def help():
         usage(0, output['name'])
 
@@ -65,13 +70,18 @@ def processargs(input_argv):
             output["player"] = input_argv[i + 1]
             indexes_to_ignore.append(i + 1)
 
+    # In place of a switch-case statement the following dictionaires link argv
+    # entries to functions.
     long_args_to_disc = {'--help': help, '--verbose': verbose,
                          '--trial': trial, '--player': player}
     short_args_to_disc = {'h': help, 'v': verbose, 't': trial,
                           'p': player}
-    output = {"verbose": None, "input": None, 'test_mode_prefix': '',
-              'test_mode_suffix': ' >/dev/null',
-              "name": os.path.basename(input_argv[0]), "player": None,
+    output = {"verbose": None,
+              "input": None,
+              "test_mode_prefix": '',
+              "test_mode_suffix": ' >/dev/null',
+              "name": os.path.basename(input_argv[0]),
+              "player": None,
               }
     indexes_to_ignore = list()
 
@@ -87,11 +97,11 @@ def processargs(input_argv):
 
             elif len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
                 try:
-                    verboseprint(long_args_to_disc[
-                        input_argv[i].split('=')[0]])
                     long_args_to_disc[input_argv[i].split('=')[0]]()
                     verboseprint(output)
                 except KeyError:
+                    verboseprint(long_args_to_disc[
+                        input_argv[i].split('=')[0]])
                     verboseprint(input_argv[i].split('=')[0])
                     warning("Invalid argument", prefix='')
                     usage(1, output['name'])
@@ -99,10 +109,10 @@ def processargs(input_argv):
             elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
                 for j in range(1, len(input_argv[i])):
                     try:
-                        verboseprint(short_args_to_disc[input_argv[i][j]])
                         short_args_to_disc[input_argv[i][j]]()
                         verboseprint(output)
                     except KeyError:
+                        verboseprint(short_args_to_disc[input_argv[i][j]])
                         warning("Invalid argument", prefix='')
                         usage(1, output['name'])
 
@@ -135,7 +145,6 @@ if arguments["verbose"]:
             print(arg)
     verboseprint("Defining verboseprint")
 
-
 else:
     def verboseprint(*args):
         return
@@ -148,6 +157,34 @@ def get_keys(command_dict):
             print("   " + j)
 
     exit(0)
+
+
+class generic:
+
+    def __init__(self):
+        verboseprint('generic is being inited')
+        self.system_prefix = arguments['test_mode_prefix']
+        self.system_suffix = arguments['test_mode_suffix']
+        self.commands = {'generic': {'play': self.pause, 'pause': self.pause,
+                                     'back': self.back, 'next': self.next,
+                                     'quit': self.stop, 'stop': self.stop,
+                                     }}
+
+    def pause(self):
+        verboseprint('generic.pause has been called')
+        os.system(self.system_prefix + '' + self.system_suffix)
+
+    def back(self):
+        verboseprint('generic.back has been called')
+        os.system(self.system_prefix + '' + self.system_suffix)
+
+    def next(self):
+        verboseprint('generic.next has been called')
+        os.system(self.system_prefix + '' + self.system_suffix)
+
+    def stop(self):
+        verboseprint('generic.stop has been called')
+        os.system(self.system_prefix + '' + self.system_suffix)
 
 
 class mpd:
