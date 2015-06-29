@@ -50,7 +50,7 @@ verboseprint("Defining verboseprint")
 def processargs(input_argv):
     verboseprint('start proccessargs')
 
-    # All of these run in the same scope as processargs(). They make canges to
+    # All of these run in the same scope as processargs(). They make changes to
     # output.
     def help():
         usage(0, output['name'])
@@ -74,8 +74,7 @@ def processargs(input_argv):
     # entries to functions.
     long_args_to_disc = {'--help': help, '--verbose': verbose,
                          '--trial': trial, '--player': player}
-    short_args_to_disc = {'h': help, 'v': verbose, 't': trial,
-                          'p': player}
+    short_args_to_disc = {'h': help, 'v': verbose, 't': trial, 'p': player}
     output = {"verbose": None,
               "input": None,
               "test_mode_prefix": '',
@@ -159,6 +158,7 @@ def get_keys(command_dict):
     exit(0)
 
 
+''' # An example implementation of a player class
 class generic:
 
     def __init__(self):
@@ -185,6 +185,9 @@ class generic:
     def stop(self):
         verboseprint('generic.stop has been called')
         os.system(self.system_prefix + '' + self.system_suffix)
+
+
+'''
 
 
 class mpd:
@@ -279,13 +282,27 @@ class playerctl:
 
 
 def which_player(arguments):
+    def get_comm_of_pid(pid):
+        try:
+            comm_file = open(os.path.join('/proc', pid, 'comm'), 'r')
+            comm = comm_file.read().rstrip('\n')
+        except FileNotFoundError:
+            comm = None
+        return comm
+
+    def list_pids():
+        return [pid for pid in os.listdir('/proc') if pid.isdigit()]
+
     output = str()
     if arguments['player'] is not None:
         output = arguments['player']
     else:
         processes = [
-            open(os.path.join('/proc', pid, 'comm'), 'r').read().strip('\n')
-            for pid in os.listdir('/proc') if pid.isdigit()]
+            comm
+            for comm in
+            map(get_comm_of_pid,
+                [pid for pid in os.listdir('/proc') if pid.isdigit()])
+            if comm is not None]
 
         verboseprint(processes)
 
