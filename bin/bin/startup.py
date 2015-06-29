@@ -2,7 +2,7 @@
 
 import os
 import sys
-import datetime
+import datetime as dt
 import time
 
 
@@ -117,7 +117,7 @@ def clean_list(input_list):
 
 # writes today's date to a log file.
 def update_log(log):
-    today = str(datetime.date.today())
+    today = str(dt.date.today())
     log_file_writeable = open(log, 'w')
     log_file_writeable.write(today)
     log_file_writeable.close()
@@ -152,8 +152,8 @@ def main(arguements):
     date_log_file = open(date_log, 'r')
     log_value = date_log_file.read()
     date_log_file.close()
-    today = str(datetime.date.today())
-    current_hour = int(str(datetime.datetime.now().time())[0:2])
+    today = str(dt.date.today())
+    current_hour = int(str(dt.datetime.now().time())[0:2])
     autostart_file_list = open(autostart, 'r')
     bootstrap_file_list = open(bootstrap, 'r')
     weekly_file_list = open(week, 'r')
@@ -195,7 +195,7 @@ def main(arguements):
         success(bootstrap_commands, run_log_name)
 
     elif log_value != today:
-        if datetime.date.today().weekday() == 5:
+        if dt.date.today().weekday() == 5:
             command_list += weekly
         update_log(date_log)
         success(command_list, run_log_name)
