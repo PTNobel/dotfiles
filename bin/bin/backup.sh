@@ -20,8 +20,8 @@ DESTINATION=$PRIMARY_DIRECTORY_ntfs/Backups
 DUPLICITY_DESTINATION=file://${PRIMARY_DIRECTORY}/Duplicity
 export PRIMARY_DIRECTORY PRIMARY_DIRECTORY_ntfs DESTINATION DUPLICITY_DESTINATION
 
-if [[ -f ~/.backup.block ]] ; then cat ~/.backup.block ; builtin exit ; fi
-if [[ -f /tmp/backup.lock ]] ; then echo lock file is present ; builtin exit ;
+if [[ -f ~/.backup.block ]] ; then cat ~/.backup.block ; builtin exit 1; fi
+if [[ -f /tmp/backup.lock ]] ; then echo lock file is present ; builtin exit 1;
 else touch /tmp/backup.lock; fi
 echo "Made lock file"
 keep_computer_awake
