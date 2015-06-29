@@ -102,5 +102,6 @@ tail -n"$(wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
 export TAILPID=$!
 
 wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8
+sleep 3
 echo wait finished.
 exit_routine
