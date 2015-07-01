@@ -3,6 +3,7 @@
 # A python3 port of musicctl.sh.
 
 import time
+import shutil
 import os
 import sys
 
@@ -226,7 +227,9 @@ class pianobar:
         self.commands = {'pianobar': {'play': self.pause, 'pause': self.pause,
                                       'back': self.like, 'next': self.next,
                                       'quit': self.stop, 'stop': self.stop,
-                                      'tired': self.tired, 'like': self.like}}
+                                      'tired': self.tired, 'like': self.like,
+                                      'dislike': self.dislike,
+                                      'is_playing': self.is_playing}}
 
     def pause(self):
         verboseprint('pianobar.pause has been called')
@@ -235,6 +238,10 @@ class pianobar:
     def like(self):
         verboseprint('pianobar.back has been called')
         os.system(self.system_prefix + 'pianoctl +' + self.system_suffix)
+
+    def dislike(self):
+        verboseprint('pianobar.back has been called')
+        os.system(self.system_prefix + 'pianoctl -' + self.system_suffix)
 
     def next(self):
         verboseprint('pianobar.next has been called')
@@ -250,6 +257,36 @@ class pianobar:
     def tired(self):
         verboseprint('pianobar.tired has been called')
         os.system(self.system_prefix + 'pianoctl t' + self.system_suffix)
+
+    def is_playing(self):
+        """Currently broken"""
+        shutil.copy(os.path.expanduser('~/.config/pianobar/out'),
+                    os.path.expanduser('/dev/shm/out.1'))
+        time.sleep(2)
+        shutil.copy(os.path.expanduser('~/.config/pianobar/out'),
+                    os.path.expanduser('/dev/shm/out.2'))
+        log1 = open('/dev/shm/out.1', 'rb')
+        log2 = open('/dev/shm/out.2', 'rb')
+        print(log1.read()[0:-8], log2.read()[0:-8])
+        if log1.read()[:-8] == log2.read()[:-8]:
+            log1.close()
+            log2.close()
+            exit(1)
+        else:
+            log1.close()
+            log2.close()
+            exit(0)
+        print(os.system("""
+                  export LOGFILE_1=$(mktemp)
+                  export LOGFILE_2=$(mktemp)
+                  tail -n1 ~/.config/pianobar/out >> $LOGFILE_1
+                  sleep 2
+                  tail -n1 ~/.config/pianobar/out >> $LOGFILE_2
+                  diff $LOGFILE_1 $LOGFILE_2 &>/dev/null
+                  export EXIT=$?
+                  echo $EXIT
+                  echo $EXIT
+                  """))
 
 
 class playerctl:
