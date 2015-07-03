@@ -74,6 +74,23 @@ self_quit() {
   self_stop
 }
 
+self_is_playing() {
+  get_player
+  if [ "$player" == "pianobar" ]; then
+    LOGFILE_1="$(mktemp)"
+    LOGFILE_2="$(mktemp)"
+    strings  ~/.config/pianobar/out | tail -n1 >> "$LOGFILE_1"
+    sleep 2
+    strings  ~/.config/pianobar/out | tail -n1 >> "$LOGFILE_2"
+    if ! diff "$LOGFILE_1" "$LOGFILE_2" ; then EXIT=0; else EXIT=1;fi #&>/dev/null
+    rm "$LOGFILE_1" "$LOGFILE_2"
+    exit $EXIT
+  elif [ "$player" == "mpd" ]; then
+    mpc status | grep playing
+    exit $?
+  fi
+}
+
 self_usage() {
   printf "Usage:
   %s pause
