@@ -183,7 +183,8 @@ bar {
         mode hide
 }
 
-
+# ease tmux use pass $mod+b as Ctrl+b
+bindsym $mod+b exec --no-startup-id control_b
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pulsectl up #increase sound volume
@@ -243,7 +244,7 @@ bindsym $mod+Shift+b exec --no-startup-id keyboard.sh
 bindsym $mod+Shift+v exec --no-startup-id touchpad.sh
 
 # Blur screen
-bindsym $mod+b exec --no-startup-id i3exit blur_with_sleep
+bindsym $mod+z exec --no-startup-id i3exit blur_with_sleep
 # Calculator
 bindsym $mod+c exec urxvt -e calc -d
 
