@@ -378,14 +378,14 @@ def main(arguments):
     if arguments["input"] == "usage" or arguments["input"] == "help":
         usage(0, arguments['name'])
 
+    if arguments["input"] == "commands":
+        get_keys([pianobar(), mpd(), playerctl()])
+
     # Figure out what player is running.
     player = which_player(arguments)
     if arguments["input"] == "player":
         print(player.name)
         exit(0)
-
-    if arguments["input"] == "commands":
-        get_keys([pianobar(), mpd(), playerctl()])
 
     # Catching a KeyError should prevent this from exploding over the user
     # giving invalid input.
