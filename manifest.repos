@@ -6,6 +6,7 @@ mpd
 pentadactyl
 screen
 systemd
+tmux
 vim
 X
 zsh.grml
