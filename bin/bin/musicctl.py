@@ -3,9 +3,9 @@
 # A python3 port of musicctl.sh.
 
 import time
-import shutil
 import os
 import sys
+import re
 
 
 # warning() functions like print, except it prefixes everything and prints to
@@ -150,10 +150,11 @@ else:
         return
 
 
-def get_keys(command_dict):
-    for i in sorted(command_dict.keys()):
-        print("For player " + i + " the following commands are available:")
-        for j in sorted(command_dict[i].keys()):
+def get_keys(list_of_classes):
+    for i in sorted(list_of_classes):
+        print("For player " + i.name +
+              " the following commands are available:")
+        for j in sorted(list_of_classes.commands.keys()):
             print("   " + j)
 
     exit(0)
@@ -166,10 +167,11 @@ class generic:
         verboseprint('generic is being inited')
         self.system_prefix = arguments['test_mode_prefix']
         self.system_suffix = arguments['test_mode_suffix']
-        self.commands = {'generic': {'play': self.pause, 'pause': self.pause,
-                                     'back': self.back, 'next': self.next,
-                                     'quit': self.stop, 'stop': self.stop,
-                                     }}
+        self.name = 'generic'
+        self.commands = {'play': self.pause, 'pause': self.pause,
+                         'back': self.back, 'next': self.next,
+                         'quit': self.stop, 'stop': self.stop,
+                         }
 
     def pause(self):
         verboseprint('generic.pause has been called')
@@ -197,9 +199,11 @@ class mpd:
         verboseprint('mpd is being inited')
         self.system_prefix = arguments['test_mode_prefix']
         self.system_suffix = arguments['test_mode_suffix']
-        self.commands = {'mpd': {'play': self.pause, 'pause': self.pause,
-                                 'back': self.back, 'next': self.next,
-                                 'quit': self.stop, 'stop': self.stop}}
+        self.name = 'mpd'
+        self.commands = {'play': self.pause, 'pause': self.pause,
+                         'back': self.back, 'next': self.next,
+                         'quit': self.stop, 'stop': self.stop,
+                         'is_playing': self.is_playing}
 
     def pause(self):
         verboseprint('mpd.pause has been called')
@@ -217,6 +221,9 @@ class mpd:
         verboseprint('mpd.stop has been called')
         os.system(self.system_prefix + 'mpc stop' + self.system_suffix)
 
+    def is_playing(self):
+        exit(os.system('mpc status | grep playing' + self.system_suffix))
+
 
 class pianobar:
 
@@ -224,12 +231,13 @@ class pianobar:
         verboseprint('pianobar is being inited')
         self.system_prefix = arguments['test_mode_prefix']
         self.system_suffix = arguments['test_mode_suffix']
-        self.commands = {'pianobar': {'play': self.pause, 'pause': self.pause,
-                                      'back': self.like, 'next': self.next,
-                                      'quit': self.stop, 'stop': self.stop,
-                                      'tired': self.tired, 'like': self.like,
-                                      'dislike': self.dislike,
-                                      'is_playing': self.is_playing}}
+        self.name = 'pianobar'
+        self.commands = {'play': self.pause, 'pause': self.pause,
+                         'back': self.like, 'next': self.next,
+                         'quit': self.stop, 'stop': self.stop,
+                         'tired': self.tired, 'like': self.like,
+                         'dislike': self.dislike,
+                         'is_playing': self.is_playing}
 
     def pause(self):
         verboseprint('pianobar.pause has been called')
@@ -259,34 +267,28 @@ class pianobar:
         os.system(self.system_prefix + 'pianoctl t' + self.system_suffix)
 
     def is_playing(self):
-        """Currently broken"""
-        shutil.copy(os.path.expanduser('~/.config/pianobar/out'),
-                    os.path.expanduser('/dev/shm/out.1'))
+        log1_time_stamp = self._get_time()
         time.sleep(2)
-        shutil.copy(os.path.expanduser('~/.config/pianobar/out'),
-                    os.path.expanduser('/dev/shm/out.2'))
-        log1 = open('/dev/shm/out.1', 'rb')
-        log2 = open('/dev/shm/out.2', 'rb')
-        print(log1.read()[0:-8], log2.read()[0:-8])
-        if log1.read()[:-8] == log2.read()[:-8]:
-            log1.close()
-            log2.close()
+        log2_time_stamp = self._get_time()
+        verboseprint(log1_time_stamp, log2_time_stamp,
+                     log1_time_stamp == log2_time_stamp)
+
+        if log1_time_stamp == log2_time_stamp:
             exit(1)
         else:
-            log1.close()
-            log2.close()
             exit(0)
-        print(os.system("""
-                  export LOGFILE_1=$(mktemp)
-                  export LOGFILE_2=$(mktemp)
-                  tail -n1 ~/.config/pianobar/out >> $LOGFILE_1
-                  sleep 2
-                  tail -n1 ~/.config/pianobar/out >> $LOGFILE_2
-                  diff $LOGFILE_1 $LOGFILE_2 &>/dev/null
-                  export EXIT=$?
-                  echo $EXIT
-                  echo $EXIT
-                  """))
+
+    def _get_time(self):
+        """Reads the pianobar time, and returns a str()
+        of syntax '##:##/##:##' if it can't do that it'll exit(1)"""
+        log = open(os.path.expanduser('~/.config/pianobar/out'), 'r')
+        time_stamp = log.read()[-12:-1]
+        log.close()
+        if re.match(r'^\d{2}:\d{2}/\d{2}:\d{2}$', time_stamp):
+            return time_stamp
+        else:
+            verboseprint('FAILED REGEX:', time_stamp)
+            exit(1)
 
 
 class playerctl:
@@ -295,9 +297,11 @@ class playerctl:
         verboseprint('playerctl is being inited')
         self.system_prefix = arguments['test_mode_prefix']
         self.system_suffix = arguments['test_mode_suffix']
-        self.commands = {'playerctl': {'play': self.pause, 'pause': self.pause,
-                                       'back': self.back, 'next': self.next,
-                                       'quit': self.stop, 'stop': self.stop}}
+        self.name = 'playerctl'
+        self.commands = {'play': self.pause, 'pause': self.pause,
+                         'back': self.back, 'next': self.next,
+                         'quit': self.stop, 'stop': self.stop,
+                         'is_playing': self.is_playing}
 
     def pause(self):
         verboseprint('playerctl.pause has been called')
@@ -317,6 +321,9 @@ class playerctl:
         verboseprint('playerctl.stop has been called')
         os.system(self.system_prefix + 'playerctl stop' + self.system_suffix)
 
+    def is_playing(self):
+        exit(os.system('playerctl status | grep Playing' + self.system_suffix))
+
 
 def which_player(arguments):
     def get_comm_of_pid(pid):
@@ -333,31 +340,35 @@ def which_player(arguments):
 
     output = str()
     if arguments['player'] is not None:
-        output = arguments['player']
+        output = {
+            'mpd': mpd,
+            'pianobar': pianobar,
+            'playerctl': playerctl}[
+            arguments['player']]
     else:
-        processes = [
-            comm
-            for comm in
-            map(get_comm_of_pid,
-                [pid for pid in os.listdir('/proc') if pid.isdigit()])
-            if comm is not None]
+        processes = [comm
+                     for comm in
+                     map(get_comm_of_pid,
+                         [pid for pid in os.listdir('/proc') if pid.isdigit()])
+                     if comm is not None]
 
         verboseprint(processes)
 
+        # pianobar get priority over mpd, unless mpd is playing.
         if 'mpd' in processes:
-            # pianobar get priority over mpd, unless mpd is playing.
             if 'pianobar' in processes:
                 if os.system("mpc status | grep playing &>/dev/null") == 0:
-                    output = "mpd"
+                    output = mpd
                 else:
-                    output = "pianobar"
+                    output = pianobar
             else:
-                output = "mpd"
+                output = mpd
         elif 'pianobar' in processes:
-            output = "pianobar"
+            output = pianobar
         else:
-            output = 'playerctl'
-    return output
+            output = playerctl
+
+    return output()
 
 
 def main(arguments):
@@ -370,27 +381,18 @@ def main(arguments):
     # Figure out what player is running.
     player = which_player(arguments)
     if arguments["input"] == "player":
-        print(player)
+        print(player.name)
         exit(0)
 
-    # Create a two dimensional dictionary. first key specifies player and the
-    # second one is the specific command. It'll be the function to call. It's
-    # possible to define commands that are specific to a player.
-    commands = dict()
-    for i in [pianobar(), mpd(), playerctl()]:
-        commands.update(i.commands)
-
-    verboseprint(commands)
     if arguments["input"] == "commands":
-        get_keys(commands)
+        get_keys([pianobar(), mpd(), playerctl()])
 
     # Catching a KeyError should prevent this from exploding over the user
-    # giving invalid input, though it also prevents bad players from being
-    # spotted. So make sure all new players are followed by thorough testing,
-    # or just make sure you use the same spelling everywhere.
+    # giving invalid input.
     try:
-        verboseprint(commands[player][arguments["input"]])
-        commands[player][arguments["input"]]()
+        verboseprint(player)
+        verboseprint(player.commands[arguments["input"]])
+        player.commands[arguments["input"]]()
     except KeyError:
         warning("Invalid input.")
         usage(1, arguments['name'])
