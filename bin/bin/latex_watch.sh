@@ -4,8 +4,8 @@
 # Exits whenever there is no longer a .swp file.
 #LATEX="$LATEX"
 
-latex="pdflatex -interaction=nonstopmode -output-directory /tmp"
-  #latex="xelatex -interaction=nonstopmode -output-directory /tmp"
+latex="pdflatex -output-directory /tmp -interaction=nonstopmode"
+#latex="xelatex -output-directory /tmp -interaction=nonstopmode"
 export latex
 
 check_for_changes() {
