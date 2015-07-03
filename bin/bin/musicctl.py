@@ -152,7 +152,7 @@ else:
 
 def get_keys(list_of_classes):
     for i in list_of_classes:
-        print("For player " + i.name +
+        print("For player " + str(i) +
               " the following commands are available:")
         for j in sorted(i.commands.keys()):
             print("   " + j)
@@ -205,6 +205,9 @@ class mpd:
                          'quit': self.stop, 'stop': self.stop,
                          'is_playing': self.is_playing}
 
+    def __repr__(self):
+        return self.name
+
     def pause(self):
         verboseprint('mpd.pause has been called')
         os.system(self.system_prefix + 'mpc toggle' + self.system_suffix)
@@ -222,7 +225,13 @@ class mpd:
         os.system(self.system_prefix + 'mpc stop' + self.system_suffix)
 
     def is_playing(self):
-        exit(os.system('mpc status | grep playing' + self.system_suffix))
+        exit_code = os.system('mpc status | grep playing' + self.system_suffix)
+        verboseprint(exit_code)
+
+        if exit_code == 0:
+            exit(0)
+        else:
+            exit(1)
 
 
 class pianobar:
@@ -238,6 +247,9 @@ class pianobar:
                          'tired': self.tired, 'like': self.like,
                          'dislike': self.dislike,
                          'is_playing': self.is_playing}
+
+    def __repr__(self):
+        return self.name
 
     def pause(self):
         verboseprint('pianobar.pause has been called')
@@ -304,6 +316,9 @@ class playerctl:
                          'quit': self.stop, 'stop': self.stop,
                          'is_playing': self.is_playing}
 
+    def __repr__(self):
+        return self.name
+
     def pause(self):
         verboseprint('playerctl.pause has been called')
         os.system(self.system_prefix + 'playerctl play-pause' +
@@ -323,7 +338,14 @@ class playerctl:
         os.system(self.system_prefix + 'playerctl stop' + self.system_suffix)
 
     def is_playing(self):
-        exit(os.system('playerctl status | grep Playing' + self.system_suffix))
+        exit_code = os.system('playerctl status | grep Playing' +
+                              self.system_suffix)
+        verboseprint(exit_code)
+
+        if exit_code == 0:
+            exit(0)
+        else:
+            exit(1)
 
 
 def which_player(arguments):
@@ -347,11 +369,8 @@ def which_player(arguments):
             'playerctl': playerctl}[
             arguments['player']]
     else:
-        processes = [comm
-                     for comm in
-                     map(get_comm_of_pid,
-                         [pid for pid in os.listdir('/proc') if pid.isdigit()])
-                     if comm is not None]
+        processes = [comm for comm in
+                     map(get_comm_of_pid, list_pids()) if comm is not None]
 
         verboseprint(processes)
 
@@ -385,7 +404,7 @@ def main(arguments):
     # Figure out what player is running.
     player = which_player(arguments)
     if arguments["input"] == "player":
-        print(player.name)
+        print(player)
         exit(0)
 
     # Catching a KeyError should prevent this from exploding over the user
