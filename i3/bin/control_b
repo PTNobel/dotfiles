@@ -1,0 +1,4 @@
+#!/bin/dash
+
+sleep .2s
+xdotool key Control+b
