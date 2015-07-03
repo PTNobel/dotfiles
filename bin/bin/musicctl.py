@@ -258,6 +258,7 @@ class pianobar:
     def stop(self):
         verboseprint('pianobar.stop has been called')
         os.system(self.system_prefix + 'pianoctl q' + self.system_suffix)
+        # if pianobar isn't responding kill it.
         time.sleep(1)
         if os.system("pidof pianobar") == 0:
             os.system("killall pianobar")
@@ -279,8 +280,8 @@ class pianobar:
             exit(0)
 
     def _get_time(self):
-        """Reads the pianobar time, and returns a str()
-        of syntax '##:##/##:##' if it can't do that it'll exit(1)"""
+        """Reads the pianobar time, and returns a str() of syntax '##:##/##:##'
+        if it can't do that it'll exit(1)"""
         log = open(os.path.expanduser('~/.config/pianobar/out'), 'r')
         time_stamp = log.read()[-12:-1]
         log.close()
