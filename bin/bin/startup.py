@@ -133,7 +133,7 @@ def success(commands, run_log_str):
             warning('Something\'s very wrong with this X server')
             warning('Dazed and confused and quitting now')
             os.system(
-                'dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] + '.log')
+                'dmesg >/tmp/dmesg.X.' + os.getenv('DISPLAY', '')[1:] + '.log')
             exit(6)
         os.system(i + ' >/dev/null &')
     run_log = open('/tmp/' + run_log_str, mode='w')
@@ -157,7 +157,7 @@ def main(arguements):
     autostart_file_list = open(autostart, 'r')
     bootstrap_file_list = open(bootstrap, 'r')
     weekly_file_list = open(week, 'r')
-    run_log_name = "startup." + os.environ["DISPLAY"][1:] + '.log'
+    run_log_name = "startup." + os.getenv('DISPLAY', '')[1:] + '.log'
 
     raw_commands = autostart_file_list.readlines()
     raw_bootstarp_commands = bootstrap_file_list.readlines()
