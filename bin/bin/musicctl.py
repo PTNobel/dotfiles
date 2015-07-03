@@ -151,10 +151,10 @@ else:
 
 
 def get_keys(list_of_classes):
-    for i in sorted(list_of_classes):
+    for i in list_of_classes:
         print("For player " + i.name +
               " the following commands are available:")
-        for j in sorted(list_of_classes.commands.keys()):
+        for j in sorted(i.commands.keys()):
             print("   " + j)
 
     exit(0)
