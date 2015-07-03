@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 sleep .2s
 xdotool key Control+b
