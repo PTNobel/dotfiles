@@ -323,6 +323,7 @@ def which_player(arguments):
         try:
             comm_file = open(os.path.join('/proc', pid, 'comm'), 'r')
             comm = comm_file.read().rstrip('\n')
+            comm_file.close()
         except FileNotFoundError:
             comm = None
         return comm
