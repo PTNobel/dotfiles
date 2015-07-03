@@ -43,7 +43,10 @@ watchdog_lock() {
   WATCHDOG_FILE="$1"
   NUM=0
   active_lock "$WATCHDOG_FILE" &
-  while sleep 60s && [ -f "$WATCHDOG_FILE" ] ; do
+  while [ -f "$WATCHDOG_FILE" ] && musicctl is_playing ; do
+    sleep 60s
+  done
+  while [ -f "$WATCHDOG_FILE" ] && sleep 60s ; do
     if [ $NUM = "$2" ]; then
       systemctl suspend && watchdog_lock "$1" "$2"
     fi
