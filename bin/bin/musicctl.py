@@ -32,8 +32,7 @@ def usage(exit_code, name):
     exit(exit_code)
 
 
-# setting VERBOSE to 1 in environ, will turn verbose mode on, during
-# processargs().
+# setting VERBOSE to 1 in environ, will turn verbose mode on for processargs().
 if os.getenv('VERBOSE') == '1':
     def verboseprint(*args):
         # Print each argument separately so caller doesn't need to stuff
@@ -172,6 +171,9 @@ class generic:
                          'back': self.back, 'next': self.next,
                          'quit': self.stop, 'stop': self.stop,
                          }
+
+    def __repr__(self):
+        return self.name
 
     def pause(self):
         verboseprint('generic.pause has been called')
@@ -361,13 +363,12 @@ def which_player(arguments):
     def list_pids():
         return [pid for pid in os.listdir('/proc') if pid.isdigit()]
 
-    output = str()
     if arguments['player'] is not None:
         output = {
             'mpd': mpd,
             'pianobar': pianobar,
             'playerctl': playerctl}[
-            arguments['player']]
+            arguments['player']]()
     else:
         processes = [comm for comm in
                      map(get_comm_of_pid, list_pids()) if comm is not None]
@@ -378,22 +379,21 @@ def which_player(arguments):
         if 'mpd' in processes:
             if 'pianobar' in processes:
                 if os.system("mpc status | grep playing &>/dev/null") == 0:
-                    output = mpd
+                    output = mpd()
                 else:
-                    output = pianobar
+                    output = pianobar()
             else:
-                output = mpd
+                output = mpd()
         elif 'pianobar' in processes:
-            output = pianobar
+            output = pianobar()
         else:
-            output = playerctl
+            output = playerctl()
 
-    return output()
+    return output
 
 
 def main(arguments):
     verboseprint('main() starting')
-    verboseprint(arguments)
     # Handle help and usage correctly:
     if arguments["input"] == "usage" or arguments["input"] == "help":
         usage(0, arguments['name'])
