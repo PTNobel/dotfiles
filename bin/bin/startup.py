@@ -59,19 +59,10 @@ else:
 # launching processes repeatedly.
 def are_there_other_startuppy():
     def check_if_pid_is_startuppy(pidnum):
-        return "startup" in str(
-            open(
-                os.path.join(
-                    '/proc',
-                    pidnum,
-                    'comm'),
-                'rb').read()) and "python" in str(
-            open(
-                os.path.join(
-                    '/proc',
-                    pidnum,
-                    'cmdline'),
-                'rb').read())
+        return "startup" in \
+            str(open(os.path.join('/proc', pidnum, 'comm'), 'rb').read()) \
+            and "python" in \
+            str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read())
 
     pids = [
         pid
@@ -142,13 +133,15 @@ def success(commands, run_log_str):
 
 
 def main(arguements):
+    # Wait for all other startup.py instances to exit, so a lockfile will be
+    # in place when we check for it.
     are_there_other_startuppy()
 
     # Variable definitions this should cover everything.
-    date_log = os.environ['HOME'] + "/.parth/date.log"
-    autostart = os.environ['HOME'] + "/.i3/autostart"
-    bootstrap = os.environ['HOME'] + "/.i3/bootstrap"
-    week = os.environ['HOME'] + "/.i3/weekly_tasks"
+    date_log = os.path.expanduser("~/.parth/date.log")
+    autostart = os.path.expanduser("~/.i3/autostart")
+    bootstrap = os.path.expanduser("~/.i3/bootstrap")
+    week = os.path.expanduser("~/.i3/weekly_tasks")
     date_log_file = open(date_log, 'r')
     log_value = date_log_file.read()
     date_log_file.close()
@@ -171,7 +164,8 @@ def main(arguements):
     if os.system('urxvt -e exit') != 0:
         warning('Something\'s very wrong with this X server')
         warning('Dazed and confused and quitting now')
-        os.system('dmesg >/tmp/dmesg.X.' + os.environ['DISPLAY'][1:] + '.log')
+        os.system('dmesg >/tmp/dmesg.X.' + os.getenv('DISPLAY', '')[1:] +
+                  '.log')
         exit(5)
 
     elif arguements["force"]:
