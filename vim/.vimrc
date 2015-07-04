@@ -37,7 +37,7 @@ let g:Tex_CompileRule_pdf = 'mkdir -p tmp; pdflatex -output-directory tmp -inter
 
 set cursorline
 set colorcolumn=80
-"highlight ColorColumn ctermbg=2
+highlight ColorColumn ctermbg=darkgrey
 "execute "set colorcolumn=" . join(range(80,335), ',')
 
 map <F6> :setlocal spell! spelllang=en_us<CR>
