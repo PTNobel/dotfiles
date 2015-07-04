@@ -376,3 +376,4 @@ compdef _git ga=git-add
 alias ppwd='cd `pwd -P` ; pwd'
 source /home/parth/.zsh-dwim/init.zsh
 alias man='env PAGER=less /usr/bin/man'
+if [ "$TERM" == "screen" ]; then export TERM='screen-256color'; fi
