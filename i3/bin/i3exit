@@ -46,7 +46,9 @@ watchdog_lock() {
   while [ -f "$WATCHDOG_FILE" ] && musicctl is_playing ; do
     sleep 60s
   done
-  while [ -f "$WATCHDOG_FILE" ] && sleep 60s ; do
+  # It needs to be sleep 60 && [ -f "$WATCHDOG_FILE" ] in order to preven the 
+  # computer from suspending when it's unlooked in the last minute.
+  while sleep 60s && [ -f "$WATCHDOG_FILE" ] ; do
     if [ $NUM = "$2" ]; then
       systemctl suspend && watchdog_lock "$1" "$2"
     fi
