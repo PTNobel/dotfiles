@@ -43,6 +43,7 @@ highlight ColorColumn ctermbg=darkgrey
 map <F6> :setlocal spell! spelllang=en_us<CR>
 map <F8> :setlocal spell! spelllang=es<CR>
 autocmd BufNewFile,BufRead *.tex set spell
+autocmd BufNewFile,BufRead *.tex let g:indentLine_enabled=0
 autocmd BufNewFile,BufRead *.java set ts=4
 autocmd BufNewFile,BufRead *.java set softtabstop=4
 autocmd BufNewFile,BufRead *.java set shiftwidth=4
@@ -80,3 +81,4 @@ let g:calendar_google_task = 1
 let g:indentLine_color_term = 239
 let g:indentLine_color_gui = '#09AA08'
 let g:indentLine_char = '│'
+let g:tex_comment_nospell= 1
