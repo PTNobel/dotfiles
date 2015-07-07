@@ -82,3 +82,8 @@ let g:indentLine_color_term = 239
 let g:indentLine_color_gui = '#09AA08'
 let g:indentLine_char = '│'
 let g:tex_comment_nospell= 1
+let g:LatexBox_quickfix = 4
+let g:LatexBox_viewer = "zathura"
+let g:LatexBox_latexmk_preview_continuously = 1
+let g:LatexBox_build_dir = '/tmp'
+let g:LatexBox_latexmk_options = "-cd -outdir='/tmp'"
