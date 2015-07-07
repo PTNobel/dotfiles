@@ -3,9 +3,11 @@
 # Watches a latex file for changes and rebuilds it whenever it changes.
 # Exits whenever there is no longer a .swp file.
 #LATEX="$LATEX"
-
-latex="pdflatex -output-directory /tmp -interaction=nonstopmode"
-#latex="xelatex -output-directory /tmp -interaction=nonstopmode"
+if [ "$2" == "xelatex" ]; then
+  latex="xelatex  -output-directory /tmp -interaction=nonstopmode"
+else
+  latex="pdflatex -output-directory /tmp -interaction=nonstopmode"
+fi
 export latex
 
 check_for_changes() {
