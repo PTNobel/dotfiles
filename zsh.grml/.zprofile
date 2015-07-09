@@ -1,1 +1,1 @@
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
+if [[ -z $TMUX ]]; then [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx; fi
