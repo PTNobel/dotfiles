@@ -19,6 +19,7 @@ set clipboard=unnamedplus
 let g:SuperTabDefaultCompletionType = "context"
 let g:jedi#popup_on_dot = 0  " disables the autocomplete to popup whenever you press .
 au BufRead /tmp/mutt-* set tw=72
+au BufRead /tmp/mutt-* set spell
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
