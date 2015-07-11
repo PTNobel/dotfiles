@@ -45,6 +45,7 @@ map <F6> :setlocal spell! spelllang=en_us<CR>
 map <F8> :setlocal spell! spelllang=es<CR>
 autocmd BufNewFile,BufRead *.tex set spell
 autocmd BufNewFile,BufRead *.tex let g:indentLine_enabled=0
+autocmd BufNewFile,BufRead *.md let g:indentLine_enabled=0
 autocmd BufNewFile,BufRead *.java set ts=4
 autocmd BufNewFile,BufRead *.java set softtabstop=4
 autocmd BufNewFile,BufRead *.java set shiftwidth=4
