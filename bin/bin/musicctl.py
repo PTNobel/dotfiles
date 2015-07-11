@@ -161,12 +161,12 @@ def get_keys(list_of_classes):
 
 ''' # An example implementation of a player class
 class generic:
+    name = 'generic'
+    system_prefix = arguments['test_mode_prefix']
+    system_suffix = arguments['test_mode_suffix']
 
     def __init__(self):
         verboseprint('generic is being inited')
-        self.system_prefix = arguments['test_mode_prefix']
-        self.system_suffix = arguments['test_mode_suffix']
-        self.name = 'generic'
         self.commands = {'play': self.pause, 'pause': self.pause,
                          'back': self.back, 'next': self.next,
                          'quit': self.stop, 'stop': self.stop,
@@ -196,12 +196,12 @@ class generic:
 
 
 class mpd:
+    name = 'mpd'
+    system_prefix = arguments['test_mode_prefix']
+    system_suffix = arguments['test_mode_suffix']
 
     def __init__(self):
         verboseprint('mpd is being inited')
-        self.system_prefix = arguments['test_mode_prefix']
-        self.system_suffix = arguments['test_mode_suffix']
-        self.name = 'mpd'
         self.commands = {'play': self.pause, 'pause': self.pause,
                          'back': self.back, 'next': self.next,
                          'quit': self.stop, 'stop': self.stop,
@@ -237,6 +237,9 @@ class mpd:
 
 
 class pianobar:
+    name = 'pianobar'
+    system_prefix = arguments['test_mode_prefix']
+    system_suffix = arguments['test_mode_suffix']
 
     def __init__(self):
         verboseprint('pianobar is being inited')
@@ -307,12 +310,14 @@ class pianobar:
 
 
 class playerctl:
+    name = 'playerctl'
+    system_prefix = arguments['test_mode_prefix']
+    system_suffix = arguments['test_mode_suffix']
 
     def __init__(self):
         verboseprint('playerctl is being inited')
         self.system_prefix = arguments['test_mode_prefix']
         self.system_suffix = arguments['test_mode_suffix']
-        self.name = 'playerctl'
         self.commands = {'play': self.pause, 'pause': self.pause,
                          'back': self.back, 'next': self.next,
                          'quit': self.stop, 'stop': self.stop,
