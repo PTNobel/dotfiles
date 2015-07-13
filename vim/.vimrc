@@ -18,8 +18,16 @@ set scrolloff=2
 set clipboard=unnamedplus
 let g:SuperTabDefaultCompletionType = "context"
 let g:jedi#popup_on_dot = 0  " disables the autocomplete to popup whenever you press .
+
+set cursorline
+set colorcolumn=81
+highlight ColorColumn ctermbg=darkgrey
+"execute "set colorcolumn=" . join(range(80,335), ',')
+
 au BufRead /tmp/mutt-* set tw=72
 au BufRead /tmp/mutt-* set spell
+au BufRead /tmp/mutt-* set cursorline
+au BufRead /tmp/mutt-* set colorcolumn=73
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -35,11 +43,6 @@ let g:tex_flavor = "latex"
 let g:Tex_DefaultTargetFormat='pdf'
 let g:Tex_MultipleCompileFormats='pdf,dvi'
 let g:Tex_CompileRule_pdf = 'mkdir -p tmp; pdflatex -output-directory tmp -interaction=nonstopmode $*; cp tmp/*.pdf .'
-
-set cursorline
-set colorcolumn=80
-highlight ColorColumn ctermbg=darkgrey
-"execute "set colorcolumn=" . join(range(80,335), ',')
 
 map <F6> :setlocal spell! spelllang=en_us<CR>
 map <F8> :setlocal spell! spelllang=es<CR>
