@@ -1,0 +1,15 @@
+name: social
+root: ~/
+windows:
+ - profanity: 
+    layout: 64d0,191x66,0,0,11
+    panes:
+      - profanity
+ - irssi:
+    layout: 64d2,191x66,0,0,13
+    panes:
+      - irssi
+ - mutt: 
+    layout: 64d9,191x66,0,0,39
+    panes:
+      - mutt

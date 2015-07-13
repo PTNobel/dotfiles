@@ -33,6 +33,8 @@ bindsym $mod+Return exec urxvt
 bindsym $mod+Control+Return exec urxvt -e /usr/bin/screen -c /home/parth/.screenrc
 bindsym $mod+Shift+Return exec urxvtc
 
+assign [class="URxvt" instance="social"] mail-IRC-XMPP
+exec urxvt -name social -e mux social
 # kill focused window
 bindsym $mod+Shift+q kill
 bindsym $mod+Shift+x exec --no-startup-id xkill
@@ -106,6 +108,7 @@ workspace 8 output LVDS1
 workspace 9 output HDMI1
 workspace 10 output LVDS1
 workspace 11 output HDMI1
+workspace mail-IRC-XMPP output HDMI1
 
 # switch to workspace
 bindsym $mod+grave workspace 0
@@ -120,6 +123,7 @@ bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
+bindsym $mod+BackSpace workspace mail-IRC-XMPP
 bindsym $mod+Tab workspace next_on_output
 bindsym $mod+Shift+Tab workspace prev_on_output
 
@@ -136,6 +140,7 @@ bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
+bindsym $mod+Shift +BackSpace move container to workspace mail-IRC-XMPP
 
 # Move the current workspace to the next output
 # (effectively toggles when you only have two outputs)
