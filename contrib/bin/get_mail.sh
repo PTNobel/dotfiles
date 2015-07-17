@@ -26,7 +26,7 @@ if ps "$pid" &>/dev/null; then
 fi
 
 if [[ "$1" == "loud" ]]; then
-  offlineimap -o & monitor $!
+  offlineimap -o
   notmuch new
 else
   offlineimap -o -u quiet & monitor $!
