@@ -383,6 +383,6 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
       TERM=fbterm)
         TERM=screen-256color ;;
     *)
-        TERM=screen
+        TERM=screen-256color
   esac
 fi
