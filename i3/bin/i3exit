@@ -4,6 +4,14 @@
 #
 #
 
+suspend_or_lock() {
+  if musicctl is_playing; then
+    watchdog_lock "$(mktemp)" 3
+  else
+    lock && systemctl suspend
+  fi
+}
+
 active_lock() {
   printf "Do I have write permission?\n%s\n" "$$" > "$1"
   if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
@@ -140,6 +148,9 @@ case "$1" in
     ;;
   watchdog_lock)
     watchdog_lock "$2" "$3"
+    ;;
+  suspend_or_lock)
+    suspend_or_lock
     ;;
   usage|help|-h|--help)
     usage

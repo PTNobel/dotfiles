@@ -224,7 +224,7 @@ bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
 # Lock screen
-bindsym $mod+q exec --no-startup-id i3exit short_inactive_lock
+bindsym $mod+q exec --no-startup-id i3exit suspend_or_lock
 bindsym $mod+Shift+w exec --no-startup-id i3exit lock
 
 set $mode_system System (l) lock, (b) blur, (f) freeze, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
