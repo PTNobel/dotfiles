@@ -1,10 +1,8 @@
 #!/bin/bash
 #
 # Partly taken from the Arch Wiki, extended by me.
-#
-#
 
-suspend_or_lock() {
+function suspend_or_lock {
   if musicctl is_playing; then
     watchdog_lock "$(mktemp)" 3
   else
@@ -12,7 +10,7 @@ suspend_or_lock() {
   fi
 }
 
-active_lock() {
+function active_lock {
   printf "Do I have write permission?\n%s\n" "$$" > "$1"
   if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
     if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
@@ -26,13 +24,13 @@ active_lock() {
   rm "$1"
 }
 
-lock(){
+function lock {
   I3LOCK_OPTIONS=-d
   export I3LOCK_OPTIONS
   generic_lock
 }
 
-generic_lock() {
+function generic_lock {
   # I3LOCK_OPTIONS MUST not not be quote to insure word splitting.
   if xrandr | grep '+' | grep '^   1366x768' >/dev/null ; then
     if xrandr | grep '+' | grep '^   1920x1080' >/dev/null ; then
@@ -47,7 +45,7 @@ generic_lock() {
 
 # TODO: After a computer is woken up, give the time value to unlock the
 # computer and then suspend it.
-watchdog_lock() {
+function watchdog_lock {
   WATCHDOG_FILE="$1"
   NUM=0
   active_lock "$WATCHDOG_FILE" &
@@ -84,14 +82,14 @@ function blur_with_sleep {
   generic_blur
 }
 
-freeze() {
+function freeze {
   file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
   scrot -d1 -z "$file1"
   i3lock -i "$file1"
   trap 'rm "$file1"' EXIT
 }
 
-usage() {
+function usage {
   echo "Usage: $0 OPTION"
   echo "OPTIONS:"
   echo "  lock - Locks screen and turns off the monitor. (depends on i3lock)"

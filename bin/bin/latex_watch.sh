@@ -10,7 +10,7 @@ else
 fi
 export latex
 
-check_for_changes() {
+function check_for_changes {
   $latex "$1"
   while diff "$1" /tmp/"$(basename "$1")"; do
     sleep 5

@@ -8,7 +8,7 @@ for i in $(pidof -x thunderbird.sh -o %PPID) ; do
   fi
 done
 
-launch_thunderbird() {
+function launch_thunderbird {
   THUNDER=$(pidof thunderbird | wc -w)
   if [ "$THUNDER" -lt "1" ]; then
     echo "launching thunderbird" ; thunderbird

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-get_pa_sink() {
+function get_pa_sink {
     pactl list | grep Sink | awk '/Sink/{print $2}' | grep \# | sed s/\#//
 }
 
-fix_pulse() {
+function fix_pulse {
   ORIG_VOLUME=$(pacmd list-sinks|grep -A 15 "* index: "| \
                 awk '/volume: front/{ print $5 }' | sed 's/%//g')
   for i in $SINKS; do
@@ -12,13 +12,13 @@ fix_pulse() {
   done
 }
 
-pa_down() {
+function pa_down {
     for i in $SINKS; do
         pactl set-sink-volume "$i" -5%
     done
 }
 
-pa_up() {
+function pa_up {
     for i in $SINKS; do
         VOLUME=$(pacmd list-sinks|grep -A 15 "index: $i"| \
             awk '/volume: front/{ print $5 }' | sed 's/%//g')
@@ -35,13 +35,13 @@ pa_up() {
     done
 }
 
-pa_force_up() {
+function pa_force_up {
     for i in $SINKS; do 
         pactl set-sink-volume "$i" +5%
     done
 }
 
-pa_mute() {
+function pa_mute {
     for i in $SINKS; do
        pactl set-sink-mute "$i" toggle
    done

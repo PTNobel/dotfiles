@@ -8,7 +8,7 @@ for i in $(pidof -x icecat.sh -o %PPID) ; do
   fi
 done
 
-launch_icecat() {
+function launch_icecat {
   ICE=$(pidof icecat | wc -w)
   if [ "$ICE" -lt "1" ]
   then echo "launching icecat" ; icecat

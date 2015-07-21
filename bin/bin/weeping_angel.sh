@@ -2,7 +2,7 @@
 #
 # swithces through Weeping Angel photos.
 
-angels() {
+function angels {
   feh --bg-scale ~/Pictures/Weeping\ Angel/1.JPG
   sleep 5
   feh --bg-scale ~/Pictures/Weeping\ Angel/2.JPG

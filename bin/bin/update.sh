@@ -8,11 +8,11 @@ OUTPUT_FILE=$(mktemp)
 export OUTPUT_FILE
 #echo OUTPUT_FILE=$OUTPUT_FILE
 
-keep_computer_awake() {
+function keep_computer_awake  {
   systemd-inhibit bash -c "while [[ -f $OUTPUT_FILE ]] ; do sleep 60 ; done"
 }
 
-exit_routine() {
+function exit_routine {
   #echo deleting OUTPUT_FILE and WATCHDOG_FILE
   rm "$OUTPUT_FILE" /tmp/update.lock
   kill "$TAILPID"
@@ -20,43 +20,43 @@ exit_routine() {
   exit $?
 }
 
-backup() {
+function backup {
   backup.sh &>> "$OUTPUT_FILE" || notify-send "backup.sh failed"
   echo backup >> /tmp/update.lock
 }
 
-mlocate() {
+function mlocate {
   /usr/local/bin/update_tools_helper mlocate &>> "$OUTPUT_FILE"
   echo mlocate >> /tmp/update.lock
 }
 
-abs_u() {
+function abs_u {
   /usr/local/bin/update_tools_helper abs &>> "$OUTPUT_FILE"
   echo abs >> /tmp/update.lock
 }
 
-pkgfile_u() {
+function pkgfile_u {
   /usr/local/bin/update_tools_helper pkgfile &>> "$OUTPUT_FILE"
   echo pkgfile >> /tmp/update.lock
 
 }
 
-man_u() {
+function man_u {
   /usr/local/bin/update_tools_helper man &>> "$OUTPUT_FILE"
   echo man >> /tmp/update.lock
 }
 
-units_cur_u() {
+function units_cur_u {
   /usr/local/bin/update_tools_helper units &>> "$OUTPUT_FILE"
   echo units_cur >> /tmp/update.lock
 }
 
-alpm() {
+function alpm {
   until /usr/local/bin/update_tools_helper alpm ; do sleep 1 ; done
   echo alpm >> /tmp/update.lock
 }
 
-yaourt_wrapper() {
+function yaourt_wrapper {
   export EDITOR=vim
   yaourt "$@"
 }

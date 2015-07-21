@@ -8,6 +8,7 @@ killall mpd &>/dev/null
 
 mpd ~/.config/mpd/mpd.conf || mpd ~/.config/mpd/mpd.conf.offline
 if [ $? -eq 0 ]; then
-mpd #~/.config/mpd/mpd.conf.online
-else mpd ~/.config/mpd/mpd.conf
+  mpd #~/.config/mpd/mpd.conf.online
+else
+  mpd ~/.config/mpd/mpd.conf
 fi

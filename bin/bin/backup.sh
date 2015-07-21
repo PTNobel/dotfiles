@@ -5,11 +5,11 @@
 set -e
 set -u
 
-keep_computer_awake() {
+function keep_computer_awake {
   setsid systemd-inhibit bash -c "while [[ -f /tmp/backup.lock ]] ; do sleep 60 ; done" &
 }
 
-exit() {
+function exit {
   rm /tmp/backup.lock
   builtin exit "$@"
 }
@@ -26,7 +26,7 @@ else touch /tmp/backup.lock; fi
 echo "Made lock file"
 keep_computer_awake
 
-backup_home() {
+function backup_home {
   # No files/directories should be hardcoded
   echo starting backup.
   mv $DESTINATION $PRIMARY_DIRECTORY_ntfs/"$USER"
@@ -36,7 +36,7 @@ backup_home() {
   echo rsync >> /tmp/backup.lock
 }
 
-main() {
+function main {
 if [ -d "$PRIMARY_DIRECTORY/" ]; then
   if [ -f $DESTINATION/"$USER" ]; then
     backup_home &

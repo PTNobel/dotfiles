@@ -8,7 +8,7 @@ for i in $(pidof -x firefox.sh -o %PPID) ; do
   fi
 done
 
-launch_firefox() {
+function launch_firefox {
   FIRE=$(pidof firefox | wc -w)
   if [ "$FIRE" -lt "1" ]; then
     echo "launching firefox"

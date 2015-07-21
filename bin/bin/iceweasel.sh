@@ -8,7 +8,7 @@ for i in $(pidof -x icecat.sh -o %PPID) ; do
     fi
 done
 
-launch_iceweasel() {
+function launch_iceweasel {
     ICE=$(pidof iceweasel | wc -w)
     if [ "$ICE" -lt "1" ]
     then echo "launching iceweasel" ; iceweasel

@@ -7,14 +7,15 @@
 # over the terminal with vim and watch it work. Consider getting some tea.
 #
 #
-
-export WINDOW_LOG_FILE=$(mktemp)
+WINDOW_LOG_FILE=$(mktemp)
+export WINDOW_LOG_FILE
 
 echo xterm -e zsh -c "echo \$WINDOWID >| $WINDOW_LOG_FILE ; vim $1" &
 xterm -e zsh -c "echo \$WINDOWID >| $WINDOW_LOG_FILE ; vim $1" &
 echo "$WINDOW_LOG_FILE"; cat "$WINDOW_LOG_FILE"
 sleep 5
-export WINDOW_ID_OF_VIM=$(cat "$WINDOW_LOG_FILE")
+WINDOW_ID_OF_VIM=$(cat "$WINDOW_LOG_FILE")
+export WINDOW_ID_OF_VIM
 echo "$WINDOW_LOG_FILE"; cat "$WINDOW_LOG_FILE"
 echo "$WINDOW_ID_OF_VIM"
 while sleep .3; grep "^\[" "$1" >|/dev/null ; do
