@@ -64,22 +64,24 @@ watchdog_lock() {
   done
 }
 
-blur() {
+function generic_blur {
   file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
   file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
   scrot -zd0 "$file1"
   convert "$file1" -blur 0x9 "$file2"
-  i3lock -i "$file2"
+  i3lock $I3LOCK_OPTIONS -i "$file2"
   trap 'rm "$file1" "$file2"' EXIT
 }
 
-blur_with_sleep() {
-  file1=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
-  file2=$(mktemp --tmpdir i3lock-wrapper-XXXXXXXXXX.png)
-  scrot -zd0 "$file1"
-  convert "$file1" -blur 0x9 "$file2"
-  i3lock -di "$file2"
-  trap 'rm "$file1" "$file2"' EXIT
+function blur {
+  export I3LOCK_OPTIONS
+  generic_blur
+}
+
+function blur_with_sleep {
+  I3LOCK_OPTIONS=-d
+  export I3LOCK_OPTIONS
+  generic_blur
 }
 
 freeze() {
@@ -99,6 +101,7 @@ usage() {
   echo "  blur - blurs screen (depends on scrot, convert [from imagemagick], and i3lock)"
   echo "  blur_with_sleep - blur, but turns off  the monitor. (depends on scrot, convert [from imagemagick], and i3lock)"
   echo "  freeze - freezes the screen (depends on scrot and i3lock)"
+  echo "  suspend_or_lock - suspend the computer if music is not being played, otherwise lock it. (depends on musicctl is_playing)"
   echo "  logout - exits i3 (depends on i3-msg)"
   echo "  suspend - locks screen and suspends the computer (depends on i3lock and systemctl)"
   echo "  hibernate - locks screen and hibernates the computer (depends on i3lock and systemctl)"
