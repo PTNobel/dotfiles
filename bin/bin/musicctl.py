@@ -52,18 +52,18 @@ def processargs(input_argv):
 
     # All of these run in the same scope as processargs(). They make changes to
     # output.
-    def help():
+    def _help():
         usage(0, output['name'])
 
-    def verbose():
+    def _verbose():
         output["verbose"] = True
         output["test_mode_suffix"] = ''
 
-    def trial():
+    def _trial():
         output["test_mode_prefix"] = 'echo '
         output["test_mode_suffix"] = ''
 
-    def player():
+    def _player():
         if '=' in input_argv[i]:
             output["player"] = input_argv[i].split('=')[1]
         else:
@@ -72,9 +72,9 @@ def processargs(input_argv):
 
     # In place of a switch-case statement the following dictionaires link argv
     # entries to functions.
-    long_args_to_disc = {'--help': help, '--verbose': verbose,
-                         '--trial': trial, '--player': player}
-    short_args_to_disc = {'h': help, 'v': verbose, 't': trial, 'p': player}
+    long_args_to_disc = {'--help': _help, '--verbose': _verbose,
+                         '--trial': _trial, '--player': _player}
+    short_args_to_disc = {'h': _help, 'v': _verbose, 't': _trial, 'p': _player}
     output = {"verbose": None,
               "input": None,
               "test_mode_prefix": '',
@@ -369,11 +369,18 @@ def which_player(arguments):
         return [pid for pid in os.listdir('/proc') if pid.isdigit()]
 
     if arguments['player'] is not None:
-        output = {
-            'mpd': mpd,
-            'pianobar': pianobar,
-            'playerctl': playerctl}[
-            arguments['player']]()
+        try:
+            output = {
+                'mpd': mpd,
+                'mpc': mpd,
+                'pianobar': pianobar,
+                'pianoctl': pianobar,
+                'playerctl': playerctl,
+                'mpris': playerctl,
+            }[arguments['player']]()
+        except KeyError:
+            warning('Invalid player')
+            exit(1)
     else:
         processes = [comm for comm in
                      map(get_comm_of_pid, list_pids()) if comm is not None]
