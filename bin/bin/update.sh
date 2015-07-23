@@ -8,7 +8,7 @@ OUTPUT_FILE=$(mktemp)
 export OUTPUT_FILE
 #echo OUTPUT_FILE=$OUTPUT_FILE
 
-function keep_computer_awake  {
+function keep_computer_awake {
   systemd-inhibit bash -c "while [[ -f $OUTPUT_FILE ]] ; do sleep 60 ; done"
 }
 
@@ -66,8 +66,6 @@ keep_computer_awake &
 echo "starting backup of $HOME"
 backup &
 PID1=$!
-
-setsid yaourt -S &>/dev/null
 
 echo "starting update of pkgfile database"
 pkgfile_u &
