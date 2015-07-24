@@ -92,5 +92,5 @@ let g:tex_comment_nospell= 1
 let g:LatexBox_quickfix = 4
 let g:LatexBox_viewer = "zathura"
 let g:LatexBox_latexmk_preview_continuously = 1
-let g:LatexBox_build_dir = '/tmp'
-let g:LatexBox_latexmk_options = "-cd -outdir='/tmp'"
+let g:LatexBox_build_dir = '/tmp/parth-LaTeX'
+let g:LatexBox_latexmk_options = "-cd -outdir='/tmp/parth-LaTeX'"
