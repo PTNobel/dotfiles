@@ -286,9 +286,10 @@ class pianobar:
 
     def is_playing(self):
         log1_time_stamp = self._get_time()
+        verboseprint(log1_time_stamp)
         time.sleep(2)
         log2_time_stamp = self._get_time()
-        verboseprint(log1_time_stamp, log2_time_stamp,
+        verboseprint(log2_time_stamp,
                      log1_time_stamp == log2_time_stamp)
 
         if log1_time_stamp == log2_time_stamp:
@@ -296,7 +297,7 @@ class pianobar:
         else:
             exit(0)
 
-    def _get_time(self):
+    def _get_time(self, tries=0):
         """Reads the pianobar time, and returns a str() of syntax '##:##/##:##'
         if it can't do that it'll exit(1)"""
         log = open(os.path.expanduser('~/.config/pianobar/out'), 'r')
@@ -304,8 +305,13 @@ class pianobar:
         log.close()
         if re.match(r'^\d{2}:\d{2}/\d{2}:\d{2}$', time_stamp):
             return time_stamp
+        elif tries < 3:
+            verboseprint('FAILED REGEX:', tries, time_stamp)
+            verboseprint('Trying again')
+            time.sleep(1)
+            return self._get_time(tries+1)
         else:
-            verboseprint('FAILED REGEX:', time_stamp)
+            verboseprint('out of tries')
             exit(1)
 
 
