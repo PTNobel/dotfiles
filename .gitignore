@@ -3,3 +3,4 @@ mpd/.config/mpd/state
 mpd/.config/mpd/database
 *.swp
 bin/bin/tags
+*__pycache__*
