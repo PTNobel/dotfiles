@@ -285,10 +285,10 @@ class pianobar:
         os.system(self.system_prefix + 'pianoctl t' + self.system_suffix)
 
     def is_playing(self):
-        log1_time_stamp = self._get_time()
+        log1_time_stamp, success1 = self._get_time()
         verboseprint(log1_time_stamp)
         time.sleep(2)
-        log2_time_stamp = self._get_time()
+        log2_time_stamp, success2 = self._get_time()
         verboseprint(log2_time_stamp,
                      log1_time_stamp == log2_time_stamp)
 
@@ -298,13 +298,13 @@ class pianobar:
             exit(0)
 
     def _get_time(self, tries=0):
-        """Reads the pianobar time, and returns a str() of syntax '##:##/##:##'
-        if it can't do that it'll exit(1)"""
+        """Reads the pianobar time, and returns a tuple of  str '##:##/##:##'
+        and a boolean which reflects whether it matches the regex"""
         log = open(os.path.expanduser('~/.config/pianobar/out'), 'r')
         time_stamp = log.read()[-12:-1]
         log.close()
         if re.match(r'^\d{2}:\d{2}/\d{2}:\d{2}$', time_stamp):
-            return time_stamp
+            return (time_stamp, True)
         elif tries < 3:
             verboseprint('FAILED REGEX:', tries, time_stamp)
             verboseprint('Trying again')
@@ -312,7 +312,7 @@ class pianobar:
             return self._get_time(tries+1)
         else:
             verboseprint('out of tries')
-            exit(1)
+            return (time_stamp, False)
 
 
 class playerctl:
