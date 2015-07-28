@@ -6,6 +6,7 @@ import time
 import os
 import sys
 import re
+import process
 
 
 # warning() functions like print, except it prefixes everything and prints to
@@ -277,7 +278,8 @@ class pianobar:
         os.system(self.system_prefix + 'pianoctl q' + self.system_suffix)
         # if pianobar isn't responding kill it.
         time.sleep(1)
-        if os.system("pidof pianobar") == 0:
+        process.update_buffers()
+        if process.is_comm_running("pianobar"):
             os.system("killall pianobar")
 
     def tired(self):
@@ -292,6 +294,8 @@ class pianobar:
         verboseprint(log2_time_stamp,
                      log1_time_stamp == log2_time_stamp)
 
+        if not (success1 and success2):
+            exit(1)
         if log1_time_stamp == log2_time_stamp:
             exit(1)
         else:
@@ -362,18 +366,6 @@ class playerctl:
 
 
 def which_player(arguments):
-    def get_comm_of_pid(pid):
-        try:
-            comm_file = open(os.path.join('/proc', pid, 'comm'), 'r')
-            comm = comm_file.read().rstrip('\n')
-            comm_file.close()
-        except FileNotFoundError:
-            comm = None
-        return comm
-
-    def list_pids():
-        return [pid for pid in os.listdir('/proc') if pid.isdigit()]
-
     if arguments['player'] is not None:
         try:
             output = {
@@ -388,21 +380,20 @@ def which_player(arguments):
             warning('Invalid player')
             exit(1)
     else:
-        processes = [comm for comm in
-                     map(get_comm_of_pid, list_pids()) if comm is not None]
+        list_of_process_names = process.get_comms()
 
-        verboseprint(processes)
+        verboseprint(list_of_process_names)
 
         # pianobar get priority over mpd, unless mpd is playing.
-        if 'mpd' in processes:
-            if 'pianobar' in processes:
+        if 'mpd' in list_of_process_names:
+            if 'pianobar' in list_of_process_names:
                 if os.system("mpc status | grep playing &>/dev/null") == 0:
                     output = mpd()
                 else:
                     output = pianobar()
             else:
                 output = mpd()
-        elif 'pianobar' in processes:
+        elif 'pianobar' in list_of_process_names:
             output = pianobar()
         else:
             output = playerctl()
