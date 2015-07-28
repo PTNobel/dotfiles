@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 
-import os
+from os import listdir as _listdir
+from os.path import join as _join
 
 
 class processes:
@@ -16,7 +17,7 @@ class processes:
     def _get_running_pids(self, rebuild_buffer):
         output = list()
         if self._buffer_running_pids == [] or rebuild_buffer:
-            output = [pid for pid in os.listdir('/proc') if pid.isdigit()]
+            output = [pid for pid in _listdir('/proc') if pid.isdigit()]
             self._buffer_running_pids = output
         else:
             output = self._buffer_running_pids
@@ -27,7 +28,7 @@ class processes:
             comm = self._buffer_map_pids_to_comms[pid]
         else:
             try:
-                comm_file = open(os.path.join('/proc', pid, 'comm'), 'r')
+                comm_file = open(_join('/proc', pid, 'comm'), 'r')
                 comm = comm_file.read().rstrip('\n')
                 comm_file.close()
             except FileNotFoundError:
@@ -36,7 +37,7 @@ class processes:
 
     def _get_pids_of_comm(self, comm):
         try:
-            pids = self._buffer_map_pids_to_comms[comm]
+            pids = self._buffer_map_comms_to_pids[comm]
         except KeyError:
             pids = []
         return pids
@@ -87,21 +88,37 @@ class processes:
         self._build_buffers(True)
 
     def get_pids(self):
-        return self._get_running_pids()
+        """Returns a list of pids that were running when this instance
+        was inited"""
+        return self._buffer_running_pids
+
+    def get_comms(self):
+        """Returns a list of comms that were running when this instance
+        was inited"""
+        return self._buffer_list_of_comms
 
     def get_comms_to_pids(self):
-        return self._map_comms_to_pids()
+        """Returns a dict of comms as keys and a list of pids as values that
+        were running when this instance was inited"""
+        return self._buffer_map_comms_to_pids
 
     def get_pids_to_comms(self):
-        return self._map_pids_to_comms()
+        """Returns a dict of pids as keys and a string of the comm as values that
+        were running when this instance was inited"""
+        return self._buffer_map_pids_to_comms
 
     def get_pids_of_comm(self, comm):
+        """Returns a list of all pids with comm that were running when this
+        instance was inited"""
         return self._get_pids_of_comm(comm)
 
     def get_comm_of_pid(self, pid):
+        """Returns the str of the comm of a pid"""
         return self._get_comm_of_pid(pid)
 
     def is_comm_running(self, comm):
+        """Returns a bool if any process with that comm were running when this
+        instance of the comm was inited"""
         return self._is_comm_running(comm)
 
 
