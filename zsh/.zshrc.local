@@ -366,6 +366,8 @@ cat_cmdline() {
 fpath=(~/.zsh.completions $fpath)
 compinit
 
+source /usr/share/zsh/site-contrib/powerline.zsh
+
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line

@@ -144,7 +144,6 @@ def usage():
     print('Options:')
     for i in option_dict.keys():
         print('\t' + i)
-    pass
 
 
 def log():
@@ -175,8 +174,8 @@ option_dict = {'lock': lock,
 if __name__ == '__main__':
     try:
         option_dict[sys.argv[1]]()
-        log()
+        # log()
     except (IndexError, KeyError):
         usage()
-        log()
+        # log()
         exit(1)

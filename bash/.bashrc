@@ -89,3 +89,4 @@ export VISUAL=vim
 export EDITOR=vim
 shopt -s cdspell autocd
 export BROWSER=firefox
+source /usr/lib/python3.4/site-packages/powerline/bindings/bash/powerline.sh
