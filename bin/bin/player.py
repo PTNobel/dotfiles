@@ -189,7 +189,7 @@ class playerctl:
         return is_playing_present
 
 
-def which_player(arguments):
+def which_player(arguments={'player': None}):
     if arguments['player'] is not None:
         try:
             output = {
