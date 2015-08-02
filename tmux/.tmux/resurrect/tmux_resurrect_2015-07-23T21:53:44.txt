@@ -1,0 +1,27 @@
+pane	13	1	:zsh	1	:*	1	:/home/parth/Documents/cards	1	vim	:vim Appa's Birthday card.tex
+pane	13	1	:zsh	1	:*	1	:/home/parth/Documents/cards	1	vim	:vim Appa's Birthday card.tex
+pane	social	1	:while	0	: 	1	:/home/parth	1	profanity	:profanity
+pane	13	1	:zsh	1	:*	1	:/home/parth/Documents/cards	1	vim	:vim Appa's Birthday card.tex
+pane	social	1	:while	0	: 	1	:/home/parth	1	profanity	:profanity
+pane	social	1	:while	0	: 	1	:/home/parth	1	profanity	:profanity
+pane	social	2	:while	0	:-	1	:/home/parth	1	irssi	:irssi
+pane	social	2	:while	0	:-	1	:/home/parth	1	irssi	:irssi
+pane	social	2	:while	0	:-	1	:/home/parth	1	irssi	:irssi
+pane	social	3	:while	1	:*	1	:/home/parth	1	mutt	:mutt
+pane	social	3	:while	1	:*	1	:/home/parth	1	mutt	:mutt
+window	13	1	1	:*	e2c8,95x66,0,0,29
+window	13	1	1	:*	e2c8,95x66,0,0,29
+window	social	1	0	: 	630f,135x46,0,0,10
+window	social	2	0	:-	6310,135x46,0,0,11
+window	social	3	1	:*	64d1,191x66,0,0,12
+window	social	1	0	: 	630f,135x46,0,0,10
+window	social	2	0	:-	6310,135x46,0,0,11
+window	social	3	1	:*	64d1,191x66,0,0,12
+state	13	
+pane	social	3	:while	1	:*	1	:/home/parth	1	mutt	:mutt
+state	13	
+window	13	1	1	:*	e2c8,95x66,0,0,29
+window	social	1	0	: 	630f,135x46,0,0,10
+window	social	2	0	:-	6310,135x46,0,0,11
+window	social	3	1	:*	64d1,191x66,0,0,12
+state	13	
