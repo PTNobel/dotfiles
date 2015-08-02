@@ -55,15 +55,19 @@ def watchdog_lock(wait_time):
     i3lock = subprocess.Popen(['i3lock', '-n', '-d'] +
                               ['-t', '-i', which_picture()])
     counter = int()
-
-    while i3lock.returncode is None:
-        time.sleep(60)
+    # i3lock.poll() is used, instead of i3lock.returncode, in order to prevent
+    # i3lock from becoming a zombie, which would never be reaped.
+    while i3lock.poll() is None:
         if counter < wait_time:
             counter += 1
         elif player.is_playing():
             pass
         else:
             suspend()
+        # time.sleep() is placed here in order to prevent the screen from being
+        # lockerevent the screen from being
+        # locked if it's unlocked in the last minute.
+        time.sleep(60)
 
 
 def inactive_lock():
@@ -132,11 +136,23 @@ def reboot():
 
 
 def shutdown():
-    subprocess.call(['systemctl', 'reboot'])
+    subprocess.call(['systemctl', 'poweroff'])
 
 
 def usage():
+    print('Usage: i3exit <option>')
+    print('Options:')
+    for i in option_dict.keys():
+        print('\t' + i)
     pass
+
+
+def log():
+    import datetime
+    fd = open(os.path.expanduser('~/.i3exit.log'), mode='a')
+    fd.write(str({'date': datetime.datetime.now(), 'argv': sys.argv}))
+    fd.write('\n')
+    fd.close()
 
 
 option_dict = {'lock': lock,
@@ -152,12 +168,15 @@ option_dict = {'lock': lock,
                'hibernate': hibernate,
                'reboot': reboot,
                'shutdown': shutdown,
+               'usage': usage,
                }
 
 
 if __name__ == '__main__':
     try:
         option_dict[sys.argv[1]]()
-    except NameError:
+        log()
+    except (IndexError, KeyError):
         usage()
+        log()
         exit(1)
