@@ -6,8 +6,8 @@ import time
 import os
 import sys
 import re
-import process
 import subprocess
+import process
 
 
 # warning() functions like print, except it prefixes everything and prints to
@@ -241,3 +241,7 @@ def back():
 
 def next_song():
     which_player().next_song()
+
+
+if __name__ == '__main__':
+    print('Please don\'t do this.')
