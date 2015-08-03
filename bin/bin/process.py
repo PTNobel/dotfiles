@@ -5,11 +5,6 @@ from os import listdir as _listdir
 from os.path import join as _join
 
 
-global _buffer_map_pids_to_comms
-global _buffer_map_comms_to_pids
-global _buffer_running_pids
-global _buffer_list_of_comms
-
 _buffer_map_pids_to_comms = {}
 _buffer_map_comms_to_pids = {}
 _buffer_running_pids = []
