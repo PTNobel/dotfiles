@@ -1,6 +1,5 @@
-#!/usr/bin/python3
-#
-# Partly taken from the Arch Wiki, extended by me.
+#!/usr/bin/env python3
+
 
 import os
 import sys
