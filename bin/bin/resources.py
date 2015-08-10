@@ -102,6 +102,9 @@ class CityClass:
     def __repr__(self):
         return self.name
 
+    def copy(self):
+        CityClass()
+
     def change_tile(self, tile_delta):
         for resource in tile_delta.key():
             self.resources[resource] += self.resources[resource]
@@ -115,7 +118,7 @@ def save_game_state(turn_log):
 
 
 def turn(nations, turn_log):
-    turn_log.append((turn_log[-1][1]+1, nations.copy()))
+    turn_log.append((turn_log[-1][0]+1, nations.copy()))
     save_game_state(turn_log)
 
 
@@ -131,7 +134,7 @@ def build_initial_nations(name_list):
 
 def roll_dice(number_of_rolls):
     output = list()
-    for i in range(1, number_of_rolls):
+    for i in range(number_of_rolls):
         output.append(random.randint(1, 6) + random.randint(1, 6))
     return output
 
@@ -141,4 +144,5 @@ def calculate_dice_rolls(nations, num_of_rolls):
         for nation in nations.keys():
             nations[nation].roll(i)
 
-print(build_initial_nations(['prince', 'parth', 'shaam', 'moulton']))
+
+nationList = (build_initial_nations(['prince', 'parth', 'shaam', 'moulton']))
