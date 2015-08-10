@@ -15,15 +15,26 @@ path="/dev/shm/measure-net-speed$DISPLAY"
 # and in the next block. 
 eno1="/sys/devices/pci0000:00/0000:00:1c.0/0000:07:00.0/net/eno1/statistics"
 wlo1="/sys/devices/pci0000:00/0000:00:1c.1/0000:0d:00.0/net/wlo1/statistics"
+
 read eno1_rx < "${eno1}/rx_bytes"
 read eno1_tx < "${eno1}/tx_bytes"
 read wlo1_rx < "${wlo1}/rx_bytes"
 read wlo1_tx < "${wlo1}/tx_bytes"
 
+if [[ -d /sys/devices/virtual/net/tun0 ]]; then
+tun0="/sys/devices/virtual/net/tun0/statistics"
+read tun0_rx < "${tun0}/rx_bytes"
+read tun0_tx < "${tun0}/tx_bytes"
+# get time and sum of rx/tx for combined display
+time=$(date +%s)
+rx=$(( $eno1_rx + $wlo1_rx + $tun0_rx))
+tx=$(( $eno1_tx + $wlo1_tx + $tun0_tx))
+else
 # get time and sum of rx/tx for combined display
 time=$(date +%s)
 rx=$(( $eno1_rx + $wlo1_rx ))
 tx=$(( $eno1_tx + $wlo1_tx ))
+fi
 
 # write current data if file does not exist. Do not exit, this will cause
 # problems if this file is sourced instead of executed as another process.
