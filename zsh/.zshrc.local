@@ -366,7 +366,7 @@ cat_cmdline() {
 fpath=(~/.zsh.completions $fpath)
 compinit
 
-source /usr/share/zsh/site-contrib/powerline.zsh
+#source /usr/share/zsh/site-contrib/powerline.zsh
 
 autoload -z edit-command-line
 zle -N edit-command-line
@@ -388,3 +388,11 @@ if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
         TERM=screen-256color
   esac
 fi
+
+function biber_watch {
+  if [ -z "$2" ]; then
+    latex_watch.sh "$1" pdflatex biber
+  else
+    latex_watch.sh "$1" "$2" biber
+  fi
+}
