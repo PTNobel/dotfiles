@@ -33,6 +33,8 @@ def makeTimeString(cur_time, maxNumber):
 
 if len(sys.argv) == 1:
     exit(1)
+for j in sys.argv[1:]:
+    pass
 elif sys.argv[1][:-1].isdigit():
     number = int(sys.argv[1][:-1])
 
@@ -46,6 +48,10 @@ elif sys.argv[1][-1] == 'd':
     number *= 60**2 * 24
 
 endTime = makeTimeString(number, number)
-for i in range(number):
-    print('\r' + makeTimeString(i, number) + '/' + endTime, end='')
-    time.sleep(1)
+try:
+    for i in range(number):
+        print('\r' + makeTimeString(i, number) + '/' + endTime, end='')
+        time.sleep(1)
+except KeyboardInterrupt:
+    print(i)
+    exit(1)
