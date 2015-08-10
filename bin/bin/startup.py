@@ -4,6 +4,7 @@ import os
 import sys
 import datetime as dt
 import time
+import i3exit
 
 
 # Usage: warning(as, many, objects, as, desired)
@@ -185,7 +186,7 @@ def main(arguements):
     elif current_hour >= 22 or current_hour <= 6:
         success(bootstrap_commands, run_log_name)
 
-    elif os.system('xrandr | grep HDMI1 | grep disconnected >/dev/null') == 0:
+    elif not i3exit.which_output()[1]:
         success(bootstrap_commands, run_log_name)
 
     elif log_value != today:
