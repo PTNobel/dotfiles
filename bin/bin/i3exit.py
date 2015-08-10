@@ -21,10 +21,11 @@ def lock():
 
 
 def generic_lock(i3LockOptions=[]):
-    subprocess.call(['i3lock'] + i3LockOptions + ['-t', '-i', which_picture()])
+    subprocess.call(['i3lock'] + i3LockOptions + ['-t', '-i', _which_picture()])
 
 
-def which_picture():
+def which_output():
+    """returns tuple of LVDS_active bool and HDMI_active bool"""
     xrandr_output = subprocess.check_output(['xrandr']).split(b'\n')
     active_output = list()
     HDMI_active = bool()
@@ -40,6 +41,11 @@ def which_picture():
         elif b'HDMI' in i:
             HDMI_active = True
 
+    return (LVDS_active, HDMI_active)
+
+
+def _which_picture():
+    LVDS_active, HDMI_active = which_output()
     if HDMI_active and LVDS_active:
         output = os.path.expanduser("~/Pictures/noise-texture.png")
     elif HDMI_active and not LVDS_active:
@@ -50,9 +56,16 @@ def which_picture():
     return output
 
 
+def watchdog_lock_wrapper():
+    if len(sys.argv) == 3:
+        watchdog_lock(int(sys.argv[2]))
+    else:
+        exit(1)
+
+
 def watchdog_lock(wait_time):
     i3lock = subprocess.Popen(['i3lock', '-n', '-d'] +
-                              ['-t', '-i', which_picture()])
+                              ['-t', '-i', _which_picture()])
     counter = int()
     # i3lock.poll() is used, instead of i3lock.returncode, in order to prevent
     # i3lock from becoming a zombie, which would never be reaped.
@@ -138,14 +151,7 @@ def shutdown():
     subprocess.call(['systemctl', 'poweroff'])
 
 
-def usage():
-    print('Usage: i3exit <option>')
-    print('Options:')
-    for i in option_dict.keys():
-        print('\t' + i)
-
-
-def log():
+def _log():
     import datetime
     fd = open(os.path.expanduser('~/.i3exit.log'), mode='a')
     fd.write(str({'date': datetime.datetime.now(), 'argv': sys.argv}))
@@ -153,28 +159,81 @@ def log():
     fd.close()
 
 
-option_dict = {'lock': lock,
-               'lock_without_sleep': generic_lock,
-               'inactive_lock': inactive_lock,
-               'short_inactive_lock': short_inactive_lock,
-               'suspend_or_lock': suspend_or_lock,
-               'blur': blur,
-               'blur_with_sleep': blur_with_sleep,
-               'freeze': freeze,
-               'logout': logout,
-               'suspend': suspend,
-               'hibernate': hibernate,
-               'reboot': reboot,
-               'shutdown': shutdown,
-               'usage': usage,
-               }
+def main():
+    def usage():
+        print('Usage: ' + arguments['name'] + ' <option>')
+        print('Options:')
+        for i in option_dict.keys():
+            print('\t' + i)
+
+    def processargs():
+        # All of these run in the same scope as processargs(). They make changes
+        # to output.
+
+        # In place of a switch-case statement the following dictionaires link
+        # argv entries to functions.
+        long_args_to_disc = {}
+        short_args_to_disc = {}
+        output = {"input": str(),
+                  "name": os.path.basename(sys.argv[0]),
+                  }
+        indexes_to_ignore = list()
+
+        if len(sys.argv) == 1:
+            exit(1)
+        else:
+            # range() starts at 1 to prevent the name from being processed.
+            for i in range(1, len(sys.argv)):
+                if i in indexes_to_ignore:
+                    continue
+
+                elif len(sys.argv[i]) >= 2 and sys.argv[i][0:2] == '--':
+                    try:
+                        long_args_to_disc[sys.argv[i].split('=')[0]]()
+                    except KeyError:
+                        exit(1)
+
+                elif sys.argv[i][0] == '-' and sys.argv[i][1] != '-':
+                    for j in range(1, len(sys.argv[i])):
+                        try:
+                            short_args_to_disc[sys.argv[i][j]]()
+                        except KeyError:
+                            exit(1)
+
+                elif not output["input"]:
+                    output["input"] = sys.argv[i]
+
+                else:
+                    exit(1)
+
+        return output
+
+    arguments = processargs()
+
+    option_dict = {'lock': lock,
+                   'lock_without_sleep': generic_lock,
+                   'inactive_lock': inactive_lock,
+                   'short_inactive_lock': short_inactive_lock,
+                   'suspend_or_lock': suspend_or_lock,
+                   'blur': blur,
+                   'blur_with_sleep': blur_with_sleep,
+                   'freeze': freeze,
+                   'logout': logout,
+                   'suspend': suspend,
+                   'hibernate': hibernate,
+                   'reboot': reboot,
+                   'shutdown': shutdown,
+                   'usage': usage,
+                   }
+
+    try:
+        option_dict[arguments["input"]]()
+        # _log()
+    except (IndexError, KeyError):
+        usage()
+        # _log()
+        exit(1)
 
 
 if __name__ == '__main__':
-    try:
-        option_dict[sys.argv[1]]()
-        # log()
-    except (IndexError, KeyError):
-        usage()
-        # log()
-        exit(1)
+    main()
