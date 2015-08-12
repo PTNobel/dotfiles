@@ -1,6 +1,10 @@
 name: social
 root: ~/
 windows:
+ - mutt: 
+    layout: 64d9,191x66,0,0,39
+    panes:
+      - mutt
  - profanity: 
     layout: 64d0,191x66,0,0,11
     panes:
@@ -9,7 +13,3 @@ windows:
     layout: 64d2,191x66,0,0,13
     panes:
       - irssi
- - mutt: 
-    layout: 64d9,191x66,0,0,39
-    panes:
-      - mutt
