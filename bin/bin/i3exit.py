@@ -57,7 +57,7 @@ def _which_picture():
 
 
 def watchdog_lock_wrapper():
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 3 and sys.argv[2].isdigit():
         watchdog_lock(int(sys.argv[2]))
     else:
         exit(1)
