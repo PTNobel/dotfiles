@@ -37,4 +37,4 @@ for workspace in workspaces:
 
 subprocess.call(pdfpc_call)
 
-pdfpc_call
+print(type(pdfpc_call))
