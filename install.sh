@@ -36,5 +36,9 @@ for i in $(cat "$(pwd -P)"/manifest_build.repos); do
   make test || exit 1
   sudo make install || exit 1
   make clean || exit 1
-  cd "$(dirname "$0")"
+  cd ..
+done
+
+for i in $(cat "$(pwd -P)"/manifest_usr_local.files); do
+  sudo cp "$i" /usr/local/bin/
 done
