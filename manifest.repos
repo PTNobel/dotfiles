@@ -8,5 +8,6 @@ screen
 systemd
 tmux
 vim
+nvim
 X
 zsh
