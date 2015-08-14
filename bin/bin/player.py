@@ -72,10 +72,9 @@ class mpd:
 
 
 class pianobar:
-    name = 'pianobar'
+    __name__ = 'pianobar'
 
     def __init__(self):
-        self.name = 'pianobar'
         self.commands = {'play': self.pause, 'pause': self.pause,
                          'back': self.like, 'next': self.next,
                          'quit': self.stop, 'stop': self.stop,
@@ -84,7 +83,7 @@ class pianobar:
                          'is_playing': self.is_playing_shell_wrapper}
 
     def __repr__(self):
-        return self.name
+        return self.__name__
 
     def _call_pianoctl(self, option):
         subprocess.call(
@@ -147,7 +146,7 @@ class pianobar:
 
 
 class playerctl:
-    name = 'playerctl'
+    __name__ = 'playerctl'
 
     def __init__(self):
         self.commands = {'play': self.pause, 'pause': self.pause,
@@ -156,7 +155,7 @@ class playerctl:
                          'is_playing': self.is_playing_shell_wrapper}
 
     def __repr__(self):
-        return self.name
+        return self.__name__
 
     def _call_playerctl(self, option):
         subprocess.call(
