@@ -30,7 +30,7 @@ def get_keys(list_of_classes):
 
 
 class mpd:
-    name = 'mpd'
+    __name__ = 'mpd'
 
     def __init__(self):
         self.commands = {'play': self.pause, 'pause': self.pause,
@@ -39,10 +39,12 @@ class mpd:
                          'is_playing': self.is_playing_shell_wrapper}
 
     def _call_mpc(self, option):
-        subprocess.call(['mpc', option])
+        devnull = open('/dev/null')
+        subprocess.call(['mpc', option], stdout=devnull.buffer)
+        devnull.close()
 
     def __repr__(self):
-        return self.name
+        return self.__name__
 
     def pause(self):
         self._call_mpc('toggle')
@@ -124,11 +126,12 @@ class pianobar:
         log2_time_stamp, success2 = self._get_time()
 
         if not (success1 and success2):
-            return False
+            output = False
         if log1_time_stamp == log2_time_stamp:
-            return False
+            output = False
         else:
-            return True
+            output = True
+        return output
 
     def _get_time(self, tries=0):
         """Reads the pianobar time, and returns a tuple of  str '##:##/##:##'
