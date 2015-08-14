@@ -243,5 +243,14 @@ def next_song():
     which_player().next_song()
 
 
+def print_keys(list_of_classes=[mpd, pianobar, playerctl]):
+    for i in list_of_classes:
+        player = i()
+        print("For player " + player.__repr__() +
+              " the following commands are available:")
+        for j in sorted(player.commands.keys()):
+            print("   " + j)
+
+
 if __name__ == '__main__':
     print('Please don\'t do this.')

@@ -148,16 +148,6 @@ else:
         return
 
 
-def get_keys(list_of_classes):
-    for i in list_of_classes:
-        print("For player " + str(i) +
-              " the following commands are available:")
-        for j in sorted(i.commands.keys()):
-            print("   " + j)
-
-    exit(0)
-
-
 def main(arguments):
     verboseprint('main() starting')
     # Handle help and usage correctly:
@@ -165,7 +155,8 @@ def main(arguments):
         usage(0, arguments['name'])
 
     if arguments["input"] == "commands":
-        get_keys([player.pianobar(), player.mpd(), player.playerctl()])
+        player.print_keys()
+        exit(0)
 
     # Figure out what player is running.
     current_player = player.which_player(arguments)
