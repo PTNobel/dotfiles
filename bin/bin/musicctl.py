@@ -64,10 +64,22 @@ def processargs(input_argv):
 
     def _player():
         if '=' in input_argv[i]:
-            output["player"] = input_argv[i].split('=')[1]
+            player = input_argv[i].split('=')[1]
         else:
-            output["player"] = input_argv[i + 1]
+            player = input_argv[i + 1]
             indexes_to_ignore.append(i + 1)
+        try:
+            output["player"] = {
+                'mpd': player.mpd,
+                'mpc': player.mpd,
+                'pianobar': player.pianobar,
+                'pianoctl': player.pianobar,
+                'playerctl': player.playerctl,
+                'mpris': player.playerctl,
+                }[player]()
+        except KeyError:
+            warning('Invalid player')
+            exit(1)
 
     # In place of a switch-case statement the following dictionaires link argv
     # entries to functions.
@@ -159,7 +171,10 @@ def main(arguments):
         exit(0)
 
     # Figure out what player is running.
-    current_player = player.which_player(arguments)
+    if arguments['player'] is not None:
+        current_player = arguments['player']
+    else:
+        current_player = player.current_player()
     if arguments["input"] == "player":
         print(current_player)
         exit(0)

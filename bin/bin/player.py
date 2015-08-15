@@ -191,58 +191,44 @@ class playerctl:
         return is_playing_present
 
 
-def which_player(arguments={'player': None}):
-    if arguments['player'] is not None:
-        try:
-            output = {
-                'mpd': mpd,
-                'mpc': mpd,
-                'pianobar': pianobar,
-                'pianoctl': pianobar,
-                'playerctl': playerctl,
-                'mpris': playerctl,
-            }[arguments['player']]()
-        except KeyError:
-            warning('Invalid player')
-            exit(1)
-    else:
-        list_of_process_names = process.get_comms()
+def current_player():
+    list_of_process_names = process.get_comms()
 
-        # pianobar get priority over mpd, unless mpd is playing.
-        if 'mpd' in list_of_process_names:
-            if 'pianobar' in list_of_process_names:
-                if b'playing' in subprocess.check_output(['mpc', 'status']):
-                    output = mpd()
-                else:
-                    output = pianobar()
-            else:
+    # pianobar get priority over mpd, unless mpd is playing.
+    if 'mpd' in list_of_process_names:
+        if 'pianobar' in list_of_process_names:
+            if b'playing' in subprocess.check_output(['mpc', 'status']):
                 output = mpd()
-        elif 'pianobar' in list_of_process_names:
-            output = pianobar()
+            else:
+                output = pianobar()
         else:
-            output = playerctl()
+            output = mpd()
+    elif 'pianobar' in list_of_process_names:
+        output = pianobar()
+    else:
+        output = playerctl()
 
     return output
 
 
 def is_playing():
-    return which_player().is_playing()
+    return current_player().is_playing()
 
 
 def pause():
-    which_player().pause()
+    current_player().pause()
 
 
 def stop():
-    which_player().stop()
+    current_player().stop()
 
 
 def back():
-    which_player().back()
+    current_player().back()
 
 
 def next_song():
-    which_player().next_song()
+    current_player().next_song()
 
 
 def print_keys(list_of_classes=[mpd, pianobar, playerctl]):
