@@ -1,6 +1,21 @@
 #!/usr/bin/python3
 
 
+__all__ = [
+    "is_comm_running",
+    "get_comms_to_pids",
+    "get_pids_to_comms",
+    "get_pids_to_cmdlines",
+    "get_pids_of_comm",
+    "get_comm_of_pid",
+    "get_pids",
+    "get_comms",
+    "get_pids_of_comm",
+    "update_buffers",
+    "get_cmdline_of_pid",
+    ]
+
+
 from os import listdir as _listdir
 from os.path import join as _join
 
