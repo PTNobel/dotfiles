@@ -4,6 +4,7 @@ import os
 import sys
 import datetime as dt
 import time
+import process
 import i3exit
 
 
@@ -59,15 +60,13 @@ def are_there_other_startuppy():
     launching processes repeatedly."""
     def check_if_pid_is_startuppy(pidnum):
         return "startup" in \
-            str(open(os.path.join('/proc', pidnum, 'comm'), 'rb').read()) \
+            process.get_cmdline_of_pid(pidnum)[1] \
             and "python" in \
-            str(open(os.path.join('/proc', pidnum, 'cmdline'), 'rb').read())
+            process.get_cmdline_of_pid(pidnum)[0]
 
-    pids = [
-        pid
-        for pid in os.listdir
-        ('/proc') if pid.isdigit() and pid != str(os.getpid())]
-
+    process.update_buffers()
+    pids = process.get_pids()
+    pids.remove(str(os.getpid()))
     verboseprint(pids)
     verboseprint(str(os.getpid()))
 
@@ -83,16 +82,15 @@ def are_there_other_startuppy():
             verboseprint(pid)
             if pid == str(os.getpid()):
                 print('This script')
-            verboseprint(open(os.path.join('/proc/', pid, 'cmdline'), 'rb')
-                         .read())
+            verboseprint(process.get_cmdline_of_pid(pid))
             while check_if_pid_is_startuppy(pid):
                 warning("Is there another " + os.path.basename(sys.argv[0]) +
                         " running?")
                 time.sleep(60)
             else:
                 verboseprint(pid + " is not startup.py")
-        except IOError:  # proc has already terminated
-            verboseprint(pid + " has terminated")
+        except (IOError, IndexError):  # proc has already terminated
+            verboseprint(pid + " has terminated, or has no args")
             continue
 
 
