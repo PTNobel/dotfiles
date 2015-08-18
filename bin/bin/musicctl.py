@@ -18,8 +18,7 @@ def warning(*objs, prefix='WARNING: '):
 
 def usage(exit_code, name):
     verboseprint('usage() starting', exit_code, name)
-    usage_text = "Usage: " + name + \
-        " {[a command]|player|commands|usage|help}"
+    usage_text = "Usage: %s {[a command]|player|commands|usage|help}" % name
 
     if exit_code == 0:
         print(usage_text)
