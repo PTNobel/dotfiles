@@ -174,9 +174,10 @@ def main():
         # argv entries to functions.
         long_args_to_disc = {}
         short_args_to_disc = {}
-        output = {"input": str(),
-                  "name": os.path.basename(sys.argv[0]),
-                  }
+        output = {
+            "input": str(),
+            "name": os.path.basename(sys.argv[0]),
+            }
         indexes_to_ignore = list()
 
         if len(sys.argv) == 1:
@@ -236,4 +237,5 @@ def main():
 
 
 if __name__ == '__main__':
+    _log()
     main()
