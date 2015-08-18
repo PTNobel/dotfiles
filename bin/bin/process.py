@@ -21,6 +21,7 @@ from os.path import join as _join
 
 
 _buffer_map_pids_to_comms = {}
+_buffer_map_pids_to_cmdlines = {}
 _buffer_map_comms_to_pids = {}
 _buffer_running_pids = []
 _buffer_list_of_comms = []
@@ -33,6 +34,18 @@ def _map_pids_to_comms(rebuild_buffer):
         for i in _buffer_running_pids:
             output[i] = _get_comm_of_pid(i)
         _buffer_map_pids_to_comms = output
+    else:
+        output = _buffer_map_pids_to_comms
+    return output
+
+
+def _map_pids_to_cmdlines(rebuild_buffer):
+    global _buffer_map_pids_to_cmdlines
+    output = dict()
+    if _buffer_map_pids_to_cmdlines == {} or rebuild_buffer:
+        for i in _buffer_running_pids:
+            output[i] = _get_cmdline_of_pid(i)
+        _buffer_map_pids_to_cmdlines = output
     else:
         output = _buffer_map_pids_to_comms
     return output
@@ -60,6 +73,21 @@ def _get_comm_of_pid(pid):
         except FileNotFoundError:
             comm = str()
     return comm
+
+
+def _get_cmdline_of_pid(pid):
+    if pid in _buffer_map_pids_to_cmdlines:
+        cmdline = _buffer_map_pids_to_cmdlines[pid]
+    else:
+        try:
+            cmd_file = open(_join('/proc', pid, 'cmdline'), 'r')
+            cmd = cmd_file.read().rstrip('\n')
+            cmd_file.close()
+            cmdline = cmd.split('\x00')
+        except FileNotFoundError:
+            cmd = str()
+            cmdline = cmd.split('\x00')
+    return cmdline
 
 
 def _get_pids_of_comm(comm):
@@ -104,6 +132,7 @@ def _is_comm_running(comm):
 def _build_buffers(rebuild):
     _get_running_pids(rebuild)
     _map_pids_to_comms(rebuild)
+    _map_pids_to_cmdlines(rebuild)
     _get_list_of_comms(rebuild)
     _map_comms_to_pids(rebuild)
 
@@ -137,9 +166,19 @@ def get_pids_of_comm(comm):
     return _get_pids_of_comm(comm)
 
 
+def get_pids_to_cmdlines():
+    """Returns a dict of pids as keys and a string of the comm as values"""
+    return _buffer_map_pids_to_cmdlines
+
+
 def get_comm_of_pid(pid):
     """Returns the str of the comm of a pid"""
     return _get_comm_of_pid(pid)
+
+
+def get_cmdline_of_pid(pid):
+    """Returns the bytes of the cmdline of a pid"""
+    return _get_cmdline_of_pid(pid)
 
 
 def is_comm_running(comm):
