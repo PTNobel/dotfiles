@@ -44,5 +44,5 @@ function check_for_changes {
 mkdir -p "$auxdir"
 cp "$file" "$auxdir"/"$(basename "$file")"
 build
-rifle "$auxdir"/"$(basename "${file%.tex}")".pdf
+rifle "$auxdir"/"$(basename "${file}" .tex)".pdf
 check_for_changes || exit 0 && exit 1
