@@ -7,9 +7,9 @@ import time
 import i3exit
 
 
-# Usage: warning(as, many, objects, as, desired)
-# Will print everything passed to it to stderr with the prefix WARNING:
 def warning(*objs):
+    """Usage: warning(as, many, objects, as, desired)
+    Will print everything passed to it to stderr with the prefix WARNING:"""
     printed_list = 'WARNING'
     for i in objs:
         printed_list += ': '
@@ -17,11 +17,11 @@ def warning(*objs):
     print(printed_list, file=sys.stderr)
 
 
-# processargs() goes through argv and returns a dictionary that specifies
-# whether the associated flag was passed.
-# Usage: processargs(argv), where argv is a list() of arguments, example,
-# sys.argv
 def processargs(argv):
+    """Usage: processargs(argv), where argv is a list() of arguments, example,
+    sys.argv
+    processargs() goes through argv and returns a dictionary that specifies
+    whether the associated flag was passed."""
     output = {"weekly": None, "verbose": None,
               "bootstrap": None, "force": None, 'try-full-boot': False}
     for i in argv:
@@ -40,14 +40,12 @@ def processargs(argv):
 arguements = processargs(sys.argv)
 
 
-# verboseprint() finctions similarly to warning() accept it only exists if
-# arguements["verbose"] is true, or when -v is present. It is intended to dump
-# objects into stdout.
-# Usage: verboseprint(as,  many, objects, as, desired)
 if arguements["verbose"]:
     def verboseprint(*args):
-        # Print each argument separately so caller doesn't need to
-        # stuff everything to be printed into a single string
+        """Usage: verboseprint(as,  many, objects, as, desired)
+        verboseprint() finctions similarly to warning() accept it only exists if
+        arguements["verbose"] is true, or when -v is present. It is intended to
+        dump objects into stdout."""
         for arg in args:
             print(arg)
 else:
@@ -55,10 +53,10 @@ else:
         return
 
 
-# Begin checking to make sure this is the only version of startup.py to be
-# running. This helps fight issues with multiple instances of startup.py
-# launching processes repeatedly.
 def are_there_other_startuppy():
+    """Begin checking to make sure this is the only version of startup.py to be
+    running. This helps fight issues with multiple instances of startup.py
+    launching processes repeatedly."""
     def check_if_pid_is_startuppy(pidnum):
         return "startup" in \
             str(open(os.path.join('/proc', pidnum, 'comm'), 'rb').read()) \
@@ -98,8 +96,8 @@ def are_there_other_startuppy():
             continue
 
 
-# removes unnecessary characters from a list.
 def clean_list(input_list):
+    """removes unnecessary characters from a list."""
     output_list = list()
     for i in input_list:
         var = i.replace('\n', '')
@@ -107,25 +105,23 @@ def clean_list(input_list):
     return output_list
 
 
-# writes today's date to a log file.
 def update_log(log):
+    """writes today's date to a log file."""
     today = str(dt.date.today())
     log_file_writeable = open(log, 'w')
     log_file_writeable.write(today)
     log_file_writeable.close()
 
 
-# Iterates through the list commands, and executes the commands. It then
-# creates run_log_str in /tmp/
 def success(commands, run_log_str):
+    """Iterates through the list commands, and executes the commands. It then
+    creates run_log_str in /tmp/"""
     verboseprint(commands)
     for i in commands:
         verboseprint(i)
         if os.system('urxvt -e exit') != 0:
             warning('Something\'s very wrong with this X server')
             warning('Dazed and confused and quitting now')
-            os.system(
-                'dmesg >/tmp/dmesg.X.' + os.getenv('DISPLAY', '')[1:] + '.log')
             exit(6)
         os.system(i + ' >/dev/null &')
     run_log = open('/tmp/' + run_log_str, mode='w')
