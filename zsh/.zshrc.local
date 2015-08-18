@@ -396,3 +396,9 @@ function biber_watch {
     latex_watch.sh "$1" "$2" biber
   fi
 }
+
+function sch {
+  unalias cd
+  wd school
+  cd $(python3 ~/bin/school.py "$1")
+}
