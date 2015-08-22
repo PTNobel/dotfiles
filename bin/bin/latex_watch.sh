@@ -24,9 +24,11 @@ function build {
     $latex "$file"
     $biber "${file%.tex}"
     $latex "$file"
+    cp "$auxdir"/"$(basename "${file}" .tex)".pdf ~/.latex
   else
     $latex "$file"
     $latex "$file"
+    cp "$auxdir"/"$(basename "${file}" .tex)".pdf ~/.latex
   fi
 }
 
