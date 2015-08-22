@@ -90,7 +90,7 @@ def suspend():
     subprocess.call(['systemctl', 'suspend'])
 
 
-def generic_blur(i3LockOptions):
+def _generic_blur(i3LockOptions):
     fileName1 = str(subprocess.Popen(
                     ['mktemp', '--tmpdir',
                      'i3lock-wrapper-XXXXXXX.png'],
@@ -109,11 +109,11 @@ def generic_blur(i3LockOptions):
 
 
 def blur():
-    generic_blur([])
+    _generic_blur([])
 
 
 def blur_with_sleep():
-    generic_blur(['-d'])
+    _generic_blur(['-d'])
 
 
 def freeze():
