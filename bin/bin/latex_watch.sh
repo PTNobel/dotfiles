@@ -11,8 +11,10 @@ else
   latex="pdflatex $latex_options"
 fi
 export latex
+if [[ "$3" == "biber" ]]; then
 biber="biber --output-directory $auxdir --input-directory $auxdir"
 export biber
+fi
 
 file="$1"
 export file
