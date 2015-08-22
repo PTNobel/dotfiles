@@ -12,3 +12,4 @@ media:/media
 cache:/var/cache/pacman/pkg
 SciOly:/home/parth/Documents/Science Olympiad/2016
 java:/home/parth/Code/UCSD-Extensions/IntroToCompSci
+latex_build:/tmp/parth-LaTeX

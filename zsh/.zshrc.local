@@ -400,5 +400,6 @@ function biber_watch {
 function sch {
   unalias cd
   wd school
+  alias cd=cl
   cd $(python3 ~/bin/school.py "$1")
 }
