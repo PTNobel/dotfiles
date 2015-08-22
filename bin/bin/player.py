@@ -216,19 +216,19 @@ def is_playing():
 
 
 def pause():
-    current_player().pause()
+    current_player().commands['pause']()
 
 
 def stop():
-    current_player().stop()
+    current_player().commands['stop']()
 
 
 def back():
-    current_player().back()
+    current_player().commands['back']()
 
 
 def next_song():
-    current_player().next_song()
+    current_player().commands['next']()
 
 
 def print_keys(list_of_classes=[mpd, pianobar, playerctl]):
