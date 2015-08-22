@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os
+import subprocess
 import process
 
 
@@ -16,7 +16,7 @@ def prompt_user(secret_num=0):
         if len(user_input) == 0:
             prompt_user(secret_num + 1)
         elif user_input[0] == 'y':
-            os.system('pianoctl')
+            subprocess.call(['pianoctl'])
         elif user_input[0] == 'n':
             exit(0)
         else:
@@ -24,7 +24,7 @@ def prompt_user(secret_num=0):
 
 
 if process.is_comm_running('pianobar'):
-    os.system('pianoctl')
+    subprocess.call(['pianoctl'])
 
 else:
     prompt_user()
