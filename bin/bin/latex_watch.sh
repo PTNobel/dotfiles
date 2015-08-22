@@ -49,4 +49,8 @@ mkdir -p "$auxdir"
 cp "$file" "$auxdir"/"$(basename "$file")"
 build
 rifle "$auxdir"/"$(basename "${file}" .tex)".pdf
-check_for_changes || exit 0 && exit 1
+if [[ -z "$VIM" ]]; then
+  check_for_changes
+else
+  exit 0
+fi
