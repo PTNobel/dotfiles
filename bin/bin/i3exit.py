@@ -9,11 +9,7 @@ import player
 
 
 def suspend_or_lock():
-    if player.is_playing():
-        watchdog_lock(3)
-    else:
-        lock()
-        suspend()
+    watchdog_lock(1, 15)
 
 
 def lock():
@@ -63,7 +59,7 @@ def watchdog_lock_wrapper():
         exit(1)
 
 
-def watchdog_lock(wait_time):
+def watchdog_lock(wait_time,  sleep_for=60):
     i3lock = subprocess.Popen(['i3lock', '-n', '-d'] +
                               ['-t', '-i', _which_picture()])
     counter = int()
@@ -76,10 +72,9 @@ def watchdog_lock(wait_time):
             pass
         else:
             suspend()
-        # time.sleep() is placed here in order to prevent the screen from being
-        # lockerevent the screen from being
-        # locked if it's unlocked in the last minute.
-        time.sleep(60)
+        # time.sleep() is placed here in order to prevent the computer from
+        # being suspended if it's unlocked in the last sleep_for seconds.
+        time.sleep(sleep_for)
 
 
 def inactive_lock():
