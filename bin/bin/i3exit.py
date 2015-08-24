@@ -17,7 +17,12 @@ def lock():
 
 
 def generic_lock(i3LockOptions=[]):
-    subprocess.call(['i3lock'] + i3LockOptions + ['-t', '-i', _which_picture()])
+    return subprocess.Popen(
+        ['i3lock'] + i3LockOptions + ['-t', '-i', _which_picture()])
+
+
+def plain_lock(i3LockOptions=[]):
+    return subprocess.Popen(['i3lock'] + i3LockOptions + ['-t'])
 
 
 def which_output():
@@ -59,9 +64,8 @@ def watchdog_lock_wrapper():
         exit(1)
 
 
-def watchdog_lock(wait_time,  sleep_for=60):
-    i3lock = subprocess.Popen(['i3lock', '-n', '-d'] +
-                              ['-t', '-i', _which_picture()])
+def watchdog_lock(wait_time,  sleep_for=60, lock_function=generic_lock):
+    i3lock = lock_function(['-n', '-d'])
     counter = int()
     # i3lock.poll() is used, instead of i3lock.returncode, in order to prevent
     # i3lock from becoming a zombie, which would never be reaped.
@@ -90,7 +94,7 @@ def suspend():
     subprocess.call(['systemctl', 'suspend'])
 
 
-def _generic_blur(i3LockOptions):
+def generic_blur(i3LockOptions=[]):
     fileName1 = str(subprocess.Popen(
                     ['mktemp', '--tmpdir',
                      'i3lock-wrapper-XXXXXXX.png'],
@@ -108,12 +112,8 @@ def _generic_blur(i3LockOptions):
         subprocess.call(['rm', fileName1, fileName2])
 
 
-def blur():
-    _generic_blur([])
-
-
 def blur_with_sleep():
-    _generic_blur(['-d'])
+    generic_blur(['-d'])
 
 
 def freeze():
@@ -209,9 +209,10 @@ def main():
     option_dict = {'lock': lock,
                    'lock_without_sleep': generic_lock,
                    'inactive_lock': inactive_lock,
+                   'watchdog_lock': watchdog_lock_wrapper,
                    'short_inactive_lock': short_inactive_lock,
                    'suspend_or_lock': suspend_or_lock,
-                   'blur': blur,
+                   'blur': generic_blur,
                    'blur_with_sleep': blur_with_sleep,
                    'freeze': freeze,
                    'logout': logout,
