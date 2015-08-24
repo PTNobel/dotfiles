@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Sets only one monitor on the actual laptop.
+# Sets only one monitor: the actual laptop.
 
 xrandr --output LVDS1 --mode 1366x768 --pos 0x809 --rotate normal --primary
 
