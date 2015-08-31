@@ -16,6 +16,9 @@ try:
         "c": "Calc",
         "photo": "Photo",
         "p": "Photo",
+        "speech": "Speech_and_Debate",
+        "debate": "Speech_and_Debate",
+        "s": "Speech_and_Debate",
     }[sys.argv[1].lower()])
 except IndexError:
     print('.')
