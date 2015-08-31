@@ -74,7 +74,11 @@ def watchdog_lock(wait_time,  sleep_for=60, lock_function=generic_lock):
             counter += 1
         elif player.is_playing():
             pass
-        else:
+        # The second i3lock check is for the edgecase where when
+        # player.is_playing() takes 2 seconds (which can happen in
+        # player.pianobar.is_playing()) and the screen is unlocked in that
+        # time.
+        elif i3lock.poll() is None:
             suspend()
         # time.sleep() is placed here in order to prevent the computer from
         # being suspended if it's unlocked in the last sleep_for seconds.
@@ -82,11 +86,11 @@ def watchdog_lock(wait_time,  sleep_for=60, lock_function=generic_lock):
 
 
 def inactive_lock():
-    watchdog_lock(15)
+    watchdog_lock(5)
 
 
 def short_inactive_lock():
-    watchdog_lock(3)
+    watchdog_lock(3, 30)
 
 
 def suspend():
