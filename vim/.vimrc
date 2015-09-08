@@ -80,6 +80,10 @@ if &t_Co == 8 && $TERM !~# '^linux'
   set t_Co=16
 endif
 
+let g:ycm_semantic_triggers = {
+\  'tex'  : ['\ref{','\cite{'],
+\ }
+
 let g:jedi#force_py_version = 3
 let g:calendar_google_calendar = 1
 let g:calendar_google_task = 1
