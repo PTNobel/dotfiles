@@ -64,8 +64,8 @@ def watchdog_lock_wrapper():
         exit(1)
 
 
-def watchdog_lock(wait_time,  sleep_for=60, lock_function=generic_lock):
-    i3lock = lock_function(['-n', '-d'])
+def watchdog_lock(wait_time,  sleep_for=60, generic_locker=generic_lock):
+    i3lock = generic_locker(['-n', '-d'])
     counter = int()
     # i3lock.poll() is used, instead of i3lock.returncode, in order to prevent
     # i3lock from becoming a zombie, which would never be reaped.
@@ -211,22 +211,24 @@ def main():
     arguments = processargs()
 
     try:
-        {'lock': lock,
-         'lock_without_sleep': generic_lock,
-         'inactive_lock': inactive_lock,
-         'watchdog_lock': watchdog_lock_wrapper,
-         'short_inactive_lock': short_inactive_lock,
-         'suspend_or_lock': suspend_or_lock,
-         'blur': generic_blur,
-         'blur_with_sleep': blur_with_sleep,
-         'freeze': freeze,
-         'logout': logout,
-         'suspend': suspend,
-         'hibernate': hibernate,
-         'reboot': reboot,
-         'shutdown': shutdown,
-         'usage': usage,
-         }[arguments["input"]]()
+        option_dict = {'lock': lock,
+                       'lock_without_sleep': generic_lock,
+                       'inactive_lock': inactive_lock,
+                       'watchdog_lock': watchdog_lock_wrapper,
+                       'short_inactive_lock': short_inactive_lock,
+                       'suspend_or_lock': suspend_or_lock,
+                       'blur': generic_blur,
+                       'blur_with_sleep': blur_with_sleep,
+                       'freeze': freeze,
+                       'logout': logout,
+                       'suspend': suspend,
+                       'hibernate': hibernate,
+                       'reboot': reboot,
+                       'shutdown': shutdown,
+                       'usage': usage,
+                       }
+
+        option_dict[arguments["input"]]()
         # _log()
     except (IndexError, KeyError):
         usage()

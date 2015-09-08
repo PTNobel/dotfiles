@@ -7,7 +7,11 @@ import time
 
 
 def usage(exit_code, name):
-    usage_text = "Usage: %s" % name
+    usage_text = ("Usage: %s [--help|-h]" +
+                  " [--sagetex|-s]" +
+                  " [--biber|-b]" +
+                  " [--auxdir </tmp/$USER-LaTeX>|-a </tmp/$USER-LaTeX>]" +
+                  " [--engine <pdflatex>|-e <pdflatex>]" + " <file.tex>") % name
 
     if exit_code == 0:
         print(usage_text)
@@ -113,6 +117,7 @@ def processargs(input_argv):
                          '--auxdir': _auxdir,
                          }
     short_args_to_disc = {'h': _help,
+                          's': _sagetex,
                           'b': _biber,
                           'e': _engine,
                           'a': _auxdir,
