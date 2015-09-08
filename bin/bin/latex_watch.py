@@ -7,7 +7,7 @@ import time
 
 
 def usage(exit_code, name):
-    usage_text = "Usage: %s {[a command]|player|commands|usage|help}" % name
+    usage_text = "Usage: %s" % name
 
     if exit_code == 0:
         print(usage_text)
@@ -35,9 +35,9 @@ class Build:
 
     def latex(self):
         subprocess.call([self.recipe['engine'],
-                        '-output-directory',
-                        self.recipe['auxdir'],
-                        "-interaction=nonstopmode", self.recipe['file']])
+                         '-output-directory',
+                         self.recipe['auxdir'],
+                         "-interaction=nonstopmode", self.recipe['file']])
 
     def biber(self):
         subprocess.call(
@@ -46,7 +46,7 @@ class Build:
                 "--input-directory", self.recipe['auxdir'],
                 os.path.basename(self.recipe
                                  ['file'][:: -1].replace
-                                ('xet.', '', 1)[:: -1])])
+                                 ('xet.', '', 1)[:: -1])])
 
     def sagetex(self):
         firstdir = os.getcwd()
@@ -55,7 +55,7 @@ class Build:
             ['sage',
                 os.path.basename(self.recipe
                                  ['file'][:: -1].replace
-                                ('xet', 'egas.xetegas', 1)[:: -1])])
+                                 ('xet', 'egas.xetegas', 1)[:: -1])])
         os.chdir(firstdir)
 
     def build(self):
@@ -173,18 +173,28 @@ arguments = processargs(sys.argv)
 
 
 class FileWatch:
+    _failed_reads = 0
 
     def __init__(self, file_name):
         self._file_name = file_name
         self._last_content = self._read_file()
 
     def _read_file(self):
-        fd = open(self._file_name)
+        try:
+            fd = open(self._file_name)
+        except FileNotFoundError as e:
+            self._failed_reads += 1
+            if self._failed_reads <= 5:
+                return self._read_file()
+            else:
+                raise e
+            time.sleep(.3)
         filecontents = fd.readlines()
         fd.close()
         return filecontents
 
     def hasItChanged(self):
+        self._failed_reads = 0
         _new_content = self._read_file()
         if _new_content != self._last_content:
             self._last_content = _new_content
@@ -194,6 +204,7 @@ class FileWatch:
 
 
 def main():
+    watchedFile = FileWatch(arguments['file'])
     os.makedirs(os.path.expandvars(arguments['auxdir']), exist_ok=True)
     pdfname = os.path.join(
         # ''[:: -1] reverses a string. So this reverses the filename, in order
@@ -204,11 +215,11 @@ def main():
                             '.' + os.path.basename(arguments['file']) + '.swp')
     arguments['build'].build()
     subprocess.call(['rifle', pdfname])
-    watchedFile = FileWatch(arguments['file'])
     while os.path.exists(swapfile):
         if watchedFile.hasItChanged():
             arguments['build'].build()
         time.sleep(5)
+    arguments['build'].build()
 
 
 if __name__ == '__main__':
