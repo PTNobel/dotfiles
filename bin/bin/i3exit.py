@@ -210,25 +210,23 @@ def main():
 
     arguments = processargs()
 
-    option_dict = {'lock': lock,
-                   'lock_without_sleep': generic_lock,
-                   'inactive_lock': inactive_lock,
-                   'watchdog_lock': watchdog_lock_wrapper,
-                   'short_inactive_lock': short_inactive_lock,
-                   'suspend_or_lock': suspend_or_lock,
-                   'blur': generic_blur,
-                   'blur_with_sleep': blur_with_sleep,
-                   'freeze': freeze,
-                   'logout': logout,
-                   'suspend': suspend,
-                   'hibernate': hibernate,
-                   'reboot': reboot,
-                   'shutdown': shutdown,
-                   'usage': usage,
-                   }
-
     try:
-        option_dict[arguments["input"]]()
+        {'lock': lock,
+         'lock_without_sleep': generic_lock,
+         'inactive_lock': inactive_lock,
+         'watchdog_lock': watchdog_lock_wrapper,
+         'short_inactive_lock': short_inactive_lock,
+         'suspend_or_lock': suspend_or_lock,
+         'blur': generic_blur,
+         'blur_with_sleep': blur_with_sleep,
+         'freeze': freeze,
+         'logout': logout,
+         'suspend': suspend,
+         'hibernate': hibernate,
+         'reboot': reboot,
+         'shutdown': shutdown,
+         'usage': usage,
+         }[arguments["input"]]()
         # _log()
     except (IndexError, KeyError):
         usage()
