@@ -5,7 +5,7 @@ from os import listdir as _listdir
 from os.path import join as _join
 
 
-class processes:
+class Processes:
     _buffer_map_pids_to_comms = dict()
     _buffer_map_comms_to_pids = dict()
     _buffer_running_pids = list()
