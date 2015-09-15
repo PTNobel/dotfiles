@@ -96,7 +96,7 @@ PID7=$!
 yaourt_wrapper -C
 PID8=$!
 
-tail -n"$(wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" | lolcat &
+tail -n"$(wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" &
 export TAILPID=$!
 
 wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8
