@@ -11,7 +11,8 @@ def usage(exit_code, name):
                   " [--sagetex|-s]" +
                   " [--biber|-b]" +
                   " [--auxdir </tmp/$USER-LaTeX>|-a </tmp/$USER-LaTeX>]" +
-                  " [--engine <pdflatex>|-e <pdflatex>]" + " <file.tex>") % name
+                  " [--engine <pdflatex>|-e <pdflatex>]" + " <file.tex>" +
+                  " [--slow|-S]") % name
 
     if exit_code == 0:
         print(usage_text)
@@ -28,6 +29,12 @@ class Build:
     def __init__(self, recipe):
         self.recipe = recipe
         self.addToBuild('latex')
+        self.pdfname = os.path.join(
+            # ''[:: -1] reverses a string. So this reverses the filename, in
+            # order to replace the last tex with pdf
+            recipe['auxdir'],
+            os.path.basename(
+                recipe['file'][:: -1].replace('xet', 'fdp', 1)[:: -1]))
 
         if recipe['biber']:
             self.addToBuild('biber')
@@ -36,6 +43,7 @@ class Build:
             self.addToBuild('sagetex')
 
         self.addToBuild('latex')
+        self.addToBuild('backup')
 
     def latex(self):
         subprocess.call([self.recipe['engine'],
@@ -62,6 +70,9 @@ class Build:
                                  ('xet', 'egas.xetegas', 1)[:: -1])])
         os.chdir(firstdir)
 
+    def backup(self):
+        subprocess.call(['cp', self.pdfname, os.path.expanduser('~/.latex/')])
+
     def build(self):
         for i in self.build_steps:
             i()
@@ -71,7 +82,8 @@ class Build:
             {
                 'latex': self.latex,
                 'biber': self.biber,
-                'sagetex': self.sagetex
+                'sagetex': self.sagetex,
+                'backup': self.backup,
             }[nameOfCompilationStep]
         )
 
@@ -88,6 +100,9 @@ def processargs(input_argv):
 
     def _biber():
         output_recipe['biber'] = True
+
+    def _slow():
+        output['slow'] = True
 
     def _auxdir():
         if '=' in input_argv[i]:
@@ -115,18 +130,21 @@ def processargs(input_argv):
                          '--engine': _engine,
                          '--biber': _biber,
                          '--auxdir': _auxdir,
+                         '--slow': _slow,
                          }
     short_args_to_disc = {'h': _help,
                           's': _sagetex,
                           'b': _biber,
                           'e': _engine,
                           'a': _auxdir,
+                          'S': _slow,
                           }
     output = {"input": None,
               "name": os.path.basename(input_argv[0]),
               "player": None,
-              "build": [],
-              'auxdir': os.path.expandvars('/tmp/$USER-LaTeX')
+              "build": Build,
+              'auxdir': os.path.expandvars('/tmp/$USER-LaTeX'),
+              'slow': False,
               }
 
     output_recipe = {
@@ -211,20 +229,33 @@ class FileWatch:
 def main():
     watchedFile = FileWatch(arguments['file'])
     os.makedirs(os.path.expandvars(arguments['auxdir']), exist_ok=True)
-    pdfname = os.path.join(
-        # ''[:: -1] reverses a string. So this reverses the filename, in order
-        # to replace the last tex with pdf
-        arguments['auxdir'], os.path.basename(arguments['file'][:: -1].replace
-                                              ('xet', 'fdp', 1)[:: -1]))
+    if arguments['slow']:
+        pdfname = os.path.join(
+            # ''[:: -1] reverses a string. So this reverses the filename,
+            # in order to replace the last tex with pdf
+            os.path.expanduser('~/.latex'),
+            os.path.basename(arguments['file'][:: -1].replace
+                             ('xet', 'fdp', 1)[:: -1]))
+    else:
+        pdfname = os.path.join(
+            # ''[:: -1] reverses a string. So this reverses the filename,
+            # in order to replace the last tex with pdf
+            arguments['auxdir'],
+            os.path.basename(arguments['file'][:: -1].replace
+                             ('xet', 'fdp', 1)[:: -1]))
     swapfile = os.path.join(os.path.dirname(arguments['file']),
                             '.' + os.path.basename(arguments['file']) + '.swp')
     arguments['build'].build()
     subprocess.call(['rifle', pdfname])
+    didSwapExist = bool()
     while os.path.exists(swapfile):
+        didSwapExist = True
         if watchedFile.hasItChanged():
             arguments['build'].build()
         time.sleep(5)
-    arguments['build'].build()
+
+    if didSwapExist:
+        arguments['build'].build()
 
 
 if __name__ == '__main__':
