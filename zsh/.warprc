@@ -1,5 +1,5 @@
+
 school:/home/parth/Documents/2015-2016
-backup:/media/Toshiba_Backups
 cards:/home/parth/Documents/cards
 triplea:/home/parth/Code/aur/triplea
 i3:/home/parth/.dotfiles/i3/.i3
@@ -11,5 +11,4 @@ tmp:/tmp
 media:/media
 cache:/var/cache/pacman/pkg
 SciOly:/home/parth/Documents/Science Olympiad/2016
-java:/home/parth/Code/UCSD-Extensions/IntroToCompSci
 latex_build:/tmp/parth-LaTeX

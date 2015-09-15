@@ -81,7 +81,7 @@ if &t_Co == 8 && $TERM !~# '^linux'
 endif
 
 let g:ycm_semantic_triggers = {
-\  'tex'  : ['\ref{','\cite{'],
+\  'tex'  : ['\ref{', '\cref{', '\cite{', '\autocite{', '\mlacite{',],
 \ }
 
 let g:jedi#force_py_version = 3
