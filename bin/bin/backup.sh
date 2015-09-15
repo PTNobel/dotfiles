@@ -59,7 +59,7 @@ if [ -d "$PRIMARY_DIRECTORY/" ]; then
   wait $PID_DUPLICITY $PID_BACKUP_HOME
   # Cleaning up.
   cd /media
-  if udevil umount $PRIMARY_DIRECTORY && udevil umount $PRIMARY_DIRECTORY_ntfs; then
+  if udevil umount $PRIMARY_DIRECTORY_ntfs; then
     echo "Disks unmounted successfully, powering down backup drive."
     udisksctl power-off --no-user-interaction -b '/dev/disk/by-id/usb-TOSHIBA_External_USB_3.0_20140730015698-0:0' && echo "Disk powered down." && notify-send "Backup complete. Please unplug disk." -u critical -a backup.sh
   fi
