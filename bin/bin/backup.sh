@@ -36,6 +36,14 @@ function backup_home {
   echo rsync >> /tmp/backup.lock
 }
 
+function new_backup_home {
+  echo starting backup
+  date=$(date "+%Y-%m-%dT%H:%M:%S")
+  last_update=$(tail -n1 "$PRIMARY_DIRECTORY_ntfs"/Backup/log)
+  if rsync -aP --exclude=.cache --link-dest="$last_update" "$HOME"/ "$PRIMARY_DIRECTORY_ntfs"/Backup/back-"$date"; then :; else echo WARNING >/dev/stderr; fi
+  echo "$PRIMARY_DIRECTORY_ntfs"/Backup/back-"$date" >> "$PRIMARY_DIRECTORY_ntfs"/Backup/log
+}
+
 function main {
 if [ -d "$PRIMARY_DIRECTORY/" ]; then
   if [ -f $DESTINATION/"$USER" ]; then
@@ -60,6 +68,18 @@ else
 fi
 }
 
-main
+function new_main {
+if [ -d "$PRIMARY_DIRECTORY_ntfs/" ]; then
+  new_backup_home
+  if udevil umount $PRIMARY_DIRECTORY && udevil umount $PRIMARY_DIRECTORY_ntfs; then
+    echo "Disks unmounted successfully, powering down backup drive."
+    udisksctl power-off --no-user-interaction -b '/dev/disk/by-id/usb-TOSHIBA_External_USB_3.0_20140730015698-0:0' && echo "Disk powered down." && notify-send "Backup complete. Please unplug disk." -u critical -a backup.sh
+  fi
+else
+  echo $DESTINATION is not found ; exit 1
+fi
+}
+
+new_main
 
 rm /tmp/backup.lock
