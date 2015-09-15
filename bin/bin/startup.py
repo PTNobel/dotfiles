@@ -20,7 +20,7 @@ def warning(*objs):
 
 def processargs(argv):
     """Usage: processargs(argv), where argv is a list() of arguments, example,
-    sys.argv
+    sys.argv.
     processargs() goes through argv and returns a dictionary that specifies
     whether the associated flag was passed."""
     output = {"weekly": None, "verbose": None,
@@ -38,14 +38,14 @@ def processargs(argv):
             output["try-full-boot"] = True
     return output
 
-arguements = processargs(sys.argv)
+arguments = processargs(sys.argv)
 
 
-if arguements["verbose"]:
+if arguments["verbose"]:
     def verboseprint(*args):
         """Usage: verboseprint(as,  many, objects, as, desired)
         verboseprint() finctions similarly to warning() accept it only exists if
-        arguements["verbose"] is true, or when -v is present. It is intended to
+        arguments["verbose"] is true, or when -v is present. It is intended to
         dump objects into stdout."""
         for arg in args:
             print(arg)
@@ -127,7 +127,7 @@ def success(commands, run_log_str):
     run_log.close()
 
 
-def main(arguements):
+def main(arguments):
     # Wait for all other startup.py instances to exit, so a lockfile will be
     # in place when we check for it.
     are_there_other_startuppy()
@@ -163,17 +163,17 @@ def main(arguements):
                   '.log')
         exit(5)
 
-    elif arguements["force"]:
+    elif arguments["force"]:
         success(command_list, run_log_name)
 
-    elif arguements["bootstrap"]:
+    elif arguments["bootstrap"]:
         success(bootstrap_commands, run_log_name)
 
-    elif arguements["weekly"]:
+    elif arguments["weekly"]:
         command_list += weekly
         success(command_list, run_log_name)
 
-    elif run_log_name in os.listdir('/tmp')and not arguements["try-full-boot"]:
+    elif run_log_name in os.listdir('/tmp')and not arguments["try-full-boot"]:
         warning('Already ran')
         exit(8)
 
@@ -196,4 +196,4 @@ def main(arguements):
 
 
 if __name__ == "__main__":
-    main(arguements)
+    main(arguments)
