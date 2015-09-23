@@ -1,5 +1,4 @@
 name: social
-root: ~/
 windows:
  - mutt: 
     layout: 64d9,191x66,0,0,39

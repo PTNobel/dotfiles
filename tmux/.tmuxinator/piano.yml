@@ -1,6 +1,6 @@
 name: piano
 windows:
- - mutt: 
+ - piano: 
     layout: 64d9,191x66,0,0,39
     panes:
       - exec pianoctl.py
