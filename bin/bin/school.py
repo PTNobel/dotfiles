@@ -3,7 +3,7 @@
 import sys
 
 try:
-    if sys.argv[1] == 'b':
+    if sys.argv[1] == 'b' and len(sys.argv) > 2:
         path = 'bitbucket/'
         num = 2
     else:
@@ -25,6 +25,7 @@ try:
         "speech": "Speech_and_Debate",
         "debate": "Speech_and_Debate",
         "s": "Speech_and_Debate",
+        "b": "bitbucket",
     }[sys.argv[num].lower()]
     print(path)
 except IndexError:
