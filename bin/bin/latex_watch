@@ -248,6 +248,9 @@ def main():
     arguments['build'].build()
     subprocess.call(['rifle', pdfname])
     didSwapExist = bool()
+    if os.getenv('VIM', False):
+        exit(0)
+
     while os.path.exists(swapfile):
         didSwapExist = True
         if watchedFile.hasItChanged():
