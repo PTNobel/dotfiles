@@ -104,6 +104,9 @@ def processargs(input_argv):
     def _slow():
         output['slow'] = True
 
+    def _disable_viewer():
+        output['disable_viewer'] = True
+
     def _auxdir():
         if '=' in input_argv[i]:
             auxdir = input_argv[i].split('=')[1]
@@ -131,6 +134,7 @@ def processargs(input_argv):
                          '--biber': _biber,
                          '--auxdir': _auxdir,
                          '--slow': _slow,
+                         '--no-pdf': _disable_viewer,
                          }
     short_args_to_disc = {'h': _help,
                           's': _sagetex,
@@ -138,12 +142,14 @@ def processargs(input_argv):
                           'e': _engine,
                           'a': _auxdir,
                           'S': _slow,
+                          'D': _disable_viewer,
                           }
     output = {"input": None,
               "name": os.path.basename(input_argv[0]),
               "player": None,
               "build": Build,
               'auxdir': os.path.expandvars('/tmp/$USER-LaTeX'),
+              "disable_viewer": False,
               'slow': False,
               }
 
@@ -246,18 +252,20 @@ def main():
     swapfile = os.path.join(os.path.dirname(arguments['file']),
                             '.' + os.path.basename(arguments['file']) + '.swp')
     arguments['build'].build()
-    subprocess.call(['rifle', pdfname])
-    didSwapExist = bool()
+    if not arguments['disable_viewer']:
+        subprocess.call(['rifle', pdfname])
     if os.getenv('VIM', False):
         exit(0)
 
     while os.path.exists(swapfile):
-        didSwapExist = True
         if watchedFile.hasItChanged():
-            arguments['build'].build()
+            try:
+                arguments['build'].build()
+            except KeyboardInterrupt:
+                arguments['build'].build()
         time.sleep(5)
 
-    if didSwapExist:
+    if watchedFile.hasItChanged():
         arguments['build'].build()
 
 
