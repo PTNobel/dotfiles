@@ -1,0 +1,6 @@
+name: tmux
+windows:
+ - mpd: 
+    layout: 64d9,191x66,0,0,39
+    panes:
+      - sleep 5m ; exit

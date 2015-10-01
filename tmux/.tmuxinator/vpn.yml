@@ -1,0 +1,6 @@
+name: vpn
+windows:
+ - vpn: 
+    layout: 64d9,191x66,0,0,39
+    panes:
+      - android-vpn.sh
