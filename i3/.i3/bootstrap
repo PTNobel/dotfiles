@@ -2,3 +2,4 @@ firefox
 browser_lock.py
 mail-notification
 libreoffice --quickstart
+get_mail.sh

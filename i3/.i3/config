@@ -219,6 +219,7 @@ bindsym XF86AudioPrev exec --no-startup-id musicctl back
 bindsym XF86AudioStop exec --no-startup-id musicctl stop
 bindsym $mod+n exec urxvt -name mpd -e mux mpd
 bindsym $mod+p exec urxvt -name piano -e mux piano
+bindsym $mod+Shift+t exec urxvt -name tmux -e mux tmux
 bindsym $mod+apostrophe exec urxvt -e htop
 #bindsym $mod+m exec urxvt -e mpd.status.update
 
@@ -261,7 +262,7 @@ bindsym $mod+c exec urxvt -e calc -d
 #firefox + thunderbird
 bindsym $mod+Shift+f exec --no-startup-id firefox -firetrayShowHide
 bindsym $mod+Shift+i exec --no-startup-id icecat -firetrayShowHide
-bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
+#bindsym $mod+Shift+t exec --no-startup-id thunderbird -firetrayShowHide
 
 # monitor-layout.sh
 bindsym $mod+Shift+m exec --no-startup-id bash -c 'monitor-layout.sh && sh ~/.fehbg'
