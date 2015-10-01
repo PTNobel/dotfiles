@@ -8,17 +8,8 @@ import subprocess
 import player
 
 
-def suspend_or_lock():
-    watchdog_lock(1, 15)
-
-
-def lock():
-    generic_lock(['-d'])
-
-
 def generic_lock(i3LockOptions=[]):
-    return subprocess.Popen(
-        ['i3lock'] + i3LockOptions + ['-t', '-i', _which_picture()])
+    return plain_lock(i3LockOptions + ['-i' + _which_picture()])
 
 
 def plain_lock(i3LockOptions=[]):
@@ -85,16 +76,8 @@ def watchdog_lock(wait_time,  sleep_for=60, generic_locker=generic_lock):
         time.sleep(sleep_for)
 
 
-def inactive_lock():
-    watchdog_lock(5)
-
-
-def short_inactive_lock():
-    watchdog_lock(3, 30)
-
-
 def suspend():
-    lock()
+    generic_lock(['-d'])
     subprocess.call(['systemctl', 'suspend'])
 
 
@@ -116,10 +99,6 @@ def generic_blur(i3LockOptions=[]):
         subprocess.call(['rm', fileName1, fileName2])
 
 
-def blur_with_sleep():
-    generic_blur(['-d'])
-
-
 def freeze():
     fileName1 = str(subprocess.Popen(
                     ['mktemp', '--tmpdir',
@@ -133,21 +112,9 @@ def freeze():
         subprocess.call(['rm', fileName1])
 
 
-def logout():
-    subprocess.call(['i3-msg', 'exit'])
-
-
 def hibernate():
-    lock()
+    generic_lock(['-d'])
     subprocess.call(['systemctl', 'hibernate'])
-
-
-def reboot():
-    subprocess.call(['systemctl', 'reboot'])
-
-
-def shutdown():
-    subprocess.call(['systemctl', 'poweroff'])
 
 
 def _log():
@@ -211,24 +178,27 @@ def main():
     arguments = processargs()
 
     try:
-        option_dict = {'lock': lock,
-                       'lock_without_sleep': generic_lock,
-                       'inactive_lock': inactive_lock,
-                       'watchdog_lock': watchdog_lock_wrapper,
-                       'short_inactive_lock': short_inactive_lock,
-                       'suspend_or_lock': suspend_or_lock,
-                       'blur': generic_blur,
-                       'blur_with_sleep': blur_with_sleep,
-                       'freeze': freeze,
-                       'logout': logout,
-                       'suspend': suspend,
-                       'hibernate': hibernate,
-                       'reboot': reboot,
-                       'shutdown': shutdown,
-                       'usage': usage,
+        option_dict = {'lock': (generic_lock, [['-d']]),
+                       'lock_without_sleep': (generic_lock, []),
+                       'inactive_lock': (watchdog_lock, [5]),
+                       'watchdog_lock': (watchdog_lock_wrapper, []),
+                       'short_inactive_lock': (watchdog_lock, [3, 30]),
+                       'suspend_or_lock': (watchdog_lock, [1, 15]),
+                       'blur': (generic_blur, []),
+                       'blur_with_sleep': (generic_blur, [['-d']]),
+                       'freeze': (freeze, []),
+                       'logout': (subprocess.call, [['i3-msg', 'exit']]),
+                       'suspend': (suspend, []),
+                       'hibernate': (hibernate, []),
+                       'reboot': (subprocess.call, [['systemctl', 'reboot']]),
+                       'shutdown': (subprocess.call,
+                                    [['systemctl', 'poweroff']]),
+                       'usage': (usage, []),
+                       'black': (plain_lock, [['-c', '000000']])
                        }
 
-        option_dict[arguments["input"]]()
+        func, args = option_dict[arguments["input"]]
+        func(*args)
         # _log()
     except (IndexError, KeyError):
         usage()
