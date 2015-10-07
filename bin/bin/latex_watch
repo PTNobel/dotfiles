@@ -267,6 +267,8 @@ def main():
 
     if watchedFile.hasItChanged():
         arguments['build'].build()
+        if os.path.exists(swapfile):
+            main()
 
 
 if __name__ == '__main__':
