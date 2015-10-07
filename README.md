@@ -15,7 +15,7 @@ These files are available for any purpose and may have their own licenses.
 My Setup
 ========
 
-i3 on Arch with zsh (using `zsh.grml/`)
+i3 on Arch GNU/Linux with zsh in tmux in urxvt, and firefox a icecat with pentadactyl,
 
 
 Installation
