@@ -36,10 +36,10 @@ class FileWatch:
         except FileNotFoundError as e:
             self._failed_reads += 1
             if self._failed_reads <= 5:
+                time.sleep(.3)
                 return self._read_file()
             else:
                 raise e
-            time.sleep(.3)
         filecontents = fd.readlines()
         fd.close()
         return filecontents
