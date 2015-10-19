@@ -53,6 +53,13 @@ int main( int argc, char *argv[] )
       return 0;
     }
 
+    else if( strcmp(argv[1],"texlive") == 0 )
+    {
+      setuid( 0 );
+      system( "/usr/local/bin/tlmgr update --all" );
+      return 0;
+    }
+
     else if( strcmp(argv[1],"units") == 0 )
     {
       setuid( 0 );
