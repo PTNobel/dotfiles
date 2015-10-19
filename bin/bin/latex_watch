@@ -23,12 +23,45 @@ def usage(exit_code, name):
     exit(exit_code)
 
 
+class FileWatch:
+    _failed_reads = 0
+
+    def __init__(self, file_name):
+        self._file_name = file_name
+        self._last_content = self._read_file()
+
+    def _read_file(self):
+        try:
+            fd = open(self._file_name)
+        except FileNotFoundError as e:
+            self._failed_reads += 1
+            if self._failed_reads <= 5:
+                return self._read_file()
+            else:
+                raise e
+            time.sleep(.3)
+        filecontents = fd.readlines()
+        fd.close()
+        return filecontents
+
+    def hasItChanged(self):
+        self._failed_reads = 0
+        _new_content = self._read_file()
+        if _new_content != self._last_content:
+            self._last_content = _new_content
+            return True
+        else:
+            return False
+
+
 class Build:
     build_steps = list()
 
     def __init__(self, recipe):
+        print(recipe)
         self.recipe = recipe
         self.addToBuild('latex')
+        self.watchedFiles = [FileWatch(recipe['file'])]
         self.pdfname = os.path.join(
             # ''[:: -1] reverses a string. So this reverses the filename, in
             # order to replace the last tex with pdf
@@ -42,14 +75,23 @@ class Build:
         if recipe['sagetex']:
             self.addToBuild('sagetex')
 
+        if recipe['extra_files']:
+            for i in recipe['extra_files']:
+                self.watchedFiles.append(FileWatch(i))
+
         self.addToBuild('latex')
         self.addToBuild('backup')
+        if recipe['make']:
+            self.build_steps = [self.make]
 
     def latex(self):
         subprocess.call([self.recipe['engine'],
                          '-output-directory',
                          self.recipe['auxdir'],
                          "-interaction=nonstopmode", self.recipe['file']])
+
+    def make(self):
+        subprocess.call(['make'])
 
     def biber(self):
         subprocess.call(
@@ -84,8 +126,18 @@ class Build:
                 'biber': self.biber,
                 'sagetex': self.sagetex,
                 'backup': self.backup,
+                'make': self.make,
             }[nameOfCompilationStep]
         )
+
+    def hasAnythingChanged(self):
+        _cache = []
+        for i in self.watchedFiles:
+            _cache.append(i.hasItChanged())
+        if True in _cache:
+            return True
+        else:
+            return False
 
 
 def processargs(input_argv):
@@ -98,6 +150,9 @@ def processargs(input_argv):
     def _sagetex():
         output_recipe['sagetex'] = True
 
+    def _make():
+        output_recipe['make'] = True
+
     def _biber():
         output_recipe['biber'] = True
 
@@ -106,6 +161,18 @@ def processargs(input_argv):
 
     def _disable_viewer():
         output['disable_viewer'] = True
+
+    def _extra_files():
+        if '=' in input_argv[i]:
+            extra_file = input_argv[i].split('=')[1]
+        else:
+            extra_file = input_argv[i + 1]
+            indexes_to_ignore.append(i + 1)
+
+        output_recipe["extra_files"].append(
+            os.path.expandvars(os.path.expanduser(extra_file)))
+        output["extra_files"].append(
+            os.path.expandvars(os.path.expanduser(extra_file)))
 
     def _auxdir():
         if '=' in input_argv[i]:
@@ -135,6 +202,8 @@ def processargs(input_argv):
                          '--auxdir': _auxdir,
                          '--slow': _slow,
                          '--no-pdf': _disable_viewer,
+                         '--files': _extra_files,
+                         '--make': _make,
                          }
     short_args_to_disc = {'h': _help,
                           's': _sagetex,
@@ -143,28 +212,35 @@ def processargs(input_argv):
                           'a': _auxdir,
                           'S': _slow,
                           'D': _disable_viewer,
+                          'f': _extra_files,
+                          'm': _make,
                           }
-    output = {"input": None,
-              "name": os.path.basename(input_argv[0]),
-              "player": None,
-              "build": Build,
-              'auxdir': os.path.expandvars('/tmp/$USER-LaTeX'),
-              "disable_viewer": False,
-              'slow': False,
-              }
+    output = {
+        "input": None,
+        "name": os.path.basename(input_argv[0]),
+        "player": None,
+        "build": Build,
+        'auxdir': os.path.expandvars('/tmp/$USER-LaTeX'),
+        "disable_viewer": False,
+        'slow': False,
+        "file": '',
+        'extra_files': [],
+    }
 
     output_recipe = {
         'engine': 'pdflatex',
         'biber': False,
         'sagetex': False,
+        'make': False,
         'file': '',
-        'auxdir': os.path.expandvars('/tmp/$USER-LaTeX')
+        'auxdir': os.path.expandvars('/tmp/$USER-LaTeX'),
+        'extra_files': [],
     }
+
     indexes_to_ignore = list()
 
     if len(input_argv) == 1:
-        print("Not enough arguments", file=sys.stderr)
-        usage(1, output['name'])
+        pass
     else:
         # range() starts at 1 to prevent the name from being processed.
         for i in range(1, len(input_argv)):
@@ -193,6 +269,11 @@ def processargs(input_argv):
             else:
                 print("Error parsing arguments", file=sys.stderr)
                 usage(1, output['name'])
+    if output_recipe["file"] == '':
+        for i in os.listdir():
+            if len(i) > 9 and i[0] == '.' and i[-8:] == '.tex.swp':
+                output["file"] = i[1:-4]
+                output_recipe["file"] = i[1:-4]
     output['build'] = Build(output_recipe)
     print(output['build'].build_steps)
     return output
@@ -201,39 +282,7 @@ def processargs(input_argv):
 arguments = processargs(sys.argv)
 
 
-class FileWatch:
-    _failed_reads = 0
-
-    def __init__(self, file_name):
-        self._file_name = file_name
-        self._last_content = self._read_file()
-
-    def _read_file(self):
-        try:
-            fd = open(self._file_name)
-        except FileNotFoundError as e:
-            self._failed_reads += 1
-            if self._failed_reads <= 5:
-                return self._read_file()
-            else:
-                raise e
-            time.sleep(.3)
-        filecontents = fd.readlines()
-        fd.close()
-        return filecontents
-
-    def hasItChanged(self):
-        self._failed_reads = 0
-        _new_content = self._read_file()
-        if _new_content != self._last_content:
-            self._last_content = _new_content
-            return True
-        else:
-            return False
-
-
 def main():
-    watchedFile = FileWatch(arguments['file'])
     os.makedirs(os.path.expandvars(arguments['auxdir']), exist_ok=True)
     if arguments['slow']:
         pdfname = os.path.join(
@@ -258,14 +307,14 @@ def main():
         exit(0)
 
     while os.path.exists(swapfile):
-        if watchedFile.hasItChanged():
-            try:
+        try:
+            if arguments['build'].hasAnythingChanged():
                 arguments['build'].build()
-            except KeyboardInterrupt:
-                arguments['build'].build()
-        time.sleep(5)
+            time.sleep(5)
+        except KeyboardInterrupt:
+            arguments['build'].build()
 
-    if watchedFile.hasItChanged():
+    if arguments['build'].hasAnythingChanged():
         arguments['build'].build()
         if os.path.exists(swapfile):
             main()
