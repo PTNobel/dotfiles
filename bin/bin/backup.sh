@@ -13,6 +13,7 @@ function exit {
   rm /tmp/backup.lock
   builtin exit "$@"
 }
+
 #DEFINTIONS!
 PRIMARY_DIRECTORY=/media/Toshiba_Backups
 PRIMARY_DIRECTORY_ntfs=/media/Toshiba_Backups_ntfs
