@@ -49,7 +49,7 @@ def new_mail(event):
                         shell=True)
         return
     box = [box for box, folder in boxes if box in event.path][0]
-    if box in To and box in From:
+    if box in To and box in From and False:
         text = ''.join(['Mail to self received.', '\n', box])
     else:
         text = ''.join([From, '\n', Subject, '\n', box])
