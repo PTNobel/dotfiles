@@ -5,6 +5,6 @@ group user
 set defsearch=duckduckgo
 set errorbells
 set visualbell
-colorscheme gruvbox-dark
+"colorscheme gruvbox-dark
 
 " vim: set ft=pentadactyl:
