@@ -41,7 +41,7 @@ function new_backup_home {
   echo starting backup
   date=$(date "+%Y-%m-%dT%H:%M:%S")
   last_update=$(tail -n1 "$PRIMARY_DIRECTORY_ntfs"/Backup/log)
-  if rsync -aP --exclude=.cache --link-dest="$last_update" "$HOME"/ "$PRIMARY_DIRECTORY_ntfs"/Backup/back-"$date"; then :; else echo WARNING >/dev/stderr; fi
+  if rsync -aP --exclude=.cache --exclude=Torrents --exclude="Archives/Rooting\ the\ G3/BACKUP/Download" --link-dest="$last_update" "$HOME"/ "$PRIMARY_DIRECTORY_ntfs"/Backup/back-"$date"; then :; else echo WARNING >/dev/stderr; fi
   echo "$PRIMARY_DIRECTORY_ntfs"/Backup/back-"$date" >> "$PRIMARY_DIRECTORY_ntfs"/Backup/log
 }
 
