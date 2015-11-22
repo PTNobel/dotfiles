@@ -23,6 +23,7 @@ let g:jedi#popup_on_dot = 0  " disables the autocomplete to popup whenever you p
 set cursorline
 set colorcolumn=81
 highlight ColorColumn ctermbg=darkgrey
+highlight SpellBad ctermbg=darkred
 "execute "set colorcolumn=" . join(range(80,335), ',')
 
 au BufRead /tmp/mutt-* set tw=72
