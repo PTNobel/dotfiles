@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-
 __all__ = [
     "is_comm_running",
     "get_comms_to_pids",
@@ -31,6 +30,8 @@ def _map_pids_to_comms(rebuild_buffer):
     global _buffer_map_pids_to_comms
     output = dict()
     if _buffer_map_pids_to_comms == {} or rebuild_buffer:
+        # Maps the contents of _bufer_running_pids to their comms.
+        # The comm getting logic is in _get_comm_of_pid
         for i in _buffer_running_pids:
             output[i] = _get_comm_of_pid(i)
         _buffer_map_pids_to_comms = output
@@ -43,6 +44,8 @@ def _map_pids_to_cmdlines(rebuild_buffer):
     global _buffer_map_pids_to_cmdlines
     output = dict()
     if _buffer_map_pids_to_cmdlines == {} or rebuild_buffer:
+        # Maps the contents of _bufer_running_pids to their cmdline.
+        # The cmdline getting logic is in _get_cmdline_of_pid
         for i in _buffer_running_pids:
             output[i] = _get_cmdline_of_pid(i)
         _buffer_map_pids_to_cmdlines = output
