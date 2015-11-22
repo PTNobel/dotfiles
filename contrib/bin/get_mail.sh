@@ -29,7 +29,7 @@ if [[ "$1" == "loud" ]]; then
   offlineimap -o
   notmuch new
 else
-  while sleep 3; do
+  while sleep 3m; do
     offlineimap -o -u quiet & monitor $!
     notmuch new 1>/dev/null
   done
