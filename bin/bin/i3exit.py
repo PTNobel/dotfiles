@@ -135,11 +135,13 @@ def main():
     def processargs():
         # All of these run in the same scope as processargs(). They make changes
         # to output.
+        def _help():
+            output['usage'] = 'help'
 
         # In place of a switch-case statement the following dictionaires link
         # argv entries to functions.
-        long_args_to_disc = {}
-        short_args_to_disc = {}
+        long_args_to_disc = {'--help': _help}
+        short_args_to_disc = {'h': _help}
         output = {
             "input": str(),
             "name": os.path.basename(sys.argv[0]),
@@ -170,9 +172,6 @@ def main():
                 elif not output["input"]:
                     output["input"] = sys.argv[i]
 
-                else:
-                    exit(1)
-
         return output
 
     arguments = processargs()
@@ -194,7 +193,8 @@ def main():
                        'shutdown': (subprocess.call,
                                     [['systemctl', 'poweroff']]),
                        'usage': (usage, []),
-                       'black': (plain_lock, [['-c', '000000']])
+                       'black': (plain_lock, [['-c', '000000']]),
+                       'white': (plain_lock, [['-c', 'ffffff']]),
                        }
 
         func, args = option_dict[arguments["input"]]
