@@ -6,6 +6,7 @@ kill "$(pidof -x "$0" -o %PPID)"
 
 killall transmission-gtk
 
-while true; do
+while false; do
   transmission-gtk -m
 done
+transmission-gtk -m
