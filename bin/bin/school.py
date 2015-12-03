@@ -25,6 +25,7 @@ try:
         "speech": "Speech_and_Debate",
         "debate": "Speech_and_Debate",
         "s": "Speech_and_Debate",
+        "m": "MUN",
         "b": "bitbucket",
     }[sys.argv[num].lower()]
     print(path)
