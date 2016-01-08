@@ -139,7 +139,7 @@ def get_atomic_mass(element):
     return element_info[0]
 
 
-def get_gfm_of_part(input_str):
+def _get_gfm_of_part(input_str):
     gfm = Decimal()
     l = 0
     for i in range(len(input_str)-2):
@@ -167,8 +167,11 @@ def get_gfm_of_part(input_str):
 
     if l < len(input_str):
         if input_str[-1] in string.ascii_uppercase:
-            if input_str[-2] in string.ascii_uppercase:
-                gfm += get_atomic_mass(input_str[-2])
+            try:
+                if input_str[-2] in string.ascii_uppercase:
+                    gfm += get_atomic_mass(input_str[-2])
+            except IndexError:
+                pass
             gfm += get_atomic_mass(input_str[-1])
         elif input_str[-2] in string.ascii_uppercase:
             if input_str[-1] in string.digits:
@@ -179,27 +182,46 @@ def get_gfm_of_part(input_str):
     return gfm
 
 
-def gfm_of_whole(input_str):
+def _gfm_of_whole(input_str):
     gfm = Decimal()
-    if '(' in input_str:
+    if '*' in input_str:
+        for i in input_str.split('*'):
+            if i[0] in string.digits:
+                multiple_str = ''
+                for j in range(0, len(i)):
+                    if i[j] in string.digits:
+                        multiple_str += i[j]
+                    else:
+                        break
+            else:
+                multiple_str = '1'
+
+            gfm += Decimal(multiple_str) * _gfm_of_whole(i)
+
+    elif '(' in input_str:
         split_list = input_str.split('(')
         for i in split_list:
             if ')' in i:
                 temp_list = i.split(')')
                 if temp_list[-1].isdigit():
-                    gfm += get_gfm_of_part(temp_list[0]) * \
+                    gfm += _get_gfm_of_part(temp_list[0]) * \
                         Decimal(temp_list[-1])
 
             else:
-                gfm += get_gfm_of_part(i)
+                gfm += _get_gfm_of_part(i)
     else:
-        gfm = get_gfm_of_part(input_str)
+        gfm = _get_gfm_of_part(input_str)
 
     return gfm
 
 
+def getGFM(input_str):
+    return _gfm_of_whole(input_str)
+
+
 def main():
-    print(gfm_of_whole(sys.argv[1]))
+    print(getGFM(sys.argv[1]))
+
 
 if __name__ == '__main__':
     main()
