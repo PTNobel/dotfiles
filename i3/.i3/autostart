@@ -2,4 +2,4 @@ transmission.sh
 skype
 /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 steam -silent
-urxvt -name social -e mux social
+urxvt -name muxgeneral -e mux general
