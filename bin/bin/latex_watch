@@ -127,6 +127,7 @@ class Build:
                 'sagetex': self.sagetex,
                 'backup': self.backup,
                 'make': self.make,
+                'hasAnythingChanged': self.hasAnythingChanged,
             }[nameOfCompilationStep]
         )
 
@@ -141,6 +142,7 @@ class Build:
 
 
 def processargs(input_argv):
+    many_outputs = []
 
     # All of these run in the same scope as processargs(). They make changes to
     # output.
@@ -276,49 +278,70 @@ def processargs(input_argv):
                 output_recipe["file"] = i[1:-4]
     output['build'] = Build(output_recipe)
     print(output['build'].build_steps)
-    return output
+    many_outputs.append(output)
+    return many_outputs
 
 # global arguments
 arguments = processargs(sys.argv)
 
 
-def main():
-    os.makedirs(os.path.expandvars(arguments['auxdir']), exist_ok=True)
-    if arguments['slow']:
+class ShouldExit():
+    _num_of_returns = 0
+    files_returned = []
+
+    def __init__(self, num):
+        self._num_of_files = num
+
+    def returnForFile(self, name):
+        self.files_returned.append[name]
+        self._num_of_returns += 1
+
+    def cleanTime(self):
+        if self._num_of_returns == self._num_of_files:
+            return True
+        else:
+            return False
+
+
+def main_for_file(args):
+    os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
+    if args['slow']:
         pdfname = os.path.join(
             # ''[:: -1] reverses a string. So this reverses the filename,
-            # in order to replace the last tex with pdf
+            # in order to replace the last tex with pdf and then reverses it
+            # again.
             os.path.expanduser('~/.latex'),
-            os.path.basename(arguments['file'][:: -1].replace
+            os.path.basename(args['file'][:: -1].replace
                              ('xet', 'fdp', 1)[:: -1]))
     else:
         pdfname = os.path.join(
             # ''[:: -1] reverses a string. So this reverses the filename,
             # in order to replace the last tex with pdf
-            arguments['auxdir'],
-            os.path.basename(arguments['file'][:: -1].replace
+            args['auxdir'],
+            os.path.basename(args['file'][:: -1].replace
                              ('xet', 'fdp', 1)[:: -1]))
-    swapfile = os.path.join(os.path.dirname(arguments['file']),
-                            '.' + os.path.basename(arguments['file']) + '.swp')
-    arguments['build'].build()
-    if not arguments['disable_viewer']:
+    swapfile = os.path.join(os.path.dirname(args['file']),
+                            '.' + os.path.basename(args['file']) + '.swp')
+    args['build'].build()
+    if not args['disable_viewer']:
         subprocess.call(['rifle', pdfname])
     if os.getenv('VIM', False):
-        exit(0)
+        return
 
     while os.path.exists(swapfile):
         try:
-            if arguments['build'].hasAnythingChanged():
-                arguments['build'].build()
+            if args['build'].hasAnythingChanged():
+                args['build'].build()
             time.sleep(5)
         except KeyboardInterrupt:
-            arguments['build'].build()
+            args['build'].build()
 
-    if arguments['build'].hasAnythingChanged():
-        arguments['build'].build()
+    if args['build'].hasAnythingChanged():
+        args['build'].build()
         if os.path.exists(swapfile):
-            main()
+            main_for_file()
 
 
 if __name__ == '__main__':
-    main()
+    for argument in arguments:
+        main_for_file(argument)
