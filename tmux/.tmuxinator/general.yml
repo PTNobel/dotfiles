@@ -1,0 +1,7 @@
+name: general
+
+root: ~/
+
+windows:
+  - mail: mutt
+  - music: music.py
