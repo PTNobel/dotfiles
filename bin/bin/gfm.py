@@ -2,7 +2,7 @@
 
 import sys
 import string
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 
 def get_atomic_mass(element):
@@ -152,17 +152,18 @@ def get_gfm_of_part(input_str):
                 element += input_str[l+1]
                 l += 1
             if input_str[l+1] in string.digits:
-                multiple = input_str[l+1]
+                multiple_str = ''
                 l += 1
                 for j in range(l, len(input_str)):
                     if input_str[j] in string.digits:
-                        multiple += input_str[j]
+                        multiple_str += input_str[j]
                         l += 1
                     else:
                         break
             else:
-                multiple = (1)
-            gfm += Decimal(multiple) * get_atomic_mass(element)
+                multiple_str = '1'
+
+            gfm += Decimal(multiple_str) * get_atomic_mass(element)
 
     if l < len(input_str):
         if input_str[-1] in string.ascii_uppercase:
