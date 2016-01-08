@@ -17,7 +17,7 @@ if pidof xautolock >/dev/null ; then
                         CHANGE_TRANSPERANCY=0
                     fi
                 done
-                if ! [ $CHANGE_TRANSPERANCY == 0 ] ; then
+                if ! [[ $CHANGE_TRANSPERANCY -eq 0 ]] ; then
                     transperancy.sh
                 fi
             else
