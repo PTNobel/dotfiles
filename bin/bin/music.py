@@ -2,7 +2,6 @@
 
 import subprocess
 import process
-import time
 
 
 def prompt_user(secret_num=0):
@@ -29,17 +28,16 @@ def prompt_user(secret_num=0):
 
 
 def main():
-    process.update_buffers()
-    if process.is_comm_running('pianobar'):
-        subprocess.call(['pianoctl'])
+    while True:
+        process.update_buffers()
+        if process.is_comm_running('pianobar'):
+            subprocess.call(['pianoctl'])
 
-    elif process.is_comm_running('mpd'):
-        subprocess.call(['ncmpcpp'])
+        elif process.is_comm_running('mpd'):
+            subprocess.call(['ncmpcpp'])
 
-    else:
-        prompt_user()
+        else:
+            prompt_user()
 
 if __name__ == '__main__':
-    while True:
-        main()
-        time.sleep(5)
+    main()
