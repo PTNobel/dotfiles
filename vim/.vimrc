@@ -5,8 +5,9 @@ execute pathogen#infect()
 execute pathogen#helptags()
 filetype plugin indent on
 syntax on
-set ruler
 set number
+set relativenumber
+set ruler
 set vb
 set nocp
 set autoindent
@@ -126,3 +127,6 @@ map <Leader>vx :VimuxInterruptRunner<CR>
 
 " Zoom the runner pane (use <bind-key> z to restore runner pane)
 map <Leader>vz :call VimuxZoomRunner()<CR>
+
+let g:ycm_extra_conf_globlist = ['~/Code/UCSD-Extensions/CCppProgrammingOne/*']
+
