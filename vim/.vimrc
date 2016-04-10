@@ -130,3 +130,15 @@ map <Leader>vz :call VimuxZoomRunner()<CR>
 
 let g:ycm_extra_conf_globlist = ['~/Code/UCSD-Extensions/CCppProgrammingOne/*']
 
+autocmd bufnewfile *.c so ~/.vim/c_header.txt
+autocmd bufnewfile *.h so ~/.vim/h_header.txt
+autocmd bufnewfile *.cpp so ~/.vim/cpp_header.txt
+autocmd bufnewfile *_Quiz.txt so ~/.vim/_Quiz.txt_header.txt
+autocmd bufnewfile *.c exe "1," . 10 . "g/FILE_NAME.*/s//" .expand("%")
+autocmd bufnewfile *.c exe "1," . 10 . "g/DATE.*/s//" .strftime("%B %e, %Y")
+autocmd bufnewfile *.h exe "1," . 10 . "g/FILE_NAME.*/s//" .expand("%")
+autocmd bufnewfile *.h exe "1," . 10 . "g/DATE.*/s//" .strftime("%B %e, %Y")
+autocmd bufnewfile *.cpp exe "1," . 10 . "g/FILE_NAME.*/s//" .expand("%")
+autocmd bufnewfile *.cpp exe "1," . 10 . "g/DATE.*/s//" .strftime("%B %e, %Y")
+autocmd bufnewfile *_Quiz.txt exe "1," . 10 . "g/FILE_NAME.*/s//" .expand("%")
+autocmd bufnewfile *_Quiz.txt exe "1," . 10 . "g/DATE.*/s//" .strftime("%B %e, %Y")
