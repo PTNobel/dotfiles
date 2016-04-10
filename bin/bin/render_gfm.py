@@ -10,10 +10,11 @@ out_file_content = list()
 
 for line in in_file_content:
     if '|ADDGFM|' in line:
+        print(line, end='')
         words = line.strip().split('|')
         out_file_content.append(
             '  gmm        = ' +
-            str(gfm.gfm_of_whole(words[2])) +
+            str(gfm.getGFM(words[2])) +
             ' ,\n')
 
     else:
