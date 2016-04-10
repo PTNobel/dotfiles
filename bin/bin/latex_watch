@@ -67,7 +67,9 @@ class Build:
             # order to replace the last tex with pdf
             recipe['auxdir'],
             os.path.basename(
-                recipe['file'][:: -1].replace('xet', 'fdp', 1)[:: -1]))
+                recipe['file'][:: -1].replace('xet', 'fdp', 1)[:: -1]
+            )
+        )
 
         if recipe['biber']:
             self.addToBuild('biber')
@@ -79,7 +81,9 @@ class Build:
             for i in recipe['extra_files']:
                 self.watchedFiles.append(FileWatch(i))
 
-        self.addToBuild('latex')
+        if recipe['biber'] or recipe['sagetex']:
+            self.addToBuild('latex')
+
         self.addToBuild('backup')
         if recipe['make']:
             self.build_steps = [self.make]
@@ -303,6 +307,29 @@ class ShouldExit():
             return False
 
 
+class SwapFilesWatch():
+    _num_of_returns = 0
+    swapsToCheck = []
+
+    def __init__(self, primaryFile, extraFiles):
+        self.swapsToCheck.append(os.path.join(os.path.dirname(primaryFile),
+                                 '.' + os.path.basename(primaryFile) + '.swp'))
+        for singleFile in extraFiles:
+            self.swapsToCheck.append(os.path.join(
+                os.path.dirname(singleFile),
+                '.' + os.path.basename(singleFile) +
+                '.swp'))
+
+    def swapFilesExist(self):
+        result = bool()
+        for swap in self.swapsToCheck:
+            if os.path.exists(swap):
+                result = True
+                break
+
+        return result
+
+
 def main_for_file(args):
     os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
     if args['slow']:
@@ -320,15 +347,14 @@ def main_for_file(args):
             args['auxdir'],
             os.path.basename(args['file'][:: -1].replace
                              ('xet', 'fdp', 1)[:: -1]))
-    swapfile = os.path.join(os.path.dirname(args['file']),
-                            '.' + os.path.basename(args['file']) + '.swp')
+    swapWatch = SwapFilesWatch(args['file'], args['extra_files'])
     args['build'].build()
     if not args['disable_viewer']:
         subprocess.call(['rifle', pdfname])
     if os.getenv('VIM', False):
         return
 
-    while os.path.exists(swapfile):
+    while swapWatch.swapFilesExist():
         try:
             if args['build'].hasAnythingChanged():
                 args['build'].build()
@@ -338,8 +364,8 @@ def main_for_file(args):
 
     if args['build'].hasAnythingChanged():
         args['build'].build()
-        if os.path.exists(swapfile):
-            main_for_file()
+        if swapWatch.swapFilesExist():
+            main_for_file(args)
 
 
 if __name__ == '__main__':
