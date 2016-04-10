@@ -28,7 +28,7 @@ if [ $UID -ne 0 ]; then
     alias svim='sudoedit'
     alias root='sudo -s'
     alias reboot='systemctl reboot'
-    alias poweroff='systemctl poweroff'
+    alias poweroff='killall skype; systemctl poweroff'
     alias update='update.sh'
     alias backup='screen backup.sh'
     alias netctl='sudo netctl'
