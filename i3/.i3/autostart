@@ -1,4 +1,4 @@
-transmission.sh
+transmission-gtk -m
 skype
 /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
 steam -silent
