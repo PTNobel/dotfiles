@@ -1,0 +1,416 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import subprocess
+import time
+from typing import List
+
+
+def usage(exit_code: int, name):
+    usage_text = ("Usage: %s [--help|-h]" +
+                  " [--sagetex|-s]" +
+                  " [--biber|-b]" +
+                  " [--auxdir </tmp/$USER-Pandoc>|-a </tmp/$USER-Pandoc>]" +
+                  " [--engine <pdflatex>|-e <pdflatex>]" + " <file.tex>" +
+                  " [--slow|-S]") % name
+
+    if exit_code == 0:
+        print(usage_text)
+    elif exit_code > 0:
+        print(usage_text, file=sys.stderr)
+    elif exit_code < 0:
+        usage(exit_code, name)
+    exit(exit_code)
+
+
+class FileWatch:
+    _failed_reads = 0
+
+    def __init__(self, file_name):
+        self._file_name = file_name
+        self._last_content = self._read_file()
+
+    def _read_file(self):
+        try:
+            fd = open(self._file_name)
+        except FileNotFoundError as e:
+            self._failed_reads += 1
+            if self._failed_reads <= 5:
+                time.sleep(.3)
+                return self._read_file()
+            else:
+                raise e
+        filecontents = fd.readlines()
+        fd.close()
+        return filecontents
+
+    def hasItChanged(self):
+        self._failed_reads = 0
+        _new_content = self._read_file()
+        if _new_content != self._last_content:
+            self._last_content = _new_content
+            return True
+        else:
+            return False
+
+
+class Build:
+    build_steps = []  # type: List[object]
+    watchedFiles = []  # type: List[FileWatch]
+
+    def addWatchedFile(self, fileToAdd: str):
+        self.watchedFiles.append(FileWatch(fileToAdd))
+
+    def hasAnythingChanged(self):
+        _cache = []
+        for i in self.watchedFiles:
+            _cache.append(i.hasItChanged())
+        if True in _cache:
+            return True
+        else:
+            return False
+
+    def build(self):
+        for i in self.build_steps:
+            i()
+
+    def addToBuild(self, nameOfCompilationStep):
+        self.build_steps.append(self.build_map[nameOfCompilationStep])
+
+
+class PandocBuild(Build):
+    def __init__(self, recipe):
+        self.build_map = {
+            'pandoc': self.pandoc
+        }
+        self.recipe = recipe
+        self.addToBuild('pandoc')
+        if recipe["docx"]:
+            _output_file_extension = 'docx'[::-1]
+        elif recipe["outputType"]:
+            _output_file_extension = recipe["outputType"][::-1]
+        else:
+            _output_file_extension = 'pdf'[::-1]
+
+        self.outputName = os.path.join(
+            # ''[:: -1] reverses a string. So this reverses the filename, in
+            # order to replace the last tex with pdf
+            recipe['auxdir'],
+            os.path.basename(
+                recipe['file'][:: -1].replace(
+                    'dm', _output_file_extension, 1
+                )[:: -1]
+            )
+        )
+        if recipe["docx"]:
+            self.pdfname = ""
+        else:
+            self.pdfname = self.outputName
+
+        self.addWatchedFile(recipe['file'])
+
+    def pandoc(self):
+        print('Started build.')
+        subprocess.call(
+            ['pandoc'] + self.recipe['pandoc_options'] + [
+                '-o',
+                self.outputName,
+                self.recipe['file']
+            ]
+            )
+        print('Finished build.')
+
+
+class LaTeXBuild(Build):
+    def __init__(self, recipe):
+        print(recipe)
+        self.build_map = {
+            'latex': self.latex,
+            'biber': self.biber,
+            'sagetex': self.sagetex,
+            'backup': self.backup,
+            'make': self.make,
+            'hasAnythingChanged': self.hasAnythingChanged,
+        }
+        self.recipe = recipe
+        self.addToBuild('latex')
+        self.pdfname = os.path.join(
+            # ''[:: -1] reverses a string. So this reverses the filename, in
+            # order to replace the last tex with pdf
+            recipe['auxdir'],
+            os.path.basename(
+                recipe['file'][:: -1].replace('xet', 'fdp', 1)[:: -1]
+            )
+        )
+
+        if recipe['biber']:
+            self.addToBuild('biber')
+
+        if recipe['sagetex']:
+            self.addToBuild('sagetex')
+
+        if recipe['extra_files']:
+            for i in recipe['extra_files']:
+                self.watchedFiles.append(FileWatch(i))
+
+        if recipe['biber'] or recipe['sagetex']:
+            self.addToBuild('latex')
+
+        self.addToBuild('backup')
+        if recipe['make']:
+            self.build_steps = [self.make]
+
+    def latex(self):
+        subprocess.call([self.recipe['engine'],
+                         '-output-directory',
+                         self.recipe['auxdir'],
+                         "-interaction=nonstopmode", self.recipe['file']])
+
+    def make(self):
+        subprocess.call(['make'])
+
+    def biber(self):
+        subprocess.call(
+            ["biber",
+             "--output-directory", self.recipe['auxdir'],
+                "--input-directory", self.recipe['auxdir'],
+                os.path.basename(self.recipe
+                                 ['file'][:: -1].replace
+                                 ('xet.', '', 1)[:: -1])])
+
+    def sagetex(self):
+        firstdir = os.getcwd()
+        os.chdir(self.recipe['auxdir'])
+        subprocess.call(
+            ['sage',
+                os.path.basename(self.recipe
+                                 ['file'][:: -1].replace
+                                 ('xet', 'egas.xetegas', 1)[:: -1])])
+        os.chdir(firstdir)
+
+    def backup(self):
+        subprocess.call(['cp', self.pdfname, os.path.expanduser('~/.latex/')])
+
+
+def processargs(input_argv: List[str]):
+    many_outputs = []
+
+    # All of these run in the same scope as processargs(). They make changes to
+    # output.
+    def _help():
+        usage(0, output['name'])
+
+    def _make():
+        output_recipe['make'] = True
+
+    def _slow():
+        output['slow'] = True
+
+    def _disable_viewer():
+        output['disable_viewer'] = True
+
+    def _extra_files():
+        if '=' in input_argv[i]:
+            extra_file = input_argv[i].split('=')[1]
+        else:
+            extra_file = input_argv[i + 1]
+            indexes_to_ignore.append(i + 1)
+
+        output_recipe["extra_files"].append(
+            os.path.expandvars(os.path.expanduser(extra_file)))
+        output["extra_files"].append(
+            os.path.expandvars(os.path.expanduser(extra_file)))
+
+    def _auxdir():
+        if '=' in input_argv[i]:
+            auxdir = input_argv[i].split('=')[1]
+        else:
+            auxdir = input_argv[i + 1]
+            indexes_to_ignore.append(i + 1)
+
+        output_recipe["auxdir"] = os.path.expandvars(os.path.expanduser(auxdir))
+        output["auxdir"] = os.path.expandvars(os.path.expanduser(auxdir))
+
+    def _output_type():
+        if '=' in input_argv[i]:
+            out_type = input_argv[i].split('=')[1]
+        else:
+            out_type = input_argv[i + 1]
+            indexes_to_ignore.append(i + 1)
+
+        output_recipe["outputType"] = out_type
+        output["outputType"] = out_type
+
+    def _docx():
+        output_recipe["docx"] = True
+        output["docx"] = True
+        _disable_viewer()
+
+    # In place of a switch-case statement the following dictionaires link argv
+    # entries to functions.
+    long_args_to_disc = {'--help': _help,
+                         '--auxdir': _auxdir,
+                         '--slow': _slow,
+                         '--no-pdf': _disable_viewer,
+                         '--files': _extra_files,
+                         '--make': _make,
+                         '--docx': _docx,
+                         }
+    short_args_to_disc = {'h': _help,
+                          'a': _auxdir,
+                          'S': _slow,
+                          'D': _disable_viewer,
+                          'f': _extra_files,
+                          'm': _make,
+                          'd': _docx,
+                          }
+    output = {
+        "input": None,
+        "name": os.path.basename(input_argv[0]),
+        "player": None,
+        "build": PandocBuild,
+        'auxdir': os.path.expandvars('/tmp/$USER-Pandoc'),
+        "disable_viewer": False,
+        'slow': False,
+        "file": '',
+        "extra_files": [],
+        "docx": False,
+        "outputType": '',
+    }
+
+    output_recipe = {
+        'make': False,
+        'pandoc_options': [],
+        'file': '',
+        'auxdir': os.path.expandvars('/tmp/$USER-Pandoc'),
+        'extra_files': [],
+        "docx": False,
+        "outputType": '',
+    }
+
+    indexes_to_ignore = []  # type: List[int]
+
+    if len(input_argv) == 1:
+        pass
+    else:
+        # range() starts at 1 to prevent the name from being processed.
+        for i in range(1, len(input_argv)):
+            if i in indexes_to_ignore:
+                continue
+
+            elif len(input_argv[i]) >= 2 and input_argv[i][0:2] == '--':
+                try:
+                    long_args_to_disc[input_argv[i].split('=')[0]]()
+                except KeyError:
+                    print("Invalid argument", file=sys.stderr)
+                    usage(1, output['name'])
+
+            elif input_argv[i][0] == '-' and input_argv[i][1] != '-':
+                for j in range(1, len(input_argv[i])):
+                    try:
+                        short_args_to_disc[input_argv[i][j]]()
+                    except KeyError:
+                        print("Invalid argument", file=sys.stderr)
+                        usage(1, output['name'])
+
+            elif not output_recipe["file"]:
+                output_recipe["file"] = input_argv[i]
+                output["file"] = input_argv[i]
+
+            else:
+                print("Error parsing arguments", file=sys.stderr)
+                usage(1, output['name'])
+    if output_recipe["file"] == '':
+        for file_name in os.listdir():
+            if len(file_name) > 9 and file_name[0] == '.' \
+                    and file_name[-7:] == '.md.swp':
+                output["file"] = file_name[1:-4]
+                output_recipe["file"] = file_name[1:-4]
+    output['build'] = PandocBuild(output_recipe)
+    print(output['build'].build_steps)
+    many_outputs.append(output)
+    return many_outputs
+
+# global arguments
+arguments = processargs(sys.argv)
+
+
+class ShouldExit():
+    _num_of_returns = 0
+    files_returned = []  # type: List[str]
+
+    def __init__(self, num: int) -> None:
+        self._num_of_files = num
+
+    def returnForFile(self, name: str) -> None:
+        self.files_returned.append(name)
+        self._num_of_returns += 1
+
+    def cleanTime(self) -> bool:
+        if self._num_of_returns == self._num_of_files:
+            return True
+        else:
+            return False
+
+
+class SwapFilesWatch():
+    _num_of_returns = 0
+    swapsToCheck = []  # type: List[str]
+
+    def __init__(self, primaryFile, extraFiles):
+        self.swapsToCheck.append(os.path.join(os.path.dirname(primaryFile),
+                                 '.' + os.path.basename(primaryFile) + '.swp'))
+        for singleFile in extraFiles:
+            self.swapsToCheck.append(os.path.join(
+                os.path.dirname(singleFile),
+                '.' + os.path.basename(singleFile) +
+                '.swp'))
+
+    def swapFilesExist(self):
+        result = bool()
+        for swap in self.swapsToCheck:
+            if os.path.exists(swap):
+                result = True
+                break
+
+        return result
+
+
+def main_for_file(args):
+    os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
+    if args['slow']:
+        pdfname = os.path.join(
+            # ''[:: -1] reverses a string. So this reverses the filename,
+            # in order to replace the last tex with pdf and then reverses it
+            # again.
+            os.path.expanduser('~/.latex'),
+            os.path.basename(args['file'][:: -1].replace
+                             ('xet', 'fdp', 1)[:: -1]))
+    else:
+        pdfname = args['build'].pdfname
+    print(pdfname)
+    swapWatch = SwapFilesWatch(args['file'], args['extra_files'])
+    args['build'].build()
+    if not args['disable_viewer']:
+        subprocess.call(['rifle', pdfname])
+    if os.getenv('VIM', False):
+        return
+
+    while swapWatch.swapFilesExist():
+        try:
+            if args['build'].hasAnythingChanged():
+                args['build'].build()
+            time.sleep(5)
+        except KeyboardInterrupt:
+            args['build'].build()
+
+    if args['build'].hasAnythingChanged():
+        args['build'].build()
+        if swapWatch.swapFilesExist():
+            main_for_file(args)
+
+
+if __name__ == '__main__':
+    for argument in arguments:
+        main_for_file(argument)
