@@ -130,6 +130,8 @@ map <Leader>vz :call VimuxZoomRunner()<CR>
 
 let g:ycm_extra_conf_globlist = ['~/Code/UCSD-Extensions/CCppProgrammingOne/*']
 
+let g:languagetool_jar = '/usr/share/java/languagetool/languagetool-commandline.jar'
+
 autocmd bufnewfile *.c so ~/.vim/c_header.txt
 autocmd bufnewfile *.h so ~/.vim/h_header.txt
 autocmd bufnewfile *.cpp so ~/.vim/cpp_header.txt

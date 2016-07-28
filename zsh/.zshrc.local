@@ -397,9 +397,12 @@ function biber_watch {
   fi
 }
 
-function sch {
-  unalias cd
-  wd school
-  alias cd=cl
-  cd $(python3 ~/bin/school.py "$@")
-}
+#function sch {
+#  unalias cd
+#  wd school
+#  alias cd=cl
+#  cd $(python3 ~/bin/school.py "$@")
+#}
+
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
+export PDFVIEWER=rifle

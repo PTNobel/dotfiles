@@ -1,16 +1,20 @@
 
-school:/home/parth/Documents/2015-2016
+school:/home/parth/Documents/current
 cards:/home/parth/Documents/cards
-triplea:/home/parth/Code/aur/triplea
 i3:/home/parth/.dotfiles/i3/.i3
-usr:/usr
 bin:/home/parth/.dotfiles/bin/bin
 dot:/home/parth/.dotfiles
 vim:/home/parth/.dotfiles/vim/.vim
-tmp:/tmp
-media:/media
 cache:/var/cache/pacman/pkg
-SciOly:/home/parth/Documents/Science Olympiad/2016
+SciOly:/home/parth/Documents/Science Olympiad/2017
 latex_build:/tmp/parth-LaTeX
-ucsd:/home/parth/Code/UCSD-Extensions/CCppProgrammingOne
 nuptse:/home/parth/Documents/Nuptse
+senior:/home/parth/Documents/2016-2017/bitbucket
+college:/home/parth/Documents/2016-2017/bitbucket/College
+cs:/home/parth/Documents/2016-2017/bitbucket/Computer Science
+calc:/home/parth/Documents/2016-2017/bitbucket/Calculus
+lit:/home/parth/Documents/2016-2017/bitbucket/World Literature
+gov:/home/parth/Documents/2016-2017/bitbucket/Government
+stats:/home/parth/Documents/2016-2017/bitbucket/Statistics
+physics:/home/parth/Documents/2016-2017/bitbucket/Physics
+peters:/home/parth/Documents/Peters2016

@@ -17,7 +17,8 @@ set $mod Mod4
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Mono 8
+#font pango:DejaVu Sans Mono 8
+font pango:Hack 8
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
 # The font above is very space-efficient, that is, it looks good, sharp and
@@ -184,9 +185,11 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bar {
         status_command measure-net-speed-i3status.bash
+        #status_command python ~/bin/i3bar-powerline.py
         position top
         tray_output primary
         mode hide
+        font pango:Hack 8
 }
 
 # ease tmux use pass $mod+b as Ctrl+b
@@ -199,6 +202,8 @@ bindsym XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
 bindsym $mod+XF86AudioRaiseVolume exec --no-startup-id pulsectl up #increase sound volume
 bindsym $mod+XF86AudioLowerVolume exec --no-startup-id pulsectl down #decrease sound volume
 bindsym $mod+XF86AudioMute exec --no-startup-id pulsectl mute  # mute sound
+bindsym XF86Mail exec --no-startup-id true  #
+bindsym XF86HomePage exec --no-startup-id true  #
 bindsym $mod+o exec pavucontrol
 
 # Sreen brightness controls
@@ -225,6 +230,7 @@ bindsym $mod+minus scratchpad show
 
 # Lock screen
 bindsym $mod+q exec --no-startup-id i3exit suspend_or_lock
+#bindsym $mod+q exec --no-startup-id i3exit lock
 bindsym $mod+Shift+w exec --no-startup-id i3exit lock
 
 set $mode_system System (l) lock, (b) blur, (f) freeze, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown

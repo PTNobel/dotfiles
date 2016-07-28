@@ -2,6 +2,7 @@
 #
 # Launches CivV.
 
+
 function CivV {
   steam steam://rungameid/8930 &
   #cd /home/parth/.local/share/Steam/SteamApps/common/Sid\ Meier\'s\ Civilization\ V

@@ -1,5 +1,6 @@
 transmission-gtk -m
 skype
 /usr/bin/chromium "--profile-directory=Profile 2" --app-id=hmjkmjkepdijhoojdojkdfohbdgmmhki
+mopidy
 steam -silent
 urxvt -name muxgeneral -e mux general
