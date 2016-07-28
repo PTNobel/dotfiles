@@ -7,7 +7,7 @@
 int usage(char *argv[] ) 
 {
     printf(argv[0]);
-    printf(": update_tools_helper {abs|alpm|man|mlocate|pkgfile|units}\n");
+    printf(": update_tools_helper {abs|alpm|mlocate|pkgfile|units}\n");
     return 0;
 }
 
@@ -29,13 +29,6 @@ int main( int argc, char *argv[] )
     {
       setuid( 0 );
       system( "/usr/bin/pacman -Syuw --noconfirm" );
-      return 0;
-    }
-
-    else if(strcmp(argv[1],"man") == 0 )
-    {
-      setuid( 0 );
-      system( "/usr/bin/mandb" );
       return 0;
     }
 
