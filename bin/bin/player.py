@@ -38,9 +38,9 @@ class mpd:
                          'quit': self.stop, 'stop': self.stop,
                          'is_playing': self.is_playing_shell_wrapper}
 
-    def _call_mpc(self, option):
+    def _call_mpc(self, *option):
         devnull = open('/dev/null')
-        subprocess.call(['mpc', option], stdout=devnull.buffer)
+        subprocess.call(['mpc', *option], stdout=devnull.buffer)
         devnull.close()
 
     def __repr__(self):
@@ -71,6 +71,12 @@ class mpd:
         except subprocess.CalledProcessError:
             is_playing_present = False
         return is_playing_present
+
+
+# Since the easiest way to control mopidy is through its mpd implementation, the
+# mopidy class inherets its implementation from mpd from the mpd class.
+class mopidy(mpd):
+    __name__ = 'mopidy'
 
 
 class pianobar:
@@ -195,7 +201,9 @@ def current_player():
     list_of_process_names = process.get_comms()
 
     # pianobar get priority over mpd, unless mpd is playing.
-    if 'mpd' in list_of_process_names:
+    if 'mopidy' in list_of_process_names:
+        output = mopidy()
+    elif 'mpd' in list_of_process_names:
         if 'pianobar' in list_of_process_names:
             if b'playing' in subprocess.check_output(['mpc', 'status']):
                 output = mpd()
