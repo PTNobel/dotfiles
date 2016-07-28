@@ -10,7 +10,7 @@ if ! [ -x update_tools_helper ] ; then
 fi
 
 _test(){
-  while read line; do
+  while read -r line; do
     if ! [[ -x "$(echo "$line" | cut -f 1 -d ' ')" ]]; then
       echo can\'t find "$(echo "$line" | cut -f 1 -d ' ')" 1>&2
       exit 1
