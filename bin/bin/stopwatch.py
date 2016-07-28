@@ -4,14 +4,14 @@ import sys
 import time
 
 
-def makeTimeString(cur_time, maxNumber):
+def makeTimeString(cur_time: int, maxNumber: int) -> str:
     _minutes_str = str()
     _hour_str = str()
     _hour = (cur_time >= 60**2 or maxNumber >= 60**2)
     _minutes = (cur_time >= 60 or maxNumber >= 60)
 
     if _minutes:
-        _minutes_str = str((cur_time // 60) % 60**2) + ':'
+        _minutes_str = str((cur_time % 60**2) // 60) + ':'
         if len(_minutes_str) <= 2:
             _minutes_str = '0' + _minutes_str
 
@@ -26,14 +26,15 @@ def makeTimeString(cur_time, maxNumber):
     return _hour_str + _minutes_str + _second_str
 
 
-def turnNumToNiceString(cur_time, maxTime):
+def turnNumToNiceString(cur_time: int, maxTime: int) -> str:
     math_time = maxTime - cur_time
     final_str = str()
     _minute_str = str()
     _hour_str = str()
     _day_str = str()
     _second_str = str()
-    _hour = (math_time >= 60**2)
+    _SEC_IN_AN_HOUR = 60**2
+    _hour = (math_time >= _SEC_IN_AN_HOUR)
     _minute = (math_time >= 60)
     _day = (math_time >= 60**2 * 24)
     _second = (math_time % 60 == 0)
@@ -57,38 +58,40 @@ def turnNumToNiceString(cur_time, maxTime):
             final_str += ' '
     return final_str
 
-if len(sys.argv) == 1:
-    exit(1)
+if __name__ == '__main__':
 
-cur_number = int()
-for j in sys.argv[1:]:
-    cur_number += int(j[:-1])
-    if j[-1] == 'm':
-        cur_number *= 60
-    elif j[-1] == 'h':
-        cur_number *= 60**2
-    elif j[-1] == 'd':
-        cur_number *= 60**2 * 24
-    print(cur_number)
-'''
-if sys.argv[1][:-1].isdigit():
-    number = int(sys.argv[1][:-1])
+    if len(sys.argv) == 1:
+        exit(1)
 
-if sys.argv[1][-1] == 's' or sys.argv[1][-1].isdigit():
-    pass
-elif sys.argv[1][-1] == 'm':
-    number *= 60
-elif sys.argv[1][-1] == 'h':
-    number *= 60**2
-elif sys.argv[1][-1] == 'd':
-    number *= 60**2 * 24
-'''
-number = cur_number
-endTime = makeTimeString(number, number)
-try:
-    for i in range(number):
-        print('\r' + makeTimeString(i, number) + '/' + endTime, end='')
-        time.sleep(1)
-except KeyboardInterrupt:
-    print('\n' + turnNumToNiceString(i, number))
-    exit(4)
+    cur_number = int()
+    for j in sys.argv[1:]:
+        cur_number += int(j[:-1])
+        if j[-1] == 'm':
+            cur_number *= 60
+        elif j[-1] == 'h':
+            cur_number *= 60**2
+        elif j[-1] == 'd':
+            cur_number *= 60**2 * 24
+        print(cur_number)
+    '''
+    if sys.argv[1][:-1].isdigit():
+        number = int(sys.argv[1][:-1])
+
+    if sys.argv[1][-1] == 's' or sys.argv[1][-1].isdigit():
+        pass
+    elif sys.argv[1][-1] == 'm':
+        number *= 60
+    elif sys.argv[1][-1] == 'h':
+        number *= 60**2
+    elif sys.argv[1][-1] == 'd':
+        number *= 60**2 * 24
+    '''
+    number = cur_number
+    endTime = makeTimeString(number, number)
+    try:
+        for i in range(number):
+            print('\r' + makeTimeString(i, number) + '/' + endTime, end='')
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print('\n' + turnNumToNiceString(i, number))
+        exit(4)
