@@ -4,8 +4,7 @@ import sys
 import string
 from decimal import Decimal
 
-
-def get_atomic_mass(element):
+def get_atomic_mass(element: str) -> Decimal:
     # The second integer is places after the decimal point.
     elements = {
         'H': (Decimal('1.0079'), 4),
@@ -139,7 +138,7 @@ def get_atomic_mass(element):
     return element_info[0]
 
 
-def _get_gfm_of_part(input_str):
+def _get_gfm_of_part(input_str: str) -> Decimal:
     gfm = Decimal()
     l = 0
     for i in range(len(input_str)-2):
@@ -182,7 +181,7 @@ def _get_gfm_of_part(input_str):
     return gfm
 
 
-def _gfm_of_whole(input_str):
+def _gfm_of_whole(input_str: str) -> Decimal:
     gfm = Decimal()
     if '*' in input_str:
         for i in input_str.split('*'):
@@ -215,7 +214,7 @@ def _gfm_of_whole(input_str):
     return gfm
 
 
-def getGFM(input_str):
+def getGFM(input_str: str) -> Decimal:
     return _gfm_of_whole(input_str)
 
 
