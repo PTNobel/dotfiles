@@ -6,37 +6,38 @@ import sys
 import time
 import subprocess
 import player
+from typing import Tuple
 
 
-def generic_lock(i3LockOptions=[]):
+def generic_lock(i3LockOptions=[]) -> subprocess.Popen:
     return plain_lock(i3LockOptions + ['-i' + _which_picture()])
 
 
-def plain_lock(i3LockOptions=[]):
+def plain_lock(i3LockOptions=[]) -> subprocess.Popen:
     return subprocess.Popen(['i3lock'] + i3LockOptions + ['-t'])
 
 
-def which_output():
+def which_output() -> Tuple[bool, bool]:
     """returns tuple of LVDS_active bool and HDMI_active bool"""
     xrandr_output = subprocess.check_output(['xrandr']).split(b'\n')
-    active_output = list()
+    active_outputs = list()
     HDMI_active = bool()
     LVDS_active = bool()
-    for i in xrandr_output:
-        if b'+' in i and b'connected' in i:
-            active_output.append(i)
+    for line in xrandr_output:
+        if b'+' in line and b'connected' in line:
+            active_outputs.append(line)
 
-    for i in active_output:
-        if b'LVDS' in i:
+    for output in active_outputs:
+        if b'LVDS' in output:
             LVDS_active = True
 
-        elif b'HDMI' in i:
+        elif b'HDMI' in output:
             HDMI_active = True
 
     return (LVDS_active, HDMI_active)
 
 
-def _which_picture():
+def _which_picture() -> str:
     LVDS_active, HDMI_active = which_output()
     if HDMI_active and LVDS_active:
         output = os.path.expanduser("~/Pictures/noise-texture.png")
@@ -76,9 +77,18 @@ def watchdog_lock(wait_time,  sleep_for=60, generic_locker=generic_lock):
         time.sleep(sleep_for)
 
 
-def suspend():
-    generic_lock(['-d'])
-    subprocess.call(['systemctl', 'suspend'])
+def suspend(lockScreen=False):
+    if lockScreen:
+        generic_lock(['-d'])
+
+    # SUSPEND IS DISABLED IF IT'S RUNNING ON A KERNEL KNOWN TO HAVE SUSPEND
+    # ISSUES
+    if '4.5.0-1-ARCH' in subprocess.getoutput(['uname', '-r']):
+        print("WARNING: SUSPEND IS KNOWN TO NOT WORK WITH THIS KERNEL",
+              file=sys.stderr)
+        exit(200)
+    else:
+        subprocess.call(['systemctl', 'suspend'])
 
 
 def generic_blur(i3LockOptions=[]):
@@ -187,7 +197,7 @@ def main():
                        'blur_with_sleep': (generic_blur, [['-d']]),
                        'freeze': (freeze, []),
                        'logout': (subprocess.call, [['i3-msg', 'exit']]),
-                       'suspend': (suspend, []),
+                       'suspend': (suspend, [True]),
                        'hibernate': (hibernate, []),
                        'reboot': (subprocess.call, [['systemctl', 'reboot']]),
                        'shutdown': (subprocess.call,
