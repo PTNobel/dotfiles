@@ -4,9 +4,10 @@ import os
 import sys
 import subprocess
 import time
+from typing import List, Dict, Any
 
 
-def usage(exit_code, name):
+def usage(exit_code: int, name):
     usage_text = ("Usage: %s [--help|-h]" +
                   " [--sagetex|-s]" +
                   " [--biber|-b]" +
@@ -55,7 +56,7 @@ class FileWatch:
 
 
 class Build:
-    build_steps = list()
+    build_steps = []  # type: List[object]
 
     def __init__(self, recipe):
         print(recipe)
@@ -92,7 +93,7 @@ class Build:
         subprocess.call([self.recipe['engine'],
                          '-output-directory',
                          self.recipe['auxdir'],
-                         "-interaction=nonstopmode", self.recipe['file']])
+                         "-interaction=batchmode", self.recipe['file']])
 
     def make(self):
         subprocess.call(['make'])
@@ -145,7 +146,7 @@ class Build:
             return False
 
 
-def processargs(input_argv):
+def processargs(input_argv: List[str]) -> List[Dict[str, Any]]:
     many_outputs = []
 
     # All of these run in the same scope as processargs(). They make changes to
@@ -243,7 +244,7 @@ def processargs(input_argv):
         'extra_files': [],
     }
 
-    indexes_to_ignore = list()
+    indexes_to_ignore = []  # type: List[int]
 
     if len(input_argv) == 1:
         pass
@@ -276,12 +277,12 @@ def processargs(input_argv):
                 print("Error parsing arguments", file=sys.stderr)
                 usage(1, output['name'])
     if output_recipe["file"] == '':
-        for i in os.listdir():
-            if len(i) > 9 and i[0] == '.' and i[-8:] == '.tex.swp':
-                output["file"] = i[1:-4]
-                output_recipe["file"] = i[1:-4]
+        for file_name in os.listdir():
+            if len(file_name) > 9 and file_name[0] == '.' \
+                    and file_name[-8:] == '.tex.swp':
+                output["file"] = file_name[1:-4]
+                output_recipe["file"] = file_name[1:-4]
     output['build'] = Build(output_recipe)
-    print(output['build'].build_steps)
     many_outputs.append(output)
     return many_outputs
 
@@ -291,16 +292,16 @@ arguments = processargs(sys.argv)
 
 class ShouldExit():
     _num_of_returns = 0
-    files_returned = []
+    files_returned = []  # type: List[str]
 
-    def __init__(self, num):
+    def __init__(self, num: int) -> None:
         self._num_of_files = num
 
-    def returnForFile(self, name):
-        self.files_returned.append[name]
+    def returnForFile(self, name: str) -> None:
+        self.files_returned.append(name)
         self._num_of_returns += 1
 
-    def cleanTime(self):
+    def cleanTime(self) -> bool:
         if self._num_of_returns == self._num_of_files:
             return True
         else:
@@ -309,7 +310,7 @@ class ShouldExit():
 
 class SwapFilesWatch():
     _num_of_returns = 0
-    swapsToCheck = []
+    swapsToCheck = []  # type: List[str]
 
     def __init__(self, primaryFile, extraFiles):
         self.swapsToCheck.append(os.path.join(os.path.dirname(primaryFile),
