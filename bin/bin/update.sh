@@ -41,11 +41,6 @@ function pkgfile_u {
 
 }
 
-function man_u {
-  /usr/local/bin/update_tools_helper man &>> "$OUTPUT_FILE"
-  echo man >> /tmp/update.lock
-}
-
 function units_cur_u {
   /usr/local/bin/update_tools_helper units &>> "$OUTPUT_FILE"
   echo units_cur >> /tmp/update.lock
@@ -85,22 +80,18 @@ echo "starting update of mlocate database"
 mlocate &
 PID5=$!
 
-echo "starting update of man database"
-man_u &
-PID6=$!
-
 echo "starting update of units database"
 units_cur_u &
-PID7=$!
+PID6=$!
 
 yaourt_wrapper -C
-PID8=$!
+PID7=$!
 
 tail -n"$(wc -l < "$OUTPUT_FILE")"  -f "$OUTPUT_FILE" &
 export TAILPID=$!
 
-echo $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8 >/tmp/backup.lock
-wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 $PID8
+echo $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7 >/tmp/backup.lock
+wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7
 sleep 3
 echo wait finished.
 exit_routine
