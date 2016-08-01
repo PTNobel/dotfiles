@@ -65,18 +65,6 @@ def _build_buffers() -> None:
             _buffer_running_pids.pop(index)
 
 
-def _get_pids_of_comm(comm: str) -> List[str]:
-    try:
-        pids = _buffer_map_comms_to_pids[comm]
-    except KeyError:
-        pids = []
-    return pids
-
-
-def _is_comm_running(comm: str) -> bool:
-    return comm in _buffer_list_of_comms
-
-
 def update_buffers() -> None:
     _build_buffers()
 
@@ -103,7 +91,11 @@ def get_pids_to_comms() -> Dict[str, str]:
 
 def get_pids_of_comm(comm: str) -> List[str]:
     """Returns a list of all pids with comm"""
-    return _get_pids_of_comm(comm)
+    try:
+        pids = _buffer_map_comms_to_pids[comm]
+    except KeyError:
+        pids = []
+    return pids
 
 
 def get_pids_to_cmdlines() -> Dict[str, List[str]]:
@@ -123,7 +115,7 @@ def get_cmdline_of_pid(pid: str) -> List[str]:
 
 def is_comm_running(comm: str) -> bool:
     """Returns a bool if any process with that comm is running"""
-    return _is_comm_running(comm)
+    return comm in _buffer_list_of_comms
 
 
 _build_buffers()
