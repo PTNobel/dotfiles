@@ -14,7 +14,11 @@ def generic_lock(i3LockOptions=[]) -> subprocess.Popen:
 
 
 def plain_lock(i3LockOptions=[]) -> subprocess.Popen:
-    return subprocess.Popen(['i3lock'] + i3LockOptions + ['-t'])
+    if '-d' in i3LockOptions:
+        i3LockOptions.remove('-d')
+        return subprocess.Popen(['i3lock_dpms.sh'] + i3LockOptions)
+    else:
+        return subprocess.Popen(['i3lock'] + i3LockOptions)
 
 
 def which_output() -> Tuple[bool, bool]:
@@ -94,19 +98,21 @@ def suspend(lockScreen=False):
 def generic_blur(i3LockOptions=[]):
     fileName1 = str(subprocess.Popen(
                     ['mktemp', '--tmpdir',
-                     'i3lock-wrapper-XXXXXXX.png'],
+                     'i3lock-wrapper1-XXXXXXX.png'],
                     stdout=subprocess.PIPE).communicate()[0].strip())[2:-1]
     fileName2 = str(subprocess.Popen(
-                    ['mktemp', '--tmpdir',
-                     'i3lock-wrapper-XXXXXXX.png'],
+                    ['mktemp', '--tmpdir', '-u',
+                     'i3lock-wrapper2-XXXXXXX.png'],
                     stdout=subprocess.PIPE).communicate()[0].strip())[2:-1]
     try:
         subprocess.call(['scrot', '-zd0', fileName1])
-        subprocess.call(['convert', fileName1, '-blur', '0x9', fileName2])
-        subprocess.call(['i3lock'] + i3LockOptions + ['-i', fileName2])
+        subprocess.call(['convert', fileName1, '-gaussian-blur', '0x9',
+                         fileName2])
+        plain_lock(i3LockOptions + ['-i', fileName2])
         raise
     except:
-        subprocess.call(['rm', fileName1, fileName2])
+        pass
+        #  subprocess.call(['rm', fileName1, fileName2])
 
 
 def freeze():
@@ -116,7 +122,7 @@ def freeze():
                     stdout=subprocess.PIPE).communicate()[0].strip())[2:-1]
     try:
         subprocess.call(['scrot', '-zd0', fileName1])
-        subprocess.call(['i3lock', '-i', fileName1])
+        plain_lock(['-i', fileName1])
         raise
     except:
         subprocess.call(['rm', fileName1])
