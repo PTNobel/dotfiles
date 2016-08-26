@@ -74,7 +74,7 @@ class mpd:
 
 
 # Since the easiest way to control mopidy is through its mpd implementation, the
-# mopidy class inherets its implementation from mpd from the mpd class.
+# mopidy class inherets its implementation from the mpd class.
 class mopidy(mpd):
     __name__ = 'mopidy'
 
