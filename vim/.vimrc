@@ -84,7 +84,7 @@ if &t_Co == 8 && $TERM !~# '^linux'
 endif
 
 let g:ycm_semantic_triggers = {
-\  'tex'  : ['\ref{', '\cref{', '\cite{', '\autocite{', '\mlacite{', '\nocite{',],
+\  'tex'  : ['\ref{', '\cref{', '\Cref{', '\cite{', '\autocite{', '\mlacite{', '\nocite{',],
 \ }
 
 let g:jedi#force_py_version = 3
@@ -131,6 +131,8 @@ map <Leader>vz :call VimuxZoomRunner()<CR>
 let g:ycm_extra_conf_globlist = ['~/Code/UCSD-Extensions/CCppProgrammingOne/*']
 
 let g:languagetool_jar = '/usr/share/java/languagetool/languagetool-commandline.jar'
+
+set mouse=a
 
 autocmd bufnewfile *.c so ~/.vim/c_header.txt
 autocmd bufnewfile *.h so ~/.vim/h_header.txt
