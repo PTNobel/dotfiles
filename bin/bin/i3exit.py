@@ -111,8 +111,7 @@ def generic_blur(i3LockOptions=[]):
         plain_lock(i3LockOptions + ['-i', fileName2])
         raise
     except:
-        pass
-        #  subprocess.call(['rm', fileName1, fileName2])
+        subprocess.call(['rm', fileName1, fileName2])
 
 
 def freeze():
