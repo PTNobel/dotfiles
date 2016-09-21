@@ -201,9 +201,7 @@ def current_player():
     list_of_process_names = process.get_comms()
 
     # pianobar get priority over mpd, unless mpd is playing.
-    if 'mopidy' in list_of_process_names:
-        output = mopidy()
-    elif 'mpd' in list_of_process_names:
+    if 'mpd' in list_of_process_names:
         if 'pianobar' in list_of_process_names:
             if b'playing' in subprocess.check_output(['mpc', 'status']):
                 output = mpd()
@@ -213,6 +211,8 @@ def current_player():
             output = mpd()
     elif 'pianobar' in list_of_process_names:
         output = pianobar()
+    elif 'mopidy' in list_of_process_names:
+        output = mopidy()
     else:
         output = playerctl()
 
@@ -239,7 +239,7 @@ def next_song():
     current_player().commands['next']()
 
 
-def print_keys(list_of_classes=[mpd, pianobar, playerctl]):
+def print_keys(list_of_classes=[mopidy, mpd, pianobar, playerctl]):
     for i in list_of_classes:
         player = i()
         print("For player " + player.__repr__() +
