@@ -4,3 +4,4 @@ skype
 mopidy
 steam -silent
 urxvt -name muxgeneral -e mux general
+/usr/lib/kdeconnectd
