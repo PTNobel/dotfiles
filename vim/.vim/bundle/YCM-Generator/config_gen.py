@@ -30,7 +30,9 @@ def main():
     # parse command-line args
     parser = argparse.ArgumentParser(description="Automatically generates config files for YouCompleteMe")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show output from build process")
+    parser.add_argument("-f", "--force", action="store_true", help="Overwrite the file if it exists.")
     parser.add_argument("-m", "--make", default="make", help="Use the specified executable for make.")
+    parser.add_argument("-b", "--build-system", choices=["cmake", "autotools", "qmake", "make"], help="Force use of the specified build system rather than trying to autodetect.")
     parser.add_argument("-c", "--compiler", help="Use the specified executable for clang. It should be the same version as the libclang used by YCM. The executable for clang++ will be inferred from this.")
     parser.add_argument("-C", "--configure_opts", default="", help="Additional flags to pass to configure/cmake/etc. e.g. --configure_opts=\"--enable-FEATURE\"")
     parser.add_argument("-F", "--format", choices=["ycm", "cc"], default="ycm", help="Format of output file (YouCompleteMe or color_coded). Default: ycm")
@@ -76,7 +78,7 @@ def main():
         "ycm": os.path.join(project_dir, ".ycm_extra_conf.py"),
     }[args["format"] if args["output"] is None else None]
 
-    if(os.path.exists(config_file)):
+    if(os.path.exists(config_file) and not args["force"]):
         print("'{}' already exists. Overwrite? [y/N] ".format(config_file)),
         response = sys.stdin.readline().strip().lower()
 
@@ -90,6 +92,7 @@ def main():
     force_lang = args.pop("language")
     output_format = args.pop("format")
     del args["compiler"]
+    del args["force"]
     del args["output"]
     del args["PROJECT_DIR"]
 
@@ -116,9 +119,14 @@ def main():
                 c_count = 0
 
             if(c_count == 0 and cxx_count == 0):
-                print()
+                print("")
                 print("ERROR: No commands were logged to the build logs (C: {}, C++: {}).".format(c_build_log.name, cxx_build_log.name))
                 print("Your build system may not be compatible.")
+
+                if(not args["verbose"]):
+                    print("")
+                    print("Try running with the --verbose flag to see build system output - the most common cause of this is a hardcoded compiler path.")
+
                 c_build_log.delete = False
                 cxx_build_log.delete = False
                 return 3
@@ -132,7 +140,7 @@ def main():
             print("Created {} config file with {} {} flags".format(output_format.upper(), len(flags), lang.upper()))
 
 
-def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_cmd, cc, cxx, out_of_tree, configure_opts, make_flags, preserve_environment, qt_version):
+def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_cmd, build_system, cc, cxx, out_of_tree, configure_opts, make_flags, preserve_environment, qt_version):
     '''Builds the project using the fake toolchain, to collect the compiler flags.
 
     project_dir: the directory containing the source files
@@ -195,8 +203,18 @@ def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_
         print("$ " + " ".join(cmd))
         subprocess.call(cmd, *args, **kwargs)
 
+    if build_system is None:
+        if os.path.exists(os.path.join(project_dir, "CMakeLists.txt")):
+            build_system = "cmake"
+        elif os.path.exists(os.path.join(project_dir, "configure")):
+            build_system = "autotools"
+        elif pro_files:
+            build_system = "qmake"
+        elif any([os.path.exists(os.path.join(project_dir, x)) for x in ["GNUmakefile", "makefile", "Makefile"]]):
+            build_system = "make"
+
     # execute the build system
-    if(os.path.exists(os.path.join(project_dir, "CMakeLists.txt"))):
+    if build_system == "cmake":
         # cmake
         # run cmake in a temporary directory, then compile the project as usual
         build_dir = tempfile.mkdtemp()
@@ -214,19 +232,22 @@ def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_
             cache_tmp = None
 
         print("Running cmake in '{}'...".format(build_dir))
+        sys.stdout.flush()
         run(["cmake", project_dir] + configure_opts, env=env_config, **proc_opts)
 
         print("\nRunning make...")
+        sys.stdout.flush()
         run(make_args, env=env, **proc_opts)
 
         print("\nCleaning up...")
         print("")
+        sys.stdout.flush()
         shutil.rmtree(build_dir)
 
         if(cache_tmp):
             shutil.move(cache_tmp, cache_path)
 
-    elif(os.path.exists(os.path.join(project_dir, "configure"))):
+    elif build_system == "autotools":
         # autotools
         # perform build in-tree, since not all projects handle out-of-tree builds correctly
 
@@ -250,7 +271,7 @@ def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_
         else:
             run([make_cmd, "maintainer-clean"], env=env, **proc_opts)
 
-    elif(pro_files):
+    elif build_system == "qmake":
         # qmake
         # make sure there is only one .pro file
         if len(pro_files) != 1:
@@ -262,7 +283,16 @@ def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_
         build_dir = tempfile.mkdtemp()
         proc_opts["cwd"] = build_dir
         env_config["QT_SELECT"] = qt_version
-        env_config["QMAKESPEC"] = "unsupported/linux-clang" if qt_version == "4" else "linux-clang"
+
+        # QMAKESPEC is platform dependent - valid mkspecs are in
+        # /usr/share/qt4/mkspecs, /usr/lib64/qt5/mkspecs
+        env_config["QMAKESPEC"] = {
+            ("Linux",  True):   "unsupported/linux-clang",
+            ("Linux",  False):  "linux-clang",
+            ("Darwin", True):   "unsupported/macx-clang",
+            ("Darwin", False):  "macx-clang",
+            ("FreeBSD", False): "unsupported/freebsd-clang",
+        }[(os.uname()[0], qt_version == "4")]
 
         print("Running qmake in '{}' with Qt {}...".format(build_dir, qt_version))
         run(["qmake"] + configure_opts + [pro_files[0]], env=env_config,
@@ -275,13 +305,29 @@ def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_
         print("")
         shutil.rmtree(build_dir)
 
-    elif(any([os.path.exists(os.path.join(project_dir, x)) for x in ["GNUmakefile", "makefile", "Makefile"]])):
+    elif build_system == "make":
         # make
         # needs to be handled last, since other build systems can generate Makefiles
         print("Preparing build directory...")
         run([make_cmd, "clean"], env=env, **proc_opts)
 
         print("\nRunning make...")
+        run(make_args, env=env, **proc_opts)
+
+    elif(os.path.exists(os.path.join(project_dir, "Make/options"))):
+        print("Found OpenFOAM Make/options")
+
+        # OpenFOAM build system
+        make_args = ["wmake"]
+
+        # Since icpc could not find directory in which g++ resides,
+        # set environmental variables to gcc to make fake_build operate normally.
+
+        env['WM_COMPILER']='Gcc'
+        env['WM_CC']='gcc'
+        env['WM_CXX']='g++'
+
+        print("\nRunning wmake...")
         run(make_args, env=env, **proc_opts)
 
     else:
@@ -311,7 +357,7 @@ def parse_flags(build_log):
     # -warnings (-Werror), but no assembler, etc. flags (-Wa,-option)
     # -language (-std=gnu99) and standard library (-nostdlib)
     # -word size (-m64)
-    flags_whitelist = ["-[iID].*", "-W[^,]*", "-std=[a-z0-9+]+", "-(no)?std(lib|inc)", "-m[0-9]+"]
+    flags_whitelist = ["-[iIDF].*", "-W[^,]*", "-std=[a-z0-9+]+", "-(no)?std(lib|inc)", "-m[0-9]+"]
     flags_whitelist = re.compile("|".join(map("^{}$".format, flags_whitelist)))
     flags = set()
     line_count = 0
@@ -321,7 +367,7 @@ def parse_flags(build_log):
     define_regex = re.compile("-D([a-zA-Z0-9_]+)=(.*)")
 
     # Used to only bundle filenames with applicable arguments
-    filename_flags = ["-o", "-I", "-isystem", "-include", "-imacros"]
+    filename_flags = ["-o", "-I", "-isystem", "-iquote", "-include", "-imacros", "-isysroot"]
 
     # Process build log
     for line in build_log:

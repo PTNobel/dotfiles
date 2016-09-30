@@ -1,10 +1,10 @@
 let mapleader = ","
 set nocompatible
 filetype off
-execute pathogen#infect()
-execute pathogen#helptags()
 filetype plugin indent on
 syntax on
+execute pathogen#infect()
+execute pathogen#helptags()
 set number
 set relativenumber
 set ruler
@@ -96,11 +96,6 @@ let g:indentLine_color_term = 239
 let g:indentLine_color_gui = '#09AA08'
 let g:indentLine_char = '│'
 let g:tex_comment_nospell= 1
-let g:LatexBox_quickfix = 4
-let g:LatexBox_viewer = "zathura"
-let g:LatexBox_latexmk_preview_continuously = 1
-let g:LatexBox_build_dir = '/tmp/parth-LaTeX'
-let g:LatexBox_latexmk_options = "-cd -outdir='/tmp/parth-LaTeX'"
 
 let g:powerline_pycmd = 'py3'
 set laststatus=2 " Always display the statusline in all windows

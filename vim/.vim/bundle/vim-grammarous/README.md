@@ -1,7 +1,7 @@
 vim-grammarous
 ==============
 
-vim-grammarous is a powerful grammar checker for Vim.  Simply do `:GrammarousCheck` to see the powerful checking.  This plugin automatically downloads [LanguageTool](https://www.languagetool.org/), which requires Java 7+.
+vim-grammarous is a powerful grammar checker for Vim.  Simply do `:GrammarousCheck` to see the powerful checking.  This plugin automatically downloads [LanguageTool](https://www.languagetool.org/), which requires Java 8+.
 
 ![screenshot](http://gifzo.net/gVALLqiB.gif)
 
@@ -118,7 +118,11 @@ let g:grammarous#disabled_rules = {
 
 The rule names are displayed in Vim command line when you disable the rule in the info window or `<Plug>(grammarous-disable-rule)`.
 
-## I want to use above `<Plug>` mappings only after checking.
+### How do I use vim's spelllang?
+
+Plese use `g:grammarous#use_vim_spelllang`. Default 0, to enable 1.
+
+### I want to use above `<Plug>` mappings only after checking.
 
 `on_check` and `on_reset` are available.
 
@@ -138,6 +142,14 @@ function! g:grammarous#hooks.on_reset(errs)
 endfunction
 ```
 
+### I want to use system global LanguageTool command
+
+`g:grammarous#languagetool_cmd` is available for the purpose.  If some command is set to `g:grammarous#languagetool_cmd` in your `.vimrc`, vim-grammarous does not install its own LanguageTool jar and use the command to run LanguageTool.
+
+```vim
+let g:grammarous#languagetool_cmd = 'languagetool'
+```
+
 
 ## Automatic installation
 
@@ -146,7 +158,7 @@ This plugin attempts to install [LanguageTool](https://www.languagetool.org/) us
 
 ## Requirements
 
-- Java7 (required)
+- Java8+ (required)
 - [vimproc.vim](https://github.com/Shougo/vimproc.vim) (optional)
 - [unite.vim](https://github.com/Shougo/unite.vim) (optional)
 - [vim-operator-user](https://github.com/kana/vim-operator-user) (optional)
