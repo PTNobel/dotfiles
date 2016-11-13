@@ -58,6 +58,7 @@ def turnNumToNiceString(cur_time: int, maxTime: int) -> str:
             final_str += ' '
     return final_str
 
+
 if __name__ == '__main__':
 
     if len(sys.argv) == 1:
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     endTime = makeTimeString(number, number)
     try:
         for i in range(number):
-            print('\r' + makeTimeString(i, number) + '/' + endTime, end='')
+            print(makeTimeString(i, number) + '/' + endTime, end='\r')
             time.sleep(1)
     except KeyboardInterrupt:
         print('\n' + turnNumToNiceString(i, number))
