@@ -73,8 +73,8 @@ class mpd:
         return is_playing_present
 
 
-# Since the easiest way to control mopidy is through its mpd implementation, the
-# mopidy class inherets its implementation from the mpd class.
+# Since the easiest way to control mopidy is through its mpd implementation,
+# the mopidy class inherets its implementation from the mpd class.
 class mopidy(mpd):
     __name__ = 'mopidy'
 
