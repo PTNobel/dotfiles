@@ -15,7 +15,7 @@ FilePair = Tuple[MainForFileMethod, ProcessedArgs]
 def processargs(
         argv: List[str],
         ) -> List[FilePair]:
-    output = list()  # type: List[FilePair]
+    output: List[FilePair] = list()
     dashArguments = False
     markdownFiles = False
     latexFiles = False
@@ -87,11 +87,15 @@ def processargs(
 
 
 def launchWatches(mainsAndArgs: List[FilePair]) -> None:
-    for mainAndArgPair in mainsAndArgs:
-        Thread(
-            target=mainAndArgPair[0],
-            args=tuple([mainAndArgPair[1]]),
-            ).start()
+
+    if len(mainsAndArgs) == 1:
+        mainsAndArgs[0][0](mainsAndArgs[0][1])
+    else:
+        for mainAndArgPair in mainsAndArgs:
+            Thread(
+                target=mainAndArgPair[0],
+                args=tuple([mainAndArgPair[1]]),
+                ).start()
 
 
 if __name__ == '__main__':
