@@ -66,14 +66,9 @@ syntax enable
 
 autocmd StdinReadPre * let s:std_in=1
 
-let g:pymode_rope_lookup_project = 0
-let g:pymode_rope = 0
-let g:pymode_python = 'python3'
-let g:pymode_lint_options_mccabe = {'complexity': 30}
 set undofile
 set undodir=~/.vim/undodir
 
-let g:pymode_rope=0
 
 set backspace=indent,eol,start
 set complete-=i
