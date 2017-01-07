@@ -88,7 +88,6 @@ function! youcompleteme#Enable()
     " We also need to trigger buf init code on the FileType event because when
     " the user does :enew and then :set ft=something, we need to run buf init
     " code again.
-    autocmd BufReadPre * call s:OnBufferReadPre( expand( '<afile>:p' ) )
     autocmd BufRead,FileType * call s:OnBufferRead()
     autocmd BufEnter * call s:OnBufferEnter()
     autocmd BufUnload * call s:OnBufferUnload()
@@ -112,10 +111,9 @@ function! youcompleteme#Enable()
     augroup END
   endif
 
-  " Calling these once solves the problem of BufReadPre/BufRead/BufEnter not
-  " triggering for the first loaded file. This should be the last commands
-  " executed in this function!
-  call s:OnBufferReadPre( expand( '<afile>:p' ) )
+  " Calling this once solves the problem of BufRead/BufEnter not triggering for
+  " the first loaded file. This should be the last command executed in this
+  " function!
   call s:OnBufferRead()
 endfunction
 
@@ -335,8 +333,8 @@ function! s:AllowedToCompleteInBuffer( buffer )
   let buffer_filetype = getbufvar( a:buffer, '&filetype' )
 
   if empty( buffer_filetype ) ||
-   \ getbufvar( a:buffer, '&buftype' ) ==# 'nofile' ||
-   \ buffer_filetype ==# 'qf'
+        \ getbufvar( a:buffer, '&buftype' ) ==# 'nofile' ||
+        \ buffer_filetype ==# 'qf'
     return 0
   endif
 
@@ -375,9 +373,9 @@ function! s:SetUpCommands()
   command! YcmShowDetailedDiagnostic call s:ShowDetailedDiagnostic()
   command! YcmDebugInfo call s:DebugInfo()
   command! -nargs=* -complete=custom,youcompleteme#LogsComplete
-    \ YcmToggleLogs call s:ToggleLogs(<f-args>)
+        \ YcmToggleLogs call s:ToggleLogs(<f-args>)
   command! -nargs=* -complete=custom,youcompleteme#SubCommandsComplete
-    \ YcmCompleter call s:CompleterCommand(<f-args>)
+        \ YcmCompleter call s:CompleterCommand(<f-args>)
   command! YcmForceCompileAndDiagnostics call s:ForceCompileAndDiagnostics()
   command! YcmDiags call s:ShowDiagnostics()
 endfunction
@@ -432,6 +430,22 @@ function! s:SetUpYcmChangedTick()
 endfunction
 
 
+function! s:DisableOnLargeFile( filename )
+  if exists( 'b:ycm_largefile' )
+    return
+  endif
+
+  let threshold = g:ycm_disable_for_files_larger_than_kb * 1024
+
+  if threshold > 0 && getfsize( a:filename ) > threshold
+    exec s:python_command "vimsupport.PostVimMessage(" .
+          \ "'YouCompleteMe is disabled in this buffer; " .
+          \ "the file exceeded the max size (see YCM options).' )"
+    let b:ycm_largefile = 1
+  endif
+endfunction
+
+
 function! s:OnVimLeave()
   exec s:python_command "ycm_state.OnVimLeave()"
 endfunction
@@ -442,24 +456,13 @@ function! s:OnCompleteDone()
 endfunction
 
 
-function! s:OnBufferReadPre(filename)
-  let threshold = g:ycm_disable_for_files_larger_than_kb * 1024
-
-  if threshold > 0 && getfsize( a:filename ) > threshold
-    echohl WarningMsg |
-          \ echomsg "YouCompleteMe is disabled in this buffer; " .
-          \ "the file exceeded the max size (see YCM options)." |
-          \ echohl None
-    let b:ycm_largefile = 1
-  endif
-endfunction
-
-
 function! s:OnBufferRead()
   " We need to do this even when we are not allowed to complete in the current
   " buffer because we might be allowed to complete in the future! The canonical
   " example is creating a new buffer with :enew and then setting a filetype.
   call s:SetUpYcmChangedTick()
+
+  call s:DisableOnLargeFile( expand( '<afile>:p' ) )
 
   if !s:AllowedToCompleteInCurrentBuffer()
     return
@@ -495,7 +498,7 @@ function! s:OnBufferUnload()
   endif
 
   let deleted_buffer_file = expand( '<afile>:p' )
-  exec s:python_command "ycm_state.OnBufferUnload("
+  exec s:python_command "ycm_state.OnBufferUnload(" .
         \ "vim.eval( 'deleted_buffer_file' ) )"
 endfunction
 
@@ -754,7 +757,7 @@ function! youcompleteme#OmniComplete( findstart, base )
       return -2
     endif
     let s:omnifunc_mode = 1
-    exec s:python_command "ycm_state.CreateCompletionRequest("
+    exec s:python_command "ycm_state.CreateCompletionRequest(" .
           \ "force_semantic = True )"
     return s:Pyeval( 'base.CompletionStartColumn()' )
   else
@@ -810,15 +813,15 @@ function! s:CompleterCommand(...)
     let arguments = arguments[1:]
   endif
 
-  exec s:python_command "ycm_state.SendCommandRequest("
-        \ "vim.eval( 'l:arguments' ), vim.eval( 'l:completer' ) ) "
+  exec s:python_command "ycm_state.SendCommandRequest(" .
+        \ "vim.eval( 'l:arguments' ), vim.eval( 'l:completer' ) )"
 endfunction
 
 
 function! youcompleteme#OpenGoToList()
-  exec s:python_command "vimsupport.PostVimMessage("
-    \ "'WARNING: youcompleteme#OpenGoToList function is deprecated."
-    \ "Do NOT use it.')"
+  exec s:python_command "vimsupport.PostVimMessage(" .
+        \ "'WARNING: youcompleteme#OpenGoToList function is deprecated. " .
+        \ "Do NOT use it.' )"
   exec s:python_command "vimsupport.OpenQuickFixList( True, True )"
 endfunction
 
@@ -835,8 +838,8 @@ endfunction
 
 function! s:ForceCompile()
   if !s:Pyeval( 'ycm_state.NativeFiletypeCompletionUsable()' )
-    echom "Native filetype completion not supported for current file, "
-          \ . "cannot force recompilation."
+    echom "Native filetype completion not supported for current file, " .
+          \ "cannot force recompilation."
     return 0
   endif
 
