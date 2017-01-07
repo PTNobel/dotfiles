@@ -7,8 +7,9 @@ YCM to work on my machine" and the reason why is obviously related to your
 machine configuration and the problem would not be resolved with _reasonable_
 changes to the YCM codebase, then the issue is likely to be closed.
 
-**A good place to ask questions is the [ycm-users][] Google group**. Rule of
-thumb: if you're not sure whether your problem is a real bug, ask on the group.
+**A good place to ask questions is the [Gitter room][gitter] or the
+[ycm-users][] Google group**. Rule of thumb: if you're not sure whether your
+problem is a real bug, ask on the room or the group.
 
 **YCM compiles just fine**; [the build bots say so][build-bots]. If the bots are
 green and YCM doesn't compile on your machine, then _your machine is the root
@@ -44,16 +45,16 @@ Here are the things you should do when creating an issue:
 1. **Write a step-by-step procedure that when performed repeatedly reproduces
    your issue.** If we can't reproduce the issue, then we can't fix it. It's
    that simple.
-2. Put the following options in your vimrc:
-
+2. Add the output of [the `:YcmDebugInfo` command][ycm-debug-info-command].
+3. Put the following options in your vimrc:
    ```viml
-   let g:ycm_server_keep_logfiles = 1
-   let g:ycm_server_log_level = 'debug'
+   let g:ycm_keep_logfiles = 1
+   let g:ycm_log_level = 'debug'
    ```
 
-   Run `:YcmToggleLogs stderr` in vim to open the logfile. Attach the contents
-   of this file to your issue.
-3. Add the output of the `:YcmDebugInfo` command.
+   Reproduce your issue and attach the contents of the logfiles. Use [the
+   `:YcmToggleLogs` command][ycm-toggle-logs-command] to directly open them in
+   Vim.
 4. **Create a test case for your issue**. This is critical. Don't talk about how
    "when I have X in my file" or similar, _create a file with X in it_ and put
    the contents inside code blocks in your issue description. Try to make this
@@ -110,3 +111,6 @@ Creating good pull requests
 
 [build-bots]: https://travis-ci.org/Valloric/YouCompleteMe
 [ycm-users]: https://groups.google.com/forum/?hl=en#!forum/ycm-users
+[gitter]: https://gitter.im/Valloric/YouCompleteMe
+[ycm-debug-info-command]: https://github.com/Valloric/YouCompleteMe#the-ycmdebuginfo-command
+[ycm-toggle-logs-command]: https://github.com/Valloric/YouCompleteMe#the-ycmtogglelogs-command

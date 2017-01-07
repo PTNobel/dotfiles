@@ -1,4 +1,5 @@
-# Copyright (C) 2011, 2012  Google Inc.
+# Copyright (C) 2011-2012 Google Inc.
+#               2016      YouCompleteMe contributors
 #
 # This file is part of YouCompleteMe.
 #
@@ -26,11 +27,11 @@ from builtins import *  # noqa
 from future.utils import iterkeys
 import vim
 import os
-import tempfile
 import json
 import re
 from collections import defaultdict
-from ycmd.utils import ToUnicode, ToBytes
+from ycmd.utils import ( GetCurrentDirectory, JoinLinesAsUnicode, ToBytes,
+                         ToUnicode )
 from ycmd import user_options_store
 
 BUFFER_COMMAND_MAP = { 'same-buffer'      : 'edit',
@@ -116,16 +117,19 @@ def BufferModified( buffer_object ):
   return bool( int( GetBufferOption( buffer_object, 'mod' ) ) )
 
 
-def GetUnsavedAndCurrentBufferData():
+def GetUnsavedAndSpecifiedBufferData( including_filepath ):
+  """Build part of the request containing the contents and filetypes of all
+  dirty buffers as well as the buffer with filepath |including_filepath|."""
   buffers_data = {}
   for buffer_object in vim.buffers:
+    buffer_filepath = GetBufferFilepath( buffer_object )
     if not ( BufferModified( buffer_object ) or
-             buffer_object == vim.current.buffer ):
+             buffer_filepath == including_filepath ):
       continue
 
-    buffers_data[ GetBufferFilepath( buffer_object ) ] = {
+    buffers_data[ buffer_filepath ] = {
       # Add a newline to match what gets saved to disk. See #1455 for details.
-      'contents': '\n'.join( ToUnicode( x ) for x in buffer_object ) + '\n',
+      'contents': JoinLinesAsUnicode( buffer_object ) + '\n',
       'filetypes': FiletypesForBuffer( buffer_object )
     }
 
@@ -153,13 +157,8 @@ def GetBufferFilepath( buffer_object ):
   if buffer_object.name:
     return buffer_object.name
   # Buffers that have just been created by a command like :enew don't have any
-  # buffer name so we use the buffer number for that. Also, os.getcwd() throws
-  # an exception when the CWD has been deleted so we handle that.
-  try:
-    folder_path = os.getcwd()
-  except OSError:
-    folder_path = tempfile.gettempdir()
-  return os.path.join( folder_path, str( buffer_object.number ) )
+  # buffer name so we use the buffer number for that.
+  return os.path.join( GetCurrentDirectory(), str( buffer_object.number ) )
 
 
 def UnplaceSignInBuffer( buffer_number, sign_id ):
@@ -847,21 +846,26 @@ def InsertNamespace( namespace ):
       return
 
   pattern = '^\s*using\(\s\+[a-zA-Z0-9]\+\s\+=\)\?\s\+[a-zA-Z0-9.]\+\s*;\s*'
+  existing_indent = ''
   line = SearchInCurrentBuffer( pattern )
-  existing_line = LineTextInCurrentBuffer( line )
-  existing_indent = re.sub( r"\S.*", "", existing_line )
+  if line:
+    existing_line = LineTextInCurrentBuffer( line )
+    existing_indent = re.sub( r"\S.*", "", existing_line )
   new_line = "{0}using {1};\n\n".format( existing_indent, namespace )
   replace_pos = { 'line_num': line + 1, 'column_num': 1 }
-  ReplaceChunk( replace_pos, replace_pos, new_line, 0, 0 )
+  ReplaceChunk( replace_pos, replace_pos, new_line, 0, 0, vim.current.buffer )
   PostVimMessage( 'Add namespace: {0}'.format( namespace ), warning = False )
 
 
 def SearchInCurrentBuffer( pattern ):
+  """ Returns the 1-indexed line on which the pattern matches
+  (going UP from the current position) or 0 if not found """
   return GetIntValue( "search('{0}', 'Wcnb')".format( EscapeForVim( pattern )))
 
 
-def LineTextInCurrentBuffer( line ):
-  return vim.current.buffer[ line ]
+def LineTextInCurrentBuffer( line_number ):
+  """ Returns the text on the 1-indexed line (NOT 0-indexed) """
+  return vim.current.buffer[ line_number - 1 ]
 
 
 def ClosePreviewWindow():
@@ -915,6 +919,8 @@ def WriteToPreviewWindow( message ):
     vim.current.buffer[:] = message.splitlines()
 
     vim.current.buffer.options[ 'buftype' ]    = 'nofile'
+    vim.current.buffer.options[ 'bufhidden' ]  = 'wipe'
+    vim.current.buffer.options[ 'buflisted' ]  = False
     vim.current.buffer.options[ 'swapfile' ]   = False
     vim.current.buffer.options[ 'modifiable' ] = False
     vim.current.buffer.options[ 'readonly' ]   = True
@@ -929,20 +935,6 @@ def WriteToPreviewWindow( message ):
     # the information we have. The only remaining option is to echo to the
     # status area.
     PostVimMessage( message, warning = False )
-
-
-def CheckFilename( filename ):
-  """Check if filename is openable."""
-  try:
-    # We don't want to check for encoding issues when trying to open the file
-    # so we open it in binary mode.
-    open( filename, mode = 'rb' ).close()
-  except TypeError:
-    raise RuntimeError( "'{0}' is not a valid filename".format( filename ) )
-  except IOError as error:
-    raise RuntimeError(
-      "filename '{0}' cannot be opened. {1}.".format( filename,
-                                                      error.strerror ) )
 
 
 def BufferIsVisibleForFilename( filename ):
@@ -992,8 +984,7 @@ def OpenFilename( filename, options = {} ):
   else:
     previous_tab = None
 
-  # Open the file
-  CheckFilename( filename )
+  # Open the file.
   try:
     vim.command( '{0}{1} {2}'.format( size, command, filename ) )
   # When the file we are trying to jump to has a swap file,

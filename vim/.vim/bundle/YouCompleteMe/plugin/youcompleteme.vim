@@ -27,9 +27,9 @@ endfunction
 if exists( "g:loaded_youcompleteme" )
   call s:restore_cpo()
   finish
-elseif v:version < 703 || (v:version == 703 && !has('patch598'))
+elseif v:version < 704 || (v:version == 704 && !has('patch143'))
   echohl WarningMsg |
-        \ echomsg "YouCompleteMe unavailable: requires Vim 7.3.598+" |
+        \ echomsg "YouCompleteMe unavailable: requires Vim 7.4.143+" |
         \ echohl None
   call s:restore_cpo()
   finish
@@ -80,11 +80,13 @@ let g:ycm_key_detailed_diagnostics =
 let g:ycm_cache_omnifunc =
       \ get( g:, 'ycm_cache_omnifunc', 1 )
 
-let g:ycm_server_log_level =
-      \ get( g:, 'ycm_server_log_level', 'info' )
+let g:ycm_log_level =
+      \ get( g:, 'ycm_log_level',
+      \ get( g:, 'ycm_server_log_level', 'info' ) )
 
-let g:ycm_server_keep_logfiles =
-      \ get( g:, 'ycm_server_keep_logfiles', 0 )
+let g:ycm_keep_logfiles =
+      \ get( g:, 'ycm_keep_logfiles',
+      \ get( g:, 'ycm_server_keep_logfiles', 0 ) )
 
 let g:ycm_extra_conf_vim_data =
       \ get( g:, 'ycm_extra_conf_vim_data', [] )

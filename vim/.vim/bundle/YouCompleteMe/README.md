@@ -1,8 +1,10 @@
 YouCompleteMe: a code-completion engine for Vim
 ===============================================
 
+[![Gitter Room](https://img.shields.io/gitter/room/Valloric/YouCompleteMe.svg)](https://gitter.im/Valloric/YouCompleteMe)
 [![Build Status](https://travis-ci.org/Valloric/YouCompleteMe.svg?branch=master)](https://travis-ci.org/Valloric/YouCompleteMe)
 [![Build status](https://ci.appveyor.com/api/projects/status/ag9uqwi8s6btwjd8/branch/master?svg=true)](https://ci.appveyor.com/project/Valloric/YouCompleteMe)
+[![Coverage Status](https://codecov.io/gh/Valloric/YouCompleteMe/branch/master/graph/badge.svg)](https://codecov.io/gh/Valloric/YouCompleteMe)
 
 - [Intro](#intro)
 - [Installation](#installation)
@@ -210,10 +212,10 @@ that are conservatively turned off by default that you may want to turn on.
 Please refer to the full Installation Guide below; the following commands are
 provided on a best-effort basis and may not work for you.
 
-Make sure you have Vim 7.3.598 with python2 or python3 support. Ubuntu 14.04 and
-later have a Vim that's recent enough. You can see the version of Vim installed
-by running `vim --version`. If the version is too old, you may need to [compile
-Vim from source][vim-build] (don't worry, it's easy).
+Make sure you have Vim 7.4.143 with Python 2 or Python 3 support. Ubuntu 14.10
+and later have a Vim that's recent enough. You can see the version of Vim
+installed by running `vim --version`. If the version is too old, you may need to
+[compile Vim from source][vim-build] (don't worry, it's easy).
 
 Install YouCompleteMe with [Vundle][].
 
@@ -272,7 +274,7 @@ that are conservatively turned off by default that you may want to turn on.
 Please refer to the full Installation Guide below; the following commands are
 provided on a best-effort basis and may not work for you.
 
-Make sure you have Vim 7.3.598 with Python 2 or Python 3 support. Fedora 21 and
+Make sure you have Vim 7.4.143 with Python 2 or Python 3 support. Fedora 21 and
 later have a Vim that's recent enough. You can see the version of Vim installed
 by running `vim --version`. If the version is too old, you may need to [compile
 Vim from source][vim-build] (don't worry, it's easy).
@@ -337,7 +339,7 @@ provided on a best-effort basis and may not work for you.
 **Important:** we assume that you are using the `cmd.exe` command prompt and
 that you know how to add an executable to the PATH environment variable.
 
-Make sure you have at least Vim 7.3.598 with Python 2 or Python 3 support. You
+Make sure you have at least Vim 7.4.143 with Python 2 or Python 3 support. You
 can check the version and which Python is supported by typing `:version` inside
 Vim. Look at the features included: `+python/dyn` for Python 2 and
 `+python3/dyn` for Python 3. Take note of the Vim architecture, i.e. 32 or
@@ -414,7 +416,7 @@ Please refer to the full Installation Guide below; the following commands are
 provided on a best-effort basis and may not work for you. OpenBSD / FreeBSD are
 not officially supported platforms by YCM.
 
-Make sure you have Vim 7.3.598 with Python 2 or Python 3 support.
+Make sure you have Vim 7.4.143 with Python 2 or Python 3 support.
 
 OpenBSD 5.5 and later have a Vim that's recent enough. You can see the version of
 Vim installed by running `vim --version`.
@@ -491,19 +493,19 @@ process.
 
 **Please follow the instructions carefully. Read EVERY WORD.**
 
-1.  **Ensure that your version of Vim is _at least_ 7.3.598 _and_ that it has
+1.  **Ensure that your version of Vim is _at least_ 7.4.143 _and_ that it has
     support for Python 2 or Python 3 scripting**.
 
     Inside Vim, type `:version`. Look at the first two to three lines of output;
     it should say `Vi IMproved X.Y`, where X.Y is the major version of vim. If
-    your version is greater than 7.3, then you're all set. If your version is
-    7.3 then look below that where it says, `Included patches: 1-Z`, where Z
-    will be some number. That number needs to be 598 or higher.
+    your version is greater than 7.4, then you're all set. If your version is
+    7.4 then look below that where it says, `Included patches: 1-Z`, where Z
+    will be some number. That number needs to be 143 or higher.
 
     If your version of Vim is not recent enough, you may need to [compile Vim
     from source][vim-build] (don't worry, it's easy).
 
-    After you have made sure that you have Vim 7.3.598+, type the following in
+    After you have made sure that you have Vim 7.4.143+, type the following in
     Vim: `:echo has('python') || has('python3')`. The output should be 1. If
     it's 0, then get a version of Vim with Python support.
 
@@ -525,10 +527,10 @@ process.
     **Download the latest version of `libclang`**. Clang is an open-source
     compiler that can compile C/C++/Objective-C/Objective-C++. The `libclang`
     library it provides is used to power the YCM semantic completion engine for
-    those languages. YCM is designed to work with libclang version 3.8 or
+    those languages. YCM is designed to work with libclang version 3.9 or
     higher.
 
-    You can use the system libclang _only if you are sure it is version 3.8 or
+    You can use the system libclang _only if you are sure it is version 3.9 or
     higher_, otherwise don't. Even if it is, we recommend using the [official
     binaries from llvm.org][clang-download] if at all possible. Make sure you
     download the correct archive file for your OS.
@@ -731,6 +733,7 @@ Quick Feature Summary
 * Go to definition (`GoTo`, `GoToDefinition`, and `GoToDeclaration` are
   identical)
 * Management of `racer` server instance
+* View documentation comments for identifiers (`GetDoc`)
 
 User Guide
 ----------
@@ -1149,12 +1152,9 @@ completion engine.
 
 ### The `:YcmToggleLogs` command
 
-This command automatically opens in windows the stdout and stderr logfiles
-written by the [ycmd server][ycmd]. If one or both logfiles are already opened,
-they are automatically closed. `stderr` or `stdout` can be specified as an
-argument of this command to only open the corresponding logfile instead of both.
-If this logfile is already opened, it will be closed. Only for debugging
-purpose.
+This command opens in separate windows the logfiles given as arguments or closes
+them if they are already open in the editor. When no argument is given, list the
+available logfiles. Only for debugging purpose.
 
 ### The `:YcmCompleter` command
 
@@ -1307,6 +1307,19 @@ NOTE: Causes re-parsing of the current translation unit.
 
 Supported in filetypes: `c, cpp, objc, objcpp, javascript, typescript`
 
+#### The `GetTypeImprecise` subcommand
+
+WARNING: This command trades correctness for speed!
+
+Same as the `GetType` command except that it doesn't recompile the file with
+libclang before looking up nodes in the AST. This can be very useful when you're
+editing files that take long to compile but you know that you haven't made any
+changes since the last parse that would lead to incorrect type. When you're
+just browsing around your codebase, this command can spare you quite a bit of
+latency.
+
+Supported in filetypes: `c, cpp, objc, objcpp`
+
 #### The `GetParent` subcommand
 
 Echos the semantic parent of the point under the cursor.
@@ -1349,7 +1362,20 @@ under the cursor. Depending on the file type, this includes things like:
 * etc.
 
 Supported in filetypes: `c, cpp, objc, objcpp, cs, python, typescript,
-javascript`
+javascript, rust`
+
+#### The `GetDocImprecise` subcommand
+
+WARNING: This command trades correctness for speed!
+
+Same as the `GetDoc` command except that it doesn't recompile the file with
+libclang before looking up nodes in the AST. This can be very useful when you're
+editing files that take long to compile but you know that you haven't made any
+changes since the last parse that would lead to incorrect docs. When you're
+just browsing around your codebase, this command can spare you quite a bit of
+latency.
+
+Supported in filetypes: `c, cpp, objc, objcpp`
 
 ### Refactoring and FixIt Commands
 
@@ -1776,6 +1802,39 @@ Default: `1`
 let g:ycm_echo_current_diagnostic = 1
 ```
 
+### The `g:ycm_filter_diagnostics` option
+
+This option controls which diagnostics will be rendered by YCM. This option
+holds a dictionary of key-values, where the keys are Vim's filetype strings
+delimited by commas and values are dictionaries describing the filter.
+
+A filter is a dictionary of key-values, where the keys are the type of filter,
+and the value is a list of arguments to that filter. In the case of just a
+single item in the list, you may omit the brackets and just provide the argument
+directly. If any filter matches a diagnostic, it will be dropped and YCM will 
+not render it.
+
+The following filter types are supported:
+
+- "regex": Accepts a string [regular expression][python-re]. This type matches
+when the regex (treated as case-insensitive) is found in the diagnostic text.
+- "level": Accepts a string level, either "warning" or "error." This type 
+matches when the diagnostic has the same level.
+
+NOTE: The regex syntax is **NOT** Vim's, it's [Python's][python-re].
+
+Default: `{}`
+
+```viml
+let g:ycm_filter_diagnostics = {
+  \ "java": {
+  \      "regex": [ ".*taco.*", ... ],
+  \      "level": "error",
+  \      ...
+  \    }
+  \ }
+```
+
 ### The `g:ycm_always_populate_location_list` option
 
 When this option is set, YCM will populate the location list automatically every
@@ -1960,23 +2019,24 @@ Default: `''`
 let g:ycm_server_python_interpreter = ''
 ```
 
-### The `g:ycm_server_keep_logfiles` option
+### The `g:ycm_keep_logfiles` option
 
-When this option is set to `1`, the [ycmd completion server][ycmd] will keep the
-logfiles around after shutting down (they are deleted on shutdown by default).
+When this option is set to `1`, YCM and the [ycmd completion server][ycmd] will
+keep the logfiles around after shutting down (they are deleted on shutdown by
+default).
 
 To see where the logfiles are, call `:YcmDebugInfo`.
 
 Default: `0`
 
 ```viml
-let g:ycm_server_keep_logfiles = 0
+let g:ycm_keep_logfiles = 0
 ```
 
-### The `g:ycm_server_log_level` option
+### The `g:ycm_log_level` option
 
-The logging level that the [ycmd completion server][ycmd] uses. Valid values are
-the following, from most verbose to least verbose:
+The logging level that YCM and the [ycmd completion server][ycmd] use. Valid
+values are the following, from most verbose to least verbose:
 - `debug`
 - `info`
 - `warning`
@@ -1988,7 +2048,7 @@ Note that `debug` is _very_ verbose.
 Default: `info`
 
 ```viml
-let g:ycm_server_log_level = 'info'
+let g:ycm_log_level = 'info'
 ```
 
 ### The `g:ycm_auto_start_csharp_server` option
@@ -2437,10 +2497,10 @@ the message log if it encounters problems. It's likely you misconfigured
 something and YCM is complaining about it.
 
 Also, you may want to run the `:YcmDebugInfo` command; it will make YCM spew out
-various debugging information, including the [ycmd][] logfile paths and the
-compile flags for the current file if the file is a C-family language file and
-you have compiled in Clang support. Logfiles can be automatically opened in the
-editor using the `:YcmToggleLogs` command.
+various debugging information, including the YCM and [ycmd][] logfile paths and
+the compile flags for the current file if the file is a C-family language file
+and you have compiled in Clang support. Logfiles can be opened in the editor
+using [the `:YcmToggleLogs` command](#the-ycmtogglelogs-command).
 
 ### Sometimes it takes much longer to get semantic completions than normal
 
@@ -2492,11 +2552,6 @@ You should probably run `brew rm python; brew install python` to get the latest
 fixes that should make YCM work with such a configuration. Also rebuild Macvim
 then. If you still get problems with this, see [issue #18][issue18] for
 suggestions.
-
-### Vim segfaults when I use the semantic completer in Ruby files
-
-This was caused by a Vim bug. Update your version of Vim (Vim 7.3.874 is known
-to work, earlier versions may also fix this issue).
 
 ### I get `LONG_BIT definition appears wrong for platform` when compiling
 
@@ -2564,7 +2619,7 @@ undefined symbol: clang_CompileCommands_dispose
 ```
 
 This means that Vim is trying to load a `libclang.so` that is too old. You need
-at least a 3.8 libclang. Just go through the installation guide and make sure
+at least a 3.9 libclang. Just go through the installation guide and make sure
 you are using a correct `libclang.so`. We recommend downloading prebuilt
 binaries from llvm.org.
 
@@ -2665,7 +2720,9 @@ Those needed to be fixed upstream (and were). A few months after those bugs were
 fixed, Vim trunk landed the `pyeval()` function which improved YCM performance
 even more since less time was spent serializing and deserializing data between
 Vim and the embedded Python interpreter. A few critical bugfixes for `pyeval()`
-landed in Vim 7.3.584 (and a few commits before that).
+landed in Vim 7.3.584 (and a few commits before that), and given the current
+availability of Vim 7.4.143, which features improved events for text change
+detection, it has been chosen.
 
 ### I get annoying messages in Vim's status area when I type
 
@@ -2836,8 +2893,8 @@ terms.
 Contact
 -------
 
-If you have questions about the plugin or need help, please use the
-[ycm-users][] mailing list.
+If you have questions about the plugin or need help, please join the [Gitter
+room][gitter] or use the [ycm-users][] mailing list.
 
 If you have bug reports or feature suggestions, please use the [issue
 tracker][tracker].
@@ -2917,3 +2974,4 @@ This software is licensed under the [GPL v3 license][gpl].
 [JediHTTP]: https://github.com/vheon/JediHTTP
 [vim_win-python2.7.11-bug]: https://github.com/vim/vim/issues/717
 [vim_win-python2.7.11-bug_workaround]: https://github.com/vim/vim-win32-installer/blob/master/appveyor.bat#L90
+[gitter]: https://gitter.im/Valloric/YouCompleteMe
