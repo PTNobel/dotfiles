@@ -16,7 +16,7 @@ function exit {
 
 #DEFINTIONS!
 PRIMARY_DIRECTORY=/media/Toshiba_Backups
-PRIMARY_DIRECTORY_ntfs=/media/Toshiba_Backups_ntfs
+PRIMARY_DIRECTORY_ntfs=/media/backups
 DESTINATION=$PRIMARY_DIRECTORY_ntfs/Backups
 DUPLICITY_DESTINATION=file://${PRIMARY_DIRECTORY}/Duplicity
 export PRIMARY_DIRECTORY PRIMARY_DIRECTORY_ntfs DESTINATION DUPLICITY_DESTINATION
@@ -41,12 +41,11 @@ function backup_home {
 function new_backup_home {
   echo starting backup
   date=$(date "+%Y-%m-%dT%H:%M:%S")
-  last_update=$(tail -n1 "$PRIMARY_DIRECTORY_ntfs"/Backup/log)
   if rsync -aP --exclude=".cache" --exclude=".local/share/Steam" \
     --exclude="Torrents" --exclude="Archives/Rooting\ the\ G3/BACKUP/Download" \
     --exclude=".dotfiles/vim/.vim/bundle" \
-    --exclude=".mozilla" --link-dest="$last_update" \
-    "$HOME"/ "$PRIMARY_DIRECTORY_ntfs"/Backup/back-"$date"; then 
+    --exclude=".mozilla" \
+    "$HOME"/ "$PRIMARY_DIRECTORY_ntfs"; then 
   :;
   else
     echo WARNING >/dev/stderr
