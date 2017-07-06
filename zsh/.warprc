@@ -6,20 +6,6 @@ bin:/home/parth/.dotfiles/bin/bin
 dot:/home/parth/.dotfiles
 vim:/home/parth/.dotfiles/vim/.vim
 cache:/var/cache/pacman/pkg
-SciOly:/home/parth/Documents/Science Olympiad/2017
 latex_build:/tmp/parth-LaTeX
-nuptse:/home/parth/Documents/Nuptse
-senior:/home/parth/Documents/2016-2017/bitbucket
-college:/home/parth/Documents/2016-2017/bitbucket/College
-cs:/home/parth/Documents/2016-2017/bitbucket/Computer Science
-calc:/home/parth/Documents/2016-2017/bitbucket/Calculus
-world:/home/parth/Documents/2016-2017/bitbucket/World Literature
-gov:/home/parth/Documents/2016-2017/bitbucket/Government
-stats:/home/parth/Documents/2016-2017/bitbucket/Statistics
-physics:/home/parth/Documents/2016-2017/bitbucket/Physics
-peters:/home/parth/Documents/Peters2016
 pandoc_build:/tmp/parth-Pandoc
-speech:/home/parth/Documents/2016-2017/bitbucket/Speech and Debate
-mun:/home/parth/Documents/2016-2017/bitbucket/MUN
-guitar:/home/parth/Documents/current/bitbucket/Guitar
-scholarships:/home/parth/Documents/2016-2017/bitbucket/Awards and Scholarships
+AntDefense:/home/parth/Documents/2016-2017/not-backed-up/Computer Science/AntDefense
