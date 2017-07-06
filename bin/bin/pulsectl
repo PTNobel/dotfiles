@@ -23,7 +23,7 @@ function pa_up {
         VOLUME=$(pacmd list-sinks|grep -A 15 "index: $i"| \
             awk '/volume: front/{ print $5 }' | sed 's/%//g')
         END=$((VOLUME + 1))
-        if [ $END -gt 20 ]
+        if [ $END -gt 24 ]
             then if [ $END -lt 21 ] ; then
                     pactl set-sink-volume "$i" +$((20 - VOLUME))%
             else
