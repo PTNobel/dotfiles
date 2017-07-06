@@ -4,9 +4,10 @@ import os
 import sys
 import subprocess
 import time
+from typing import List, Tuple, Dict, Any, Callable, NewType
+
 import shared_watch
 from shared_watch import Build
-from typing import List, Tuple, Dict, Any, Callable, NewType
 
 ProcessedArgs = Dict[str, Any]
 Recipe = NewType("Recipe", Dict[str, Any])
@@ -15,12 +16,12 @@ FilePair = Tuple[MainForFileMethod, ProcessedArgs]
 
 
 def usage(exit_code: int, name: object) -> None:
-    usage_text = ("Usage: %s [--help|-h]" +
-                  " [--sagetex|-s]" +
-                  " [--biber|-b]" +
-                  " [--auxdir </tmp/$USER-LaTeX>|-a </tmp/$USER-LaTeX>]" +
-                  " [--engine <pdflatex>|-e <pdflatex>]" + " <file.tex>" +
-                  " [--slow|-S]") % str(name)
+    usage_text: str = ("Usage: %s [--help|-h]" +
+                       " [--sagetex|-s]" +
+                       " [--biber|-b]" +
+                       " [--auxdir </tmp/$USER-LaTeX>|-a </tmp/$USER-LaTeX>]" +
+                       " [--engine <pdflatex>|-e <pdflatex>]" + " <file.tex>" +
+                       " [--slow|-S]") % str(name)
 
     if exit_code == 0:
         print(usage_text)
@@ -32,10 +33,13 @@ def usage(exit_code: int, name: object) -> None:
 
 
 class LaTeXBuild(Build):
+    latexArgs: List[str]
+
     def __init__(self, recipe: Recipe) -> None:
-        self.recipe = recipe
+        self.recipe: Recipe = recipe
         self.addToBuild('latex')
         self.addWatchedFile(recipe['file'])
+        self.latexArgs = []
 
         self.pdfname = os.path.join(
             # ''[:: -1] reverses a string. So this reverses the filename, in
@@ -45,6 +49,9 @@ class LaTeXBuild(Build):
                 recipe['file'][:: -1].replace('xet', 'fdp', 1)[:: -1]
             )
         )
+
+        if recipe['shell_escape']:
+            self.latexArgs += ["-shell-escape"]
 
         if recipe['biber']:
             self.addToBuild('biber')
@@ -67,7 +74,9 @@ class LaTeXBuild(Build):
         subprocess.call([self.recipe['engine'],
                          '-output-directory',
                          self.recipe['auxdir'],
-                         "-interaction=nonstopmode", self.recipe['file']])
+                         "-interaction=nonstopmode"] +
+                        self.latexArgs +
+                        [self.recipe['file']])
 
     def make(self):
         subprocess.call(['make'])
@@ -117,6 +126,7 @@ def processargs(input_argv: List[str]) -> ProcessedArgs:
 
     processingArgs.output_recipe['sagetex'] = False
     processingArgs.output_recipe['biber'] = False
+    processingArgs.output_recipe['shell_escape'] = False
     processingArgs.output_recipe['engine'] = "pdflatex"
 
     def _sagetex(i: int):
@@ -124,12 +134,18 @@ def processargs(input_argv: List[str]) -> ProcessedArgs:
     processingArgs.long_args_to_disc['--sagetex'] = _sagetex
     processingArgs.short_args_to_disc['s'] = _sagetex
 
+    def _shell_escape(i: int):
+        processingArgs.output_recipe['shell_escape'] = True
+    processingArgs.long_args_to_disc['--shell-escape'] = _shell_escape
+    processingArgs.short_args_to_disc['S'] = _shell_escape
+
     def _biber(i: int):
         processingArgs.output_recipe['biber'] = True
     processingArgs.long_args_to_disc['--biber'] = _biber
     processingArgs.short_args_to_disc['b'] = _biber
 
     def _engine(i: int):
+        engine: str
         if '=' in input_argv[i]:
             engine = input_argv[i].split('=')[1]
         else:
@@ -163,7 +179,7 @@ class ShouldExit():
 
 class SwapFilesWatch():
     _num_of_returns = 0
-    swapsToCheck = []  # type: List[str]
+    swapsToCheck: List[str] = []
 
     def __init__(self, primaryFile, extraFiles) -> None:
         self.swapsToCheck.append(os.path.join(os.path.dirname(primaryFile),
@@ -186,6 +202,7 @@ class SwapFilesWatch():
 
 def main_for_file(args: ProcessedArgs) -> None:
     os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
+    pdfname: str
     if args['slow']:
         pdfname = os.path.join(
             # ''[:: -1] reverses a string. So this reverses the filename,
