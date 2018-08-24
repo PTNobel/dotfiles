@@ -22,7 +22,7 @@ class FileWatch:
         except FileNotFoundError as e:
             self._failed_reads += 1
             if self._failed_reads <= 5:
-                time.sleep(.3)
+                time.sleep(.7)
                 return self._read_file()
             else:
                 raise e
@@ -66,7 +66,8 @@ class Build:
 
 class ProcessArgs:
     def __init__(
-            self, argv: List[str],
+            self,
+            argv: List[str],
             usage_func: Callable[[int, object], None],
             BuildClassToUse,
             file_auxdir_suffix: str,
@@ -197,3 +198,34 @@ class ProcessArgs:
         self.output['build'] = self.BuildClassToUse(self.output_recipe)
 
         return self.output
+
+
+class SwapFilesWatch():
+    _num_of_returns = 0
+    swapsToCheck: List[str] = []
+
+    def __init__(self, files_to_check: List[str]) -> None:
+        for file_name in files_to_check:
+            if os.path.exists('.' + os.path.basename(file_name) + '.swp'):
+                self.swapsToCheck.append(
+                        os.path.join(
+                            os.path.dirname(file_name),
+                            '.' + os.path.basename(file_name) + '.swp'))
+            else:
+                full_file_name = os.path.abspath(file_name).replace('/', '%')
+                full_file_name += ".swp"
+                self.swapsToCheck.append(
+                    os.path.join(
+                            os.path.expanduser('~/.cache/vim/swap'),
+                            full_file_name
+                    )
+                )
+
+    def swapFilesExist(self):
+        result = False
+        for swap in self.swapsToCheck:
+            if os.path.exists(swap):
+                result = True
+                break
+
+        return result

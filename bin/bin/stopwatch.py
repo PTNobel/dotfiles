@@ -92,6 +92,8 @@ if __name__ == '__main__':
     try:
         for i in range(number):
             print(makeTimeString(i, number) + '/' + endTime, end='\r')
+            if i == number - 10:
+                print("\nTAP\nTAP\nTAP")
             time.sleep(1)
     except KeyboardInterrupt:
         print('\n' + turnNumToNiceString(i, number))

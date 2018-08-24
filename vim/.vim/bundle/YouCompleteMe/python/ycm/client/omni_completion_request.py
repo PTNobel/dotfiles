@@ -19,8 +19,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
 from ycm.client.completion_request import CompletionRequest
@@ -41,11 +40,17 @@ class OmniCompletionRequest( CompletionRequest ):
 
 
   def RawResponse( self ):
-    return _ConvertVimDatasToCompletionDatas( self._results )
+    return {
+      'completions': _ConvertVimDatasToCompletionDatas( self._results ),
+      'completion_start_column': self.request_data[ 'start_column' ]
+    }
 
 
   def Response( self ):
-    return self._results
+    return {
+      'completions': self._results,
+      'completion_start_column': self.request_data[ 'start_column' ]
+    }
 
 
 def ConvertVimDataToCompletionData( vim_data ):

@@ -19,13 +19,12 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
 import time
 from threading import Thread
-from ycm.client.base_request import BaseRequest, HandleServerException
+from ycm.client.base_request import BaseRequest
 
 
 # This class can be used to keep the ycmd server alive for the duration of the
@@ -46,5 +45,4 @@ class YcmdKeepalive( object ):
     while True:
       time.sleep( self._ping_interval_seconds )
 
-      with HandleServerException( display = False ):
-        BaseRequest.GetDataFromHandler( 'healthy' )
+      BaseRequest().GetDataFromHandler( 'healthy', display_message = False )

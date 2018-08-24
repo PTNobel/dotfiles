@@ -4,21 +4,30 @@
 #
 # Executed by startx (run your window manager from here)
 
+mkdir /tmp/launch-xintirc
+
 if [ -d /etc/X11/xinit/xinitrc.d ]; then
   for f in /etc/X11/xinit/xinitrc.d/*; do
+    echo "$f" >> /tmp/launch-xintirc/xinitrc.log
     [ -x "$f" ] && . "$f"
   done
   unset f
+  echo "unset f" >> /tmp/launch-xintirc/xinitrc.log
 fi
+
+echo finished_loop >> /tmp/launch-xintirc/xinitrc.log
 #export $(dbus-launch)
 [ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
+echo finished_xresources >> /tmp/launch-xintirc/xinitrc.log
 monitor-layout.sh
+echo finished_monitor_stuff >> /tmp/launch-xintirc/xinitrc.log
 setxkbmap -option caps:escape
+echo remapped_keys >> /tmp/launch-xintirc/xinitrc.log
 
-if ! pidof pulseaudio; then 
-  pulseaudio
-fi
+echo launched_pulse >> /tmp/launch-xintirc/xinitrc.log
+
 exec i3
+# exec i3 -V -d all --shmlog-size=26214400 >/tmp/i3-$(date +'%F-%k-%M-%S').log 2>&1
 # exec gnome-session
 # exec startkde
 # exec startxfce4

@@ -11,12 +11,12 @@ from time import ctime as _ctime
 
 
 class Processes:
-    _buffer_map_pids_to_comms = {}  # type: Dict[str, str]
-    _buffer_map_pids_to_cmdlines = {}  # type: Dict[str, List[str]]
-    _buffer_map_comms_to_pids = {}  # type: Dict[str, List[str]]
-    _buffer_running_pids = []  # type: List[str]
-    _buffer_list_of_comms = []  # type: List[str]
-    time_of_init = ""
+    _buffer_map_pids_to_comms: Dict[str, str]
+    _buffer_map_pids_to_cmdlines: Dict[str, List[str]]
+    _buffer_map_comms_to_pids: Dict[str, List[str]]
+    _buffer_running_pids: List[str]
+    _buffer_list_of_comms: List[str]
+    time_of_init: str
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and \
@@ -33,7 +33,6 @@ class Processes:
         self._buffer_map_pids_to_cmdlines = {}
         self._buffer_list_of_comms = []
         self._buffer_map_comms_to_pids = {}
-        self._buffer_map_comms_to_pids = dict()
 
         self._buffer_running_pids = [
             pid for pid in _listdir('/proc') if pid.isdigit()
@@ -90,18 +89,14 @@ class Processes:
 
     def get_pids_of_comm(self, comm: str) -> List[str]:
         """Returns a list of all pids with comm"""
-        if comm in self._buffer_map_comms_to_pids.keys():
-            pids = self._buffer_map_comms_to_pids[comm]
-        else:
-            pids = []
-        return pids
+        return self._buffer_map_comms_to_pids.get(comm, [])
 
     def get_comm_of_pid(self, pid: str) -> str:
-        """Returns the str of the comm of a pid"""
+        """Returns the comm of a pid"""
         return self._buffer_map_pids_to_comms[pid]
 
     def get_cmdline_of_pid(self, pid: str) -> List[str]:
-        """Returns the list with each argv entry of pid as a different string"""
+        """Returns the argv of pid"""
         return self._buffer_map_pids_to_cmdlines[pid]
 
     def is_comm_running(self, comm: str) -> bool:

@@ -21,12 +21,13 @@ def plain_lock(i3LockOptions=[]) -> subprocess.Popen:
         return subprocess.Popen(['i3lock'] + i3LockOptions)
 
 
-def which_output() -> Tuple[bool, bool]:
-    """returns tuple of LVDS_active bool and HDMI_active bool"""
+def which_output() -> Tuple[bool, bool, bool]:
+    """returns tuple of LVDS_active bool and HDMI_active bool and eDP1_active"""
     xrandr_output = subprocess.check_output(['xrandr']).split(b'\n')
     active_outputs = list()
     HDMI_active = bool()
     LVDS_active = bool()
+    eDP1_active = bool()
     for line in xrandr_output:
         if b'+' in line and b'connected' in line:
             active_outputs.append(line)
@@ -38,16 +39,21 @@ def which_output() -> Tuple[bool, bool]:
         elif b'HDMI' in output:
             HDMI_active = True
 
-    return (LVDS_active, HDMI_active)
+        elif b'eDP1' in output:
+            eDP1_active = True
+
+    return (LVDS_active, HDMI_active, eDP1_active)
 
 
 def _which_picture() -> str:
-    LVDS_active, HDMI_active = which_output()
-    if HDMI_active and LVDS_active:
+    LVDS_active, HDMI_active, eDP1_active = which_output()
+    if eDP1_active:
+        output = os.path.expanduser("~/Pictures/lock.png")
+    elif HDMI_active and LVDS_active:
         output = os.path.expanduser("~/Pictures/noise-texture.png")
     elif HDMI_active and not LVDS_active:
         output = os.path.expanduser("~/Pictures/262039.png")
-    else:
+    elif LVDS_active and not HDMI_active:
         output = os.path.expanduser("~/Pictures/262039-small.png")
 
     return output
@@ -109,8 +115,7 @@ def generic_blur(i3LockOptions=[]):
         subprocess.call(['convert', fileName1, '-gaussian-blur', '0x9',
                          fileName2])
         plain_lock(i3LockOptions + ['-i', fileName2])
-        raise
-    except:
+    finally:
         subprocess.call(['rm', fileName1, fileName2])
 
 

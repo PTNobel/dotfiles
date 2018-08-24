@@ -177,29 +177,6 @@ class ShouldExit():
             return False
 
 
-class SwapFilesWatch():
-    _num_of_returns = 0
-    swapsToCheck: List[str] = []
-
-    def __init__(self, primaryFile, extraFiles) -> None:
-        self.swapsToCheck.append(os.path.join(os.path.dirname(primaryFile),
-                                 '.' + os.path.basename(primaryFile) + '.swp'))
-        for singleFile in extraFiles:
-            self.swapsToCheck.append(os.path.join(
-                os.path.dirname(singleFile),
-                '.' + os.path.basename(singleFile) +
-                '.swp'))
-
-    def swapFilesExist(self):
-        result = False
-        for swap in self.swapsToCheck:
-            if os.path.exists(swap):
-                result = True
-                break
-
-        return result
-
-
 def main_for_file(args: ProcessedArgs) -> None:
     os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
     pdfname: str
@@ -218,7 +195,9 @@ def main_for_file(args: ProcessedArgs) -> None:
             args['auxdir'],
             os.path.basename(args['file'][:: -1].replace
                              ('xet', 'fdp', 1)[:: -1]))
-    swapWatch = SwapFilesWatch(args['file'], args['extra_files'])
+    swapWatch = shared_watch.SwapFilesWatch(
+        [args['file']] + args['extra_files']
+    )
     args['build'].build()
     if not args['disable_viewer']:
         subprocess.call(['rifle', pdfname])

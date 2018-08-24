@@ -376,7 +376,7 @@ compdef _git gc=git-commit
 alias ga='git add'
 compdef _git ga=git-add
 alias ppwd='cd `pwd -P` ; pwd'
-source /home/parth/.zsh-dwim/init.zsh
+source $HOME/.zsh-dwim/init.zsh
 alias man='env PAGER=less /usr/bin/man'
 ## workaround for handling TERM variable in multiple tmux sessions properly from http://sourceforge.net/p/tmux/mailman/message/32751663/ by Nicholas Marriott
 if [[ -n ${TMUX} && -n ${commands[tmux]} ]];then
@@ -404,5 +404,38 @@ function biber_watch {
 #  cd $(python3 ~/bin/school.py "$@")
 #}
 
+function start_conda_jupyter {
+  source /opt/anaconda/bin/activate root
+  jupyter notebook &
+  sleep 3
+  LINE="$(jupyter notebook list | grep "::")"
+  firefox ${LINE%::*}
+
+  fg
+}
+
+function start_jupyter {
+  jupyter notebook &
+  sleep 3
+  LINE="$(jupyter notebook list | grep "::")"
+  firefox ${LINE%::*}
+
+  fg
+}
+
+alias restart_networking="systemctl restart netctl-auto@wlp1s0.service"
+alias connect_to_airbears="sudo netctl-auto switch-to wlp1s0-AirBears2"
+
+export WINEPREFIX=~/data/.wine
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
 export PDFVIEWER=rifle
+
+source /usr/bin/virtualenvwrapper.sh
+
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+export PATH="${HOME}/data/.cargo/bin:$PATH"
+
+export CARGO_HOME="${HOME}/data/.cargo"
+export PYTHONBREAKPOINT='ipdb.set_trace'

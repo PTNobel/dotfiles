@@ -99,8 +99,16 @@ def processargs(input_argv: List[str]) -> ProcessedArgs:
         processingArgs.output_recipe["docx"] = True
         processingArgs.output["docx"] = True
         processingArgs._disable_viewer(i)
+
+    def _citeproc(i: int):
+        processingArgs.output_recipe['pandoc_options'] += [
+            '--filter', 'pandoc-citeproc'
+        ]
+
     processingArgs.long_args_to_disc['--docx'] = _docx
     processingArgs.short_args_to_disc['d'] = _docx
+    processingArgs.long_args_to_disc['--citeproc'] = _citeproc
+    processingArgs.short_args_to_disc['c'] = _citeproc
 
     return processingArgs.render_processargs()
 
@@ -123,29 +131,6 @@ class ShouldExit():
             return False
 
 
-class SwapFilesWatch():
-    _num_of_returns = 0
-    swapsToCheck = []  # type: List[str]
-
-    def __init__(self, primaryFile: str, extraFiles: List[str]) -> None:
-        self.swapsToCheck.append(os.path.join(os.path.dirname(primaryFile),
-                                 '.' + os.path.basename(primaryFile) + '.swp'))
-        for singleFile in extraFiles:
-            self.swapsToCheck.append(os.path.join(
-                os.path.dirname(singleFile),
-                '.' + os.path.basename(singleFile) +
-                '.swp'))
-
-    def swapFilesExist(self) -> bool:
-        result = bool()
-        for swap in self.swapsToCheck:
-            if os.path.exists(swap):
-                result = True
-                break
-
-        return result
-
-
 def main_for_file(args: ProcessedArgs) -> None:
     os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
     if args['slow']:
@@ -159,7 +144,9 @@ def main_for_file(args: ProcessedArgs) -> None:
     else:
         pdfname = args['build'].pdfname
     print(pdfname)
-    swapWatch = SwapFilesWatch(args['file'], args['extra_files'])
+    swapWatch = shared_watch.SwapFilesWatch(
+        [args['file']] + args['extra_files']
+    )
     args['build'].build()
     if not args['disable_viewer']:
         subprocess.call(['rifle', pdfname])

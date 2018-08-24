@@ -14,11 +14,14 @@ if pidof redshift; then
     fi
     done
     if echo "$OPTIONS" | grep redshift.alt.conf >/dev/null ; then
-        redshift -c "$HOME"/.config/redshift.off.conf &
+      killall redshift
+      redshift -P -c "$HOME"/.config/redshift.off.conf &
     elif echo "$OPTIONS" | grep redshift.off.conf ; then
-      redshift &
+      killall redshift
+      redshift -P &
     else
-        redshift -c "$HOME"/.config/redshift.alt.conf &
+        killall redshift
+        redshift -P -c "$HOME"/.config/redshift.alt.conf &
     fi
 else
     echo redshift lauching

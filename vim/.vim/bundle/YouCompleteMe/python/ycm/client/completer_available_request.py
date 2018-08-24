@@ -19,12 +19,10 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
-from ycm.client.base_request import ( BaseRequest, BuildRequestData,
-                                      HandleServerException )
+from ycm.client.base_request import BaseRequest, BuildRequestData
 
 
 class CompleterAvailableRequest( BaseRequest ):
@@ -37,9 +35,8 @@ class CompleterAvailableRequest( BaseRequest ):
   def Start( self ):
     request_data = BuildRequestData()
     request_data.update( { 'filetypes': self.filetypes } )
-    with HandleServerException():
-      self._response = self.PostDataToHandler( request_data,
-                                               'semantic_completion_available' )
+    self._response = self.PostDataToHandler( request_data,
+                                             'semantic_completion_available' )
 
 
   def Response( self ):

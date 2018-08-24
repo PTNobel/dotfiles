@@ -1,9 +1,13 @@
 vim-grammarous
 ==============
 
-vim-grammarous is a powerful grammar checker for Vim.  Simply do `:GrammarousCheck` to see the powerful checking.  This plugin automatically downloads [LanguageTool](https://www.languagetool.org/), which requires Java 8+.
+vim-grammarous is a powerful grammar checker for Vim.  Simply do `:GrammarousCheck` to see the powerful checking.
+This plugin automatically downloads [LanguageTool](https://www.languagetool.org/), which requires Java 8+.
 
-![screenshot](http://gifzo.net/gVALLqiB.gif)
+This plugin can use job feature on Vim 8.0.27 (or later) or Neovim. It enables asynchronous command execution so you don't need to
+be blocked until the check has been done on Vim8+ or Neovim.
+
+![demo screen cast](https://github.com/rhysd/ss/blob/master/vim-grammarous/demo.gif?raw=true)
 
 
 ## Commands
@@ -16,7 +20,7 @@ Execute the grammar checker for current buffer (when `[range]` is specified, the
 
 1. It makes LanguageTool check grammar (It takes a while)
 2. It highlights the locations of detected grammar errors
-3. When you move the cursor on a location of error, it automatically shows the error with the information window.
+3. When you move the cursor to a location of an error, it automatically shows the error with the information window.
 
 Please do `:GrammarousCheck --help` to show more detail about the command.
 
@@ -31,7 +35,7 @@ Reset the current check.
 
 ### Local mappings in the information window
 
-You can use some mappings in the information window, which is opened to show the detail of an error when the cursor move on an error.
+You can use some mappings in the information window, which is opened to show the detail of an error when the cursor moves to the error.
 
 | Mappings | Description                                    |
 | -------- |:---------------------------------------------- |
@@ -64,7 +68,8 @@ However, above local mappings are enough to deal with grammar errors.  They are 
 
 ### Operator mappings
 
-Operator mapping checks grammar errors in the extent which the text object specify.  This mapping is available when [vim-operator-user](https://github.com/kana/vim-operator-user) is installed.
+Operator mapping checks grammatical errors in the extent which the text object specifies.
+This mapping is available when [vim-operator-user](https://github.com/kana/vim-operator-user) is installed.
 
 | Mappings                      | Description                            |
 | ----------------------------- |:-------------------------------------- |
@@ -80,7 +85,14 @@ Execute below command in the buffer already checked or you want to check.
 :Unite grammarous
 ```
 
-![unite source for grammarous](https://dl.dropboxusercontent.com/u/2753138/unite_grammarous.jpg)
+### `grammarous` denite.nvim source
+
+For [denite.nvim](https://github.com/Shougo/denite.nvim) users, `grammarous` denite source is available. Note that the kind is currently set to `file`, which means that actions a user can use are limited to open(jump), preview, etc.
+Execute below command in the buffer already checked.
+
+```
+:Denite grammarous
+```
 
 ## Fix examples
 
@@ -89,11 +101,12 @@ Execute below command in the buffer already checked or you want to check.
 - [vim-quickrun](https://github.com/rhysd/vim-quickrun/commit/236c753e0572266670d176e667054d55ad52a3f3)
 - [neosnippet.vim](https://github.com/rhysd/neosnippet/commit/c72e26e50ccf53f9d66a31fd9d70696c85c62873)
 
+
 ## FAQ
 
 ### How do I check comments only in source code by default?
 
-Plese use `g:grammarous#default_comments_only_filetypes`.
+Please use `g:grammarous#default_comments_only_filetypes`.
 
 For example, below setting makes grammar checker check comments only except for markdown and vim help.
 
@@ -107,7 +120,7 @@ let g:grammarous#default_comments_only_filetypes = {
 
 Please use `g:grammarous#disabled_rules` to disable specific rules.
 
-For example, below setting disables some rules for each filetypes. `*` means all filetypes, `help` means vim help.
+For example, below setting disables some rules for each filetype. `*` means all filetypes, `help` means vim help.
 
 ```vim
 let g:grammarous#disabled_rules = {
@@ -118,7 +131,7 @@ let g:grammarous#disabled_rules = {
 
 The rule names are displayed in Vim command line when you disable the rule in the info window or `<Plug>(grammarous-disable-rule)`.
 
-### How do I use vim's spelllang?
+### How do I use this plugin with vim's spelllang?
 
 Plese use `g:grammarous#use_vim_spelllang`. Default 0, to enable 1.
 
@@ -126,17 +139,17 @@ Plese use `g:grammarous#use_vim_spelllang`. Default 0, to enable 1.
 
 `on_check` and `on_reset` are available.
 
-For example, below setting defines `<C-n>` and `<C-p>` mappings as buffer local mappings when the check has been completed.
+For example, below setting defines `<C-n>` and `<C-p>` mappings as buffer-local mappings when the check has been completed.
 They are cleared when the check is reset.
 
 ```vim
 let g:grammarous#hooks = {}
-function! g:grammarous#hooks.on_check(errs)
+function! g:grammarous#hooks.on_check(errs) abort
     nmap <buffer><C-n> <Plug>(grammarous-move-to-next-error)
     nmap <buffer><C-p> <Plug>(grammarous-move-to-previous-error)
 endfunction
 
-function! g:grammarous#hooks.on_reset(errs)
+function! g:grammarous#hooks.on_reset(errs) abort
     nunmap <buffer><C-n>
     nunmap <buffer><C-p>
 endfunction
@@ -144,34 +157,43 @@ endfunction
 
 ### I want to use system global LanguageTool command
 
-`g:grammarous#languagetool_cmd` is available for the purpose.  If some command is set to `g:grammarous#languagetool_cmd` in your `.vimrc`, vim-grammarous does not install its own LanguageTool jar and use the command to run LanguageTool.
+`g:grammarous#languagetool_cmd` is available for the purpose.
+If some command is set to `g:grammarous#languagetool_cmd` in your `.vimrc`, vim-grammarous does not install
+its own LanguageTool jar and use the command to run LanguageTool.
 
 ```vim
 let g:grammarous#languagetool_cmd = 'languagetool'
 ```
 
+### I want to see the first error in an information window soon after `:GrammarousCheck`
+
+Please set `g:grammarous#show_first_error` to `1`. It opens an information window after `:GrammarousCheck` immediately when some error detected.
+
 
 ## Automatic installation
 
-This plugin attempts to install [LanguageTool](https://www.languagetool.org/) using `curl` or `wget` command at first time.  If it fails, you should install it manually.  Please download zip file of LanguageTool and extract it to `path/to/vim-grammarous/misc`.
+This plugin attempts to install [LanguageTool](https://www.languagetool.org/) using `curl` or `wget` command at first time.
+If it fails, you should install it manually.  Please download zip file of LanguageTool and extract it to `path/to/vim-grammarous/misc`.
 
 
 ## Requirements
 
 - Java8+ (required)
-- [vimproc.vim](https://github.com/Shougo/vimproc.vim) (optional)
+- [vimproc.vim](https://github.com/Shougo/vimproc.vim) (optional for Vim 8.0.25 or earlier on Windows)
 - [unite.vim](https://github.com/Shougo/unite.vim) (optional)
 - [vim-operator-user](https://github.com/kana/vim-operator-user) (optional)
+
 
 ## Future
 
 - __Ignore specific regions__ : Enable to specify the region which vim-grammarous should not check.  It is helpful for GFM's fenced code blocks.
-- __Check background__ : Run LanguageTool in background.  It will not prevent user input but may make the response poor.
 - __Incremental grammarous check__ : Check only the sentences you input while starting from entering and leaving insert mode.
+
 
 ## Contribution
 
-If you find some bugs, please report it to [issues page](https://github.com/rhysd/vim-grammarous/issues).  Pull requests are welcome. None of them is too short.
+If you find some bugs, please report it to [issues page](https://github.com/rhysd/vim-grammarous/issues).
+Pull requests are welcome. None of them is too short.
 
 
 ## License

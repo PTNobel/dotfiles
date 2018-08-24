@@ -167,8 +167,11 @@ class playerctl:
         return self.__name__
 
     def _call_playerctl(self, option):
-        subprocess.call(
-            ['playerctl', option])
+        try:
+            subprocess.call(['playerctl', option])
+        except FileNotFoundError:
+            # Playerctl is not installed
+            pass
 
     def pause(self):
         self._call_playerctl('play-pause')
@@ -192,7 +195,7 @@ class playerctl:
         try:
             is_playing_present = b"Playing" in subprocess.check_output(
                 ['playerctl', 'status'])
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             is_playing_present = False
         return is_playing_present
 

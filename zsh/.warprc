@@ -1,11 +1,14 @@
-
-school:/home/parth/Documents/current
-cards:/home/parth/Documents/cards
-i3:/home/parth/.dotfiles/i3/.i3
-bin:/home/parth/.dotfiles/bin/bin
-dot:/home/parth/.dotfiles
-vim:/home/parth/.dotfiles/vim/.vim
-cache:/var/cache/pacman/pkg
-latex_build:/tmp/parth-LaTeX
-pandoc_build:/tmp/parth-Pandoc
-AntDefense:/home/parth/Documents/2016-2017/not-backed-up/Computer Science/AntDefense
+data:/home/parthnobel/data
+school:/home/parthnobel/Documents/2018-Fall
+cs61c:/home/parthnobel/Documents/non-git-able-cs-work/cs61c
+seventy:/home/parthnobel/Documents/2018-Fall/CS70
+physics7b:/home/parthnobel/Documents/2018-Fall/Physics7B
+pp117ac:/home/parthnobel/Documents/2018-Fall/PP117AC
+ee290n:/home/parthnobel/Documents/2018-Fall/EE290N
+rcsa:/home/parthnobel/Documents/RCSA/WebDev
+fanfare:/home/parthnobel/Documents/Fanfare for Michael Dukakis
+books:/home/parthnobel/data/Archives/Books
+textbooks:/home/parthnobel/data/Textbooks
+velt:/home/parthnobel/data/Documents/Velt
+ucbmun:/home/parthnobel/Documents/UCBMUN
+research:/home/parthnobel/Documents/2018-Fall/Research

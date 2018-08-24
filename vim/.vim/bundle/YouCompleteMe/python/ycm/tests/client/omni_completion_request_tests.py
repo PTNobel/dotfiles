@@ -19,8 +19,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
 from mock import MagicMock
@@ -30,11 +29,14 @@ from hamcrest import assert_that, has_entries
 from ycm.client.omni_completion_request import OmniCompletionRequest
 
 
-def BuildOmnicompletionRequest( results ):
+def BuildOmnicompletionRequest( results, start_column = 1 ):
   omni_completer = MagicMock()
   omni_completer.ComputeCandidates = MagicMock( return_value = results )
 
-  request = OmniCompletionRequest( omni_completer, None )
+  request_data = {
+    'start_column': start_column
+  }
+  request = OmniCompletionRequest( omni_completer, request_data )
   request.Start()
 
   return request
@@ -50,7 +52,10 @@ def Response_FromOmniCompleter_test():
   results = [ { "word": "test" } ]
   request = BuildOmnicompletionRequest( results )
 
-  eq_( request.Response(), results )
+  eq_( request.Response(), {
+    'completions': results,
+    'completion_start_column': 1
+  } )
 
 
 def RawResponse_ConvertedFromOmniCompleter_test():
@@ -59,8 +64,8 @@ def RawResponse_ConvertedFromOmniCompleter_test():
       "kind": "KIND", "info": "INFO" },
     { "word": "WORD2", "abbr": "ABBR2", "menu": "MENU2",
       "kind": "KIND2", "info": "INFO" },
-    { "word": "WORD", "abbr": "ABBR",  },
-    {  },
+    { "word": "WORD", "abbr": "ABBR", },
+    {},
   ]
   expected_results = [
     has_entries( { "insertion_text": "WORD", "menu_text": "ABBR",
@@ -69,12 +74,12 @@ def RawResponse_ConvertedFromOmniCompleter_test():
     has_entries( { "insertion_text": "WORD2", "menu_text": "ABBR2",
                    "extra_menu_info": "MENU2", "kind": [ "KIND2" ],
                    "detailed_info": "INFO" } ),
-    has_entries( { "insertion_text": "WORD", "menu_text": "ABBR",  } ),
-    has_entries( {  } ),
+    has_entries( { "insertion_text": "WORD", "menu_text": "ABBR", } ),
+    has_entries( {} ),
   ]
   request = BuildOmnicompletionRequest( vim_results )
 
-  results = request.RawResponse()
+  results = request.RawResponse()[ 'completions' ]
 
   eq_( len( results ), len( expected_results ) )
   for result, expected_result in zip( results, expected_results ):

@@ -6,19 +6,22 @@ bad_func() {
       echo Shall we stay up a bit later then?
       ;;
     morning)
-      echo Let\'s not risk an update then?
+      echo "Let's not risk an update then?"
+      ;;
+    moorning)
+      cowsay "Sad."
       ;;
     work)
-      echo "I\'m sorry...I\'ll try to do be better next time."
+      echo "I'm sorry...I'll try to do be better next time."
       ;;
     computer)
-      echo "I\'ll do better next time."
+      echo "I'll do better next time."
       ;;
     ana)
-      echo "That\'s not my name! I\'m sure she didn\'t do anything wrong."
+      echo "That's not my name! I'm sure she didn't do anything wrong."
       ;;
     day)
-      echo It has been hasn\'t it?
+      echo "It has been hasn't it?"
       ;;
     afternoon)
       echo It has sucked.
@@ -27,7 +30,7 @@ bad_func() {
       echo Was that a backslash?
       ;;
     "")
-      echo What\'s so bad?
+      echo "What's so bad?"
       ;;
     *)
       echo How should I respond?
@@ -41,6 +44,9 @@ good_func() {
       ;;
     morning)
       update.sh
+      ;;
+    moorning)
+      cowsay "Good moorning to you too!"
       ;;
     work)
       echo Thank you!

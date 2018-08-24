@@ -97,16 +97,17 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 # define workspace outputs
+workspace 0 output eDP1
 workspace 1 output HDMI1
-workspace 2 output LVDS1
+workspace 2 output eDP1
 workspace 3 output HDMI1
-workspace 4 output LVDS1
+workspace 4 output eDP1
 workspace 5 output HDMI1
-workspace 6 output LVDS1
+workspace 6 output eDP1
 workspace 7 output HDMI1
-workspace 8 output LVDS1
+workspace 8 output eDP1
 workspace 9 output HDMI1
-workspace 10 output LVDS1
+workspace 10 output eDP1
 workspace 11 output HDMI1
 workspace mail-music output HDMI1
 
@@ -207,8 +208,8 @@ bindsym XF86HomePage exec --no-startup-id true  #
 bindsym $mod+o exec pavucontrol
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 2 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 2 # decrease screen brightness
 bindsym XF86Sleep exec --no-startup-id i3exit suspend
 
 
@@ -275,9 +276,12 @@ bindsym $mod+t exec --no-startup-id transperancy.sh
 bindsym $mod+Shift+o exec --no-startup-id video.sh
 bindsym $mod+Shift+p exec --no-startup-id redshift.sh
 
+# multitouch gestures
+bindsym --whole-window $mod+button6 exec --no-startup-id change_workspace.py prev
+bindsym --whole-window $mod+button7 exec --no-startup-id change_workspace.py next
+
 # Startup Applications autostart
 
-exec_always --no-startup-id monitor-layout.sh
 exec_always --no-startup-id setxkbmap -option caps:escape
 exec --no-startup-id urxvtd.sh
 exec --no-startup-id unlock-keyring.py
@@ -286,8 +290,9 @@ exec --no-startup-id redshift
 #exec --no-startup-id "devmon --no-gui"
 #exec --no-startup-id "pulseaudio"
 exec --no-startup-id xautolock -time 5 -locker 'i3exit inactive_lock' &
-exec_always --no-startup-id feh --bg-scale Pictures/tardis-14940-1920x1080.jpg
-exec --no-startup-id bash -c 'sleep 3 ; dunst.sh & ; sleep 3; notify-send Do\ Exercises'
+#exec_always --no-startup-id feh --bg-scale Pictures/tardis-14940-1920x1080.jpg
+#exec --no-startup-id bash -c 'sleep 3 ; dunst.sh & ; sleep 3; notify-send Do\ Exercises'
 #exec --no-startup-id linconnect-server
 #exec --no-startup-id /usr/share/android-notifier-desktop/run.sh 
 exec --no-startup-id startup
+exec --no-startup-id start-pulseaudio-x11

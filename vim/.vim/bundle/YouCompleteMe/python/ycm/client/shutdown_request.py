@@ -19,23 +19,24 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
-from ycm.client.base_request import BaseRequest, HandleServerException
+from ycm.client.base_request import BaseRequest
 
 TIMEOUT_SECONDS = 0.1
 
 
 class ShutdownRequest( BaseRequest ):
   def __init__( self ):
-    super( BaseRequest, self ).__init__()
+    super( ShutdownRequest, self ).__init__()
 
 
   def Start( self ):
-    with HandleServerException( display = False ):
-      self.PostDataToHandler( {}, 'shutdown', TIMEOUT_SECONDS )
+    self.PostDataToHandler( {},
+                            'shutdown',
+                            TIMEOUT_SECONDS,
+                            display_message = False )
 
 
 def SendShutdownRequest():

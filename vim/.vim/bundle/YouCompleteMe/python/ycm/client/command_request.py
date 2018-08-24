@@ -19,12 +19,10 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
-from ycm.client.base_request import ( BaseRequest, BuildRequestData,
-                                      HandleServerException )
+from ycm.client.base_request import BaseRequest, BuildRequestData
 from ycm import vimsupport
 from ycmd.utils import ToUnicode
 
@@ -36,30 +34,33 @@ def _EnsureBackwardsCompatibility( arguments ):
 
 
 class CommandRequest( BaseRequest ):
-  def __init__( self, arguments, completer_target = None ):
+  def __init__( self, arguments, completer_target = None, extra_data = None ):
     super( CommandRequest, self ).__init__()
     self._arguments = _EnsureBackwardsCompatibility( arguments )
+    self._command = arguments and arguments[ 0 ]
     self._completer_target = ( completer_target if completer_target
                                else 'filetype_default' )
+    self._extra_data = extra_data
     self._response = None
 
 
   def Start( self ):
     request_data = BuildRequestData()
+    if self._extra_data:
+      request_data.update( self._extra_data )
     request_data.update( {
       'completer_target': self._completer_target,
       'command_arguments': self._arguments
     } )
-    with HandleServerException():
-      self._response = self.PostDataToHandler( request_data,
-                                               'run_completer_command' )
+    self._response = self.PostDataToHandler( request_data,
+                                             'run_completer_command' )
 
 
   def Response( self ):
     return self._response
 
 
-  def RunPostCommandActionsIfNeeded( self ):
+  def RunPostCommandActionsIfNeeded( self, modifiers ):
     if not self.Done() or self._response is None:
       return
 
@@ -81,10 +82,10 @@ class CommandRequest( BaseRequest ):
     # The only other type of response we understand is GoTo, and that is the
     # only one that we can't detect just by inspecting the response (it should
     # either be a single location or a list)
-    return self._HandleGotoResponse()
+    return self._HandleGotoResponse( modifiers )
 
 
-  def _HandleGotoResponse( self ):
+  def _HandleGotoResponse( self, modifiers ):
     if isinstance( self._response, list ):
       vimsupport.SetQuickFixList(
         [ _BuildQfListItem( x ) for x in self._response ] )
@@ -92,7 +93,8 @@ class CommandRequest( BaseRequest ):
     else:
       vimsupport.JumpToLocation( self._response[ 'filepath' ],
                                  self._response[ 'line_num' ],
-                                 self._response[ 'column_num' ] )
+                                 self._response[ 'column_num' ],
+                                 modifiers )
 
 
   def _HandleFixitResponse( self ):
@@ -112,7 +114,8 @@ class CommandRequest( BaseRequest ):
             [ fixit[ 'text' ] for fixit in self._response[ 'fixits' ] ] )
 
         vimsupport.ReplaceChunks(
-          self._response[ 'fixits' ][ fixit_index ][ 'chunks' ] )
+          self._response[ 'fixits' ][ fixit_index ][ 'chunks' ],
+          silent = self._command == 'Format' )
       except RuntimeError as e:
         vimsupport.PostVimMessage( str( e ) )
 
@@ -129,11 +132,11 @@ class CommandRequest( BaseRequest ):
     vimsupport.WriteToPreviewWindow( self._response[ 'detailed_info' ] )
 
 
-def SendCommandRequest( arguments, completer ):
-  request = CommandRequest( arguments, completer )
+def SendCommandRequest( arguments, completer, modifiers, extra_data = None ):
+  request = CommandRequest( arguments, completer, extra_data )
   # This is a blocking call.
   request.Start()
-  request.RunPostCommandActionsIfNeeded()
+  request.RunPostCommandActionsIfNeeded( modifiers )
   return request.Response()
 
 

@@ -19,8 +19,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
+# Not installing aliases from python-future; it's unreliable and slow.
 from builtins import *  # noqa
 
 from ycm.tests.test_utils import MockVimModule
@@ -62,7 +61,7 @@ def RegexFilter_test():
 
 
 def RegexSingleList_test():
-  opts = _JavaFilter( { 'regex' : [ 'taco' ] }  )
+  opts = _JavaFilter( { 'regex' : [ 'taco' ] } )
   f = _CreateFilterForTypes( opts, [ 'java' ] )
 
   _assert_rejects( f, 'This is a Taco' )

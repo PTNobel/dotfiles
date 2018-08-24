@@ -28,6 +28,19 @@ def usage(exit_code, name):
     exit(exit_code)
 
 
+def new_processargs(input_argv):
+    parser = argparse.ArgumentParser(
+            description="Controls various music playing applicaitons."
+    )
+    parser.add_argument(
+        '-t',
+        '--trial',
+    )
+    parser.add_argument(
+        '-p',
+        '--player',
+    )
+
 def processargs(input_argv):
 
     # All of these run in the same scope as processargs(). They make changes to

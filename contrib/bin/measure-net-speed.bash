@@ -13,13 +13,13 @@ path="/dev/shm/measure-net-speed$DISPLAY"
 #  find /sys/devices -name statistics
 # If you have more (or less) than two adapters, simply adjust the script here
 # and in the next block. 
-eno1="/sys/devices/pci0000:00/0000:00:1c.0/0000:07:00.0/net/eno1/statistics"
-wlo1="/sys/devices/pci0000:00/0000:00:1c.1/0000:0d:00.0/net/wlo1/statistics"
+#eno1="/sys/devices/pci0000:00/0000:00:1c.0/0000:07:00.0/net/eno1/statistics"
+wlp1s0="/sys/devices/pci0000:00/0000:00:1c.0/0000:01:00.0/net/wlp1s0/statistics"
 
-read eno1_rx < "${eno1}/rx_bytes"
-read eno1_tx < "${eno1}/tx_bytes"
-read wlo1_rx < "${wlo1}/rx_bytes"
-read wlo1_tx < "${wlo1}/tx_bytes"
+#read eno1_rx < "${eno1}/rx_bytes"
+#read eno1_tx < "${eno1}/tx_bytes"
+read wlp1s0_rx < "${wlp1s0}/rx_bytes"
+read wlp1s0_tx < "${wlp1s0}/tx_bytes"
 
 if [[ -d /sys/devices/virtual/net/tun0 ]]; then
 tun0="/sys/devices/virtual/net/tun0/statistics"
@@ -27,13 +27,13 @@ read tun0_rx < "${tun0}/rx_bytes"
 read tun0_tx < "${tun0}/tx_bytes"
 # get time and sum of rx/tx for combined display
 time=$(date +%s)
-rx=$(( $eno1_rx + $wlo1_rx + $tun0_rx))
-tx=$(( $eno1_tx + $wlo1_tx + $tun0_tx))
+rx=$(( $wlp1s0_rx + $tun0_rx))
+tx=$(( $wlp1s0_tx + $tun0_tx))
 else
 # get time and sum of rx/tx for combined display
 time=$(date +%s)
-rx=$(( $eno1_rx + $wlo1_rx ))
-tx=$(( $eno1_tx + $wlo1_tx ))
+rx=$(( $wlp1s0_rx ))
+tx=$(( $wlp1s0_tx ))
 fi
 
 # write current data if file does not exist. Do not exit, this will cause

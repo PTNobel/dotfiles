@@ -1,15 +1,17 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:V = vital#of('grammarous')
+let s:V = vital#grammarous#new()
 let s:XML = s:V.import('Web.XML')
 let s:O = s:V.import('OptionParser')
 let s:P = s:V.import('Process')
+let s:is_cygwin = has('win32unix')
+let s:is_windows = has('win32') || has('win64')
+let s:job_is_available = has('job') && has('patch-8.0.0027')
 
 let g:grammarous#root                            = fnamemodify(expand('<sfile>'), ':p:h:h')
-silent! lockvar g:grammarous#root
 let g:grammarous#jar_dir                         = get(g:, 'grammarous#jar_dir', g:grammarous#root . '/misc')
-let g:grammarous#jar_url                         = get(g:, 'grammarous#jar_url', 'https://www.languagetool.org/download/LanguageTool-3.5.zip')
+let g:grammarous#jar_url                         = get(g:, 'grammarous#jar_url', 'https://www.languagetool.org/download/LanguageTool-3.8.zip')
 let g:grammarous#java_cmd                        = get(g:, 'grammarous#java_cmd', 'java')
 let g:grammarous#default_lang                    = get(g:, 'grammarous#default_lang', 'en')
 let g:grammarous#use_vim_spelllang               = get(g:, 'grammarous#use_vim_spelllang', 0)
@@ -22,6 +24,7 @@ let g:grammarous#enable_spell_check              = get(g:, 'grammarous#enable_sp
 let g:grammarous#move_to_first_error             = get(g:, 'grammarous#move_to_first_error', 1)
 let g:grammarous#hooks                           = get(g:, 'grammarous#hooks', {})
 let g:grammarous#languagetool_cmd                = get(g:, 'grammarous#languagetool_cmd', '')
+let g:grammarous#show_first_error                = get(g:, 'grammarous#show_first_error', 0)
 
 highlight default link GrammarousError SpellBad
 highlight default link GrammarousInfoError ErrorMsg
@@ -34,6 +37,12 @@ augroup pluging-rammarous-highlight
     autocmd ColorScheme * highlight default link GrammarousInfoSection Keyword
     autocmd ColorScheme * highlight default link GrammarousInfoHelp Special
 augroup END
+
+function! s:get_SID() abort
+    return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_SID$')
+endfunction
+let s:SID = s:get_SID()
+delfunction s:get_SID
 
 function! grammarous#_import_vital_modules()
     return [s:XML, s:O, s:P]
@@ -53,6 +62,37 @@ function! grammarous#error(...)
     finally
         echohl None
     endtry
+endfunction
+
+function! s:delete_jar_dir() abort
+    if !isdirectory(g:grammarous#jar_dir)
+        return
+    endif
+
+    let dir = g:grammarous#jar_dir
+    if s:is_cygwin
+        let dir = s:cygpath(dir)
+    endif
+
+    if dir ==# '' || !isdirectory(dir)
+        call grammarous#error("Directory '%s' does not exist", dir)
+        return
+    endif
+
+    if s:is_windows && !s:is_cygwin
+        let cmd = 'rmdir /s /q ' . dir
+    else
+        let cmd = 'rm -rf ' . dir
+    endif
+
+    let out = system(cmd)
+    if v:shell_error
+        call grammarous#error("Cannot remove the directory '%s': %s", dir, out)
+        return
+    endif
+
+    echomsg 'Deleted ' . dir
+    unlet! s:jar_file
 endfunction
 
 function! s:find_jar(dir)
@@ -88,8 +128,29 @@ function! s:init()
         return ''
     endif
 
+    if s:is_cygwin
+        let jar = s:cygpath(jar)
+    endif
+
     let s:jar_file = jar
     return jar
+endfunction
+
+function! s:cygpath(path) abort
+    if !executable('cygpath')
+        return a:path
+    endif
+
+    " On Cygwin environment, paths should be converted with cygpath.
+    "   /cygdrive/c/... -> C:/...
+    " https://github.com/rhysd/vim-grammarous/issues/30
+    let converted = substitute(s:P.system('cygpath -aw ' . a:path), '\n\+$', '', '')
+
+    if s:P.get_last_status()
+        return a:path
+    endif
+
+    return converted
 endfunction
 
 function! s:make_text(text)
@@ -100,11 +161,86 @@ function! s:make_text(text)
     endif
 endfunction
 
-function! grammarous#invoke_check(range_start, ...)
+function! s:set_errors_from_xml_string(xml) abort
+    let b:grammarous_result = grammarous#get_errors_from_xml(s:XML.parse(substitute(a:xml, "\n", '', 'g')))
+    let parsed = s:last_parsed_options
+
+    if s:is_comment_only(parsed['comments-only'])
+        call filter(b:grammarous_result, 'synIDattr(synID(v:val.fromy+1, v:val.fromx+1, 0), "name") =~? "comment"')
+    endif
+
+    redraw!
+    if empty(b:grammarous_result)
+        echomsg 'Yay! No grammatical errors detected.'
+        return
+    endif
+
+    let len = len(b:grammarous_result)
+    echomsg printf('Detected %d grammatical error%s', len, len > 1 ? 's' : '')
+    call grammarous#highlight_errors_in_current_buffer(b:grammarous_result)
+    if parsed['move-to-first-error']
+        call cursor(b:grammarous_result[0].fromy+1, b:grammarous_result[0].fromx+1)
+    endif
+
+    if g:grammarous#enable_spell_check
+        let s:saved_spell = &l:spell
+        setlocal spell
+    endif
+
+    if g:grammarous#show_first_error
+        call grammarous#create_update_info_window_of(b:grammarous_result)
+    endif
+
+    if has_key(g:grammarous#hooks, 'on_check')
+        call call(g:grammarous#hooks.on_check, [b:grammarous_result], g:grammarous#hooks)
+    endif
+endfunction
+
+function! s:on_check_done_vim8(channel) abort
+    let xml = ''
+    while ch_status(a:channel, {'part' : 'out'}) ==# 'buffered'
+        let xml .= ch_read(a:channel)
+    endwhile
+    if xml ==# ''
+        return
+    endif
+    call s:set_errors_from_xml_string(xml)
+endfunction
+
+function! s:on_check_exit_vim8(channel, status) abort
+    if a:status == 0
+        return
+    endif
+    let err = ''
+    while ch_status(a:channel, {'part' : 'err'}) ==# 'buffered'
+        let err .= ch_read(a:channel, {'part' : 'err'})
+    endwhile
+    call grammarous#error('Grammar check failed with exit status ' . a:status . ': ' . err)
+endfunction
+
+function! s:on_exit_nvim(job, status, event) abort dict
+    if a:status != 0
+        call grammarous#error('Grammar check failed: ' . self._stderr)
+        return
+    endif
+
+    call s:set_errors_from_xml_string(self._stdout)
+endfunction
+
+function! s:on_output_nvim(job, lines, event) abort dict
+    let output = join(a:lines, "\n")
+    if a:event ==# 'stdout'
+        let self._stdout .= output
+    else
+        let self._stderr .= output
+    endif
+endfunction
+
+function! s:invoke_check(range_start, ...)
     if g:grammarous#languagetool_cmd ==# ''
         let jar = s:init()
         if jar ==# ''
-            return []
+            return
         endif
     else
         let jar = ''
@@ -112,9 +248,8 @@ function! grammarous#invoke_check(range_start, ...)
 
     if a:0 < 1
         call grammarous#error('Invalid argument')
-        return []
+        return
     endif
-
 
     if g:grammarous#use_vim_spelllang
       " Convert vim spelllang to languagetool spelllang
@@ -138,6 +273,10 @@ function! grammarous#invoke_check(range_start, ...)
         silent echon text
     redir END
 
+    if s:is_cygwin
+        let tmpfile = s:cygpath(tmpfile)
+    endif
+
     let cmdargs = printf(
             \   '-c %s -d %s -l %s --api %s',
             \   &fileencoding ? &fileencoding : &encoding,
@@ -152,29 +291,45 @@ function! grammarous#invoke_check(range_start, ...)
         let cmd = printf('%s -jar %s %s', g:grammarous#java_cmd, substitute(jar, '\\\s\@!', '\\\\', 'g'), cmdargs)
     endif
 
-    echo printf("Checking grammar (lang: %s) ...", lang)
-    " FIXME: Do it in background
+    if s:job_is_available
+        let job = job_start(cmd, {'close_cb' : s:SID . 'on_check_done_vim8', 'exit_cb' : s:SID . 'on_check_exit_vim8'})
+        echo 'Grammar check has started with job(' . job . ')...'
+        return
+    endif
+
+    if has('nvim')
+        let opts = {
+            \   'on_stdout' : function('s:on_output_nvim'),
+            \   'on_stderr' : function('s:on_output_nvim'),
+            \   'on_exit' : function('s:on_exit_nvim'),
+            \   '_stdout' : '',
+            \   '_stderr' : '',
+            \ }
+        let job = jobstart(cmd, opts)
+        echo 'Grammar check has started with job(id: ' . job . ')...'
+        return
+    endif
+
     let xml = s:P.system(cmd)
     call delete(tmpfile)
 
     if s:P.get_last_status()
         call grammarous#error("Command '%s' failed:\n%s", cmd, xml)
-        return []
+        return
     endif
-
-    return s:XML.parse(substitute(xml, "\n", '', 'g'))
+    call s:set_errors_from_xml_string(xml)
 endfunction
 
-function! s:sunitize(s)
+function! s:sanitize(s)
     return substitute(escape(a:s, "'\\"), ' ', '\\_\\s', 'g')
 endfunction
 
 function! grammarous#generate_highlight_pattern(error)
     let line = a:error.fromy + 1
-    let prefix = a:error.contextoffset > 0 ? s:sunitize(a:error.context[: a:error.contextoffset-1]) : ''
+    let prefix = a:error.contextoffset > 0 ? s:sanitize(a:error.context[: a:error.contextoffset-1]) : ''
     let rest = a:error.context[a:error.contextoffset :]
-    let the_error = s:sunitize(rest[: a:error.errorlength-1])
-    let rest = s:sunitize(rest[a:error.errorlength :])
+    let the_error = s:sanitize(rest[: a:error.errorlength-1])
+    let rest = s:sanitize(rest[a:error.errorlength :])
     return '\V' . prefix . '\zs' . the_error . '\ze' . rest
 endfunction
 
@@ -208,8 +363,9 @@ function! s:highlight_error(from, to)
 
     let ids = [s:matcherrpos(a:from[0], a:from[1], strlen(getline(a:from[0]))+1 - a:from[1])]
     let line = a:from[0] + 1
-    while line != a:to[0]
+    while line < a:to[0]
         call add(ids, s:matcherrpos(line))
+        let line += 1
     endwhile
     call add(ids, s:matcherrpos(a:to[0], 1, a:to[1] - 1))
     return ids
@@ -230,7 +386,7 @@ function! grammarous#highlight_errors_in_current_buffer(errs)
     else
         for e in a:errs
             let e.id = matchadd(
-                    \   "GrammarousError",
+                    \   'GrammarousError',
                     \   s:remove_3dots(grammarous#generate_highlight_pattern(e)),
                     \   999
                     \ )
@@ -244,7 +400,37 @@ function! grammarous#reset_highlights()
     endfor
 endfunction
 
+function! grammarous#find_checked_winnr() abort
+    if exists('b:grammarous_result')
+        return winnr()
+    endif
+    for bufnr in tabpagebuflist()
+        let result = getbufvar(bufnr, 'grammarous_result', [])
+        if empty(result)
+            continue
+        endif
+
+        let winnr = bufwinnr(bufnr)
+        if winnr == -1
+            continue
+        endif
+
+        return winnr
+    endfor
+    return -1
+endfunction
+
 function! grammarous#reset()
+    let win = grammarous#find_checked_winnr()
+    if win == -1
+        return
+    endif
+
+    let prev_win = winnr()
+    if win != prev_win
+        execute win . 'wincmd w'
+    endif
+
     call grammarous#reset_highlights()
     call grammarous#info_win#stop_auto_preview()
     call grammarous#info_win#close()
@@ -256,6 +442,10 @@ function! grammarous#reset()
         call call(g:grammarous#hooks.on_reset, [b:grammarous_result], g:grammarous#hooks)
     endif
     unlet! b:grammarous_result b:grammarous_preview_bufnr
+
+    if win != prev_win
+        wincmd p
+    endif
 endfunction
 
 let s:opt_parser = s:O.new()
@@ -263,6 +453,7 @@ let s:opt_parser = s:O.new()
     \.on('--[no-]preview',             'enable auto preview', {'default' : 1})
     \.on('--[no-]comments-only',       'check comment only',  {'default' : ''})
     \.on('--[no-]move-to-first-error', 'move to first error', {'default' : g:grammarous#move_to_first_error})
+    \.on('--reinstall-languagetool',   'reinstall LanguageTool', {'default' : 0})
 
 function! grammarous#complete_opt(arglead, cmdline, cursorpos)
     return s:opt_parser.complete(a:arglead, a:cmdline, a:cursorpos)
@@ -286,7 +477,7 @@ function! grammarous#check_current_buffer(qargs, range)
         redraw!
     endif
 
-    let parsed = s:opt_parser.parse(a:qargs, a:range, "")
+    let parsed = s:opt_parser.parse(a:qargs, a:range, '')
     if has_key(parsed, 'help')
         return
     endif
@@ -296,40 +487,18 @@ function! grammarous#check_current_buffer(qargs, range)
         call grammarous#info_win#start_auto_preview()
     endif
 
-    let b:grammarous_result
-                \ = grammarous#get_errors_from_xml(
-                \       grammarous#invoke_check(
-                \           parsed.__range__[0],
-                \           parsed.lang,
-                \           getline(parsed.__range__[0], parsed.__range__[1])
-                \       )
-                \   )
-
-    if s:is_comment_only(parsed['comments-only'])
-        call filter(b:grammarous_result, 'synIDattr(synID(v:val.fromy+1, v:val.fromx+1, 0), "name") =~? "comment"')
+    if parsed['reinstall-languagetool']
+        call s:delete_jar_dir()
     endif
 
-    redraw!
-    if empty(b:grammarous_result)
-        echomsg "Yay! No grammatical errors detected."
-        return
-    else
-        let len = len(b:grammarous_result)
-        echomsg printf("Detected %d grammatical error%s", len, len > 1 ? 's' : '')
-        call grammarous#highlight_errors_in_current_buffer(b:grammarous_result)
-        if parsed['move-to-first-error']
-            call cursor(b:grammarous_result[0].fromy+1, b:grammarous_result[0].fromx+1)
-        endif
-    endif
+    " XXX
+    let s:last_parsed_options = parsed
 
-    if g:grammarous#enable_spell_check
-        let s:saved_spell = &l:spell
-        setlocal spell
-    endif
-
-    if has_key(g:grammarous#hooks, 'on_check')
-        call call(g:grammarous#hooks.on_check, [b:grammarous_result], g:grammarous#hooks)
-    endif
+    call s:invoke_check(
+                \ parsed.__range__[0],
+                \ parsed.lang,
+                \ getline(parsed.__range__[0], parsed.__range__[1])
+              \ )
 endfunction
 
 function! s:less_position(p1, p2)
@@ -367,12 +536,15 @@ function! grammarous#get_error_at(pos, errs)
 endfunction
 
 function! grammarous#fixit(err)
-    if empty(a:err) || !grammarous#move_to_checked_buf(a:err.fromy+1, a:err.fromx+1)
+    if empty(a:err)
+     \ || !grammarous#move_to_checked_buf(a:err.fromy+1, a:err.fromx+1)
+     \ || a:err.replacements ==# ''
+        call grammarous#error('Cannot fix this error automatically.')
         return
     endif
 
     let sel_save = &l:selection
-    let &l:selection = "inclusive"
+    let &l:selection = 'inclusive'
     let save_g_reg = getreg('g', 1)
     let save_g_regtype = getregtype('g')
     try
@@ -511,7 +683,7 @@ function! grammarous#disable_rule(rule, errs)
         endif
     endfor
 
-    echomsg "Disabled rule: " . a:rule
+    echomsg 'Disabled rule: ' . a:rule
 
     return 1
 endfunction
@@ -532,7 +704,7 @@ function! grammarous#move_to_next_error(pos, errs)
             return s:move_to_pos(p)
         endif
     endfor
-    call grammarous#error("No next error found.")
+    call grammarous#error('No next error found.')
     return 0
 endfunction
 
@@ -543,7 +715,7 @@ function! grammarous#move_to_previous_error(pos, errs)
             return s:move_to_pos(p)
         endif
     endfor
-    call grammarous#error("No previous error found.")
+    call grammarous#error('No previous error found.')
     return 0
 endfunction
 

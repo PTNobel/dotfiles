@@ -57,46 +57,72 @@ endfunction
 
 function! grammarous#info_win#action_help()
     echo join([
-            \   "| Mappings | Description                                    |",
-            \   "| -------- |:---------------------------------------------- |",
-            \   "|    q     | Quit the info window                           |",
-            \   "|   <CR>   | Move to the location of the error              |",
-            \   "|    f     | Fix the error automatically                    |",
-            \   "|    r     | Remove the error without fix                   |",
-            \   "|    R     | Disable the grammar rule in the checked buffer |",
-            \   "|    n     | Move to the next error                         |",
-            \   "|    p     | Move to the previous error                     |",
+            \   '| Mappings | Description                                    |',
+            \   '| -------- |:---------------------------------------------- |',
+            \   '|    q     | Quit the info window                           |',
+            \   '|   <CR>   | Move to the location of the error              |',
+            \   '|    f     | Fix the error automatically                    |',
+            \   '|    r     | Remove the error without fix                   |',
+            \   '|    R     | Disable the grammar rule in the checked buffer |',
+            \   '|    n     | Move to the next error                         |',
+            \   '|    p     | Move to the previous error                     |',
             \ ], "\n")
 endfunction
 
 function! s:get_info_buffer(e)
-    return join(
+    let lines = 
         \ [
-        \   "Error: " . a:e.category,
-        \   "    " . a:e.msg,
-        \   "",
-        \   "Context:",
-        \   "    " . a:e.context,
-        \   "",
-        \   "Correction:",
-        \   "    " . string(split(a:e.replacements, '#', 1)[0]),
-        \   "",
-        \   "Press '?' in this window to show help",
-        \ ],
-        \ "\n")
+        \   'Error: ' . a:e.category,
+        \   '    ' . a:e.msg,
+        \   '',
+        \   'Context:',
+        \   '    ' . a:e.context,
+        \   '',
+        \ ]
+    if a:e.replacements !=# ''
+        let lines +=
+        \ [
+        \   'Correction:',
+        \   '    ' . string(split(a:e.replacements, '#', 1)[0]),
+        \   '',
+        \ ]
+    endif
+    let lines += ["Press '?' in this window to show help"]
+    return lines
 endfunction
 
 function! grammarous#info_win#action_quit()
     let s:do_not_preview = 1
+    let preview_bufnr = bufnr('%')
+
     quit!
-    unlet b:grammarous_preview_bufnr
+
+    " Consider the case where :quit! does not navigate to the buffer
+    " where :GrammarousCheck checked.
+    for bufnr in tabpagebuflist()
+        let b = getbufvar(bufnr, 'grammarous_preview_bufnr', -1)
+        if b != preview_bufnr
+            continue
+        endif
+
+        let winnr = bufwinnr(bufnr)
+        if winnr == -1
+            continue
+        endif
+
+        execute winnr . 'wincmd w'
+        unlet b:grammarous_preview_bufnr
+        return
+    endfor
+    " Reach here when the original buffer was already closed
 endfunction
 
 function! grammarous#info_win#update(e)
     let b:grammarous_preview_error = a:e
     silent normal! gg"_dG
-    silent put =s:get_info_buffer(a:e)
-    silent 1delete _
+    silent %delete _
+    call setline(1, s:get_info_buffer(a:e))
+    execute 1
     setlocal modified
 
     return bufnr('%')
@@ -106,8 +132,7 @@ function! grammarous#info_win#open(e, bufnr)
     execute g:grammarous#info_win_direction g:grammarous#info_window_height . 'new' '[Grammarous]'
     let b:grammarous_preview_original_bufnr = a:bufnr
     let b:grammarous_preview_error = a:e
-    silent put =s:get_info_buffer(a:e)
-    silent 1delete _
+    call setline(1, s:get_info_buffer(a:e))
     execute 1
     syntax match GrammarousInfoSection "\%(Context\|Correction\):"
     syntax match GrammarousInfoError "Error:.*$"
