@@ -4,6 +4,8 @@ from __future__ import annotations
 import requests
 import subprocess
 import re
+import sys
+import os
 from typing import Any, Dict
 
 
@@ -34,6 +36,33 @@ def ssh_to_hive(lowest_load_hive: str) -> None:
     ])
 
 
+def mount_hive(lowest_load_hive: str) -> None:
+    subprocess.call([
+        "sshfs",
+        "-o",
+        "IdentityFile=~/.ssh/id_berkeley",
+        f"cs61c-aah@{lowest_load_hive}.berkeley.edu:/home/cc/cs61c/fa18/class/cs61c-aah",
+        "/home/parthnobel/Documents/non-git-able-cs-work/cs61c/sftp",
+    ])
+
+
+def umount_hive() -> None:
+    subprocess.call([
+        "fusermount",
+        "-u",
+        "/home/parthnobel/Documents/non-git-able-cs-work/cs61c/sftp",
+    ])
+
+
 if __name__ == '__main__':
-    hive = pick_best_hive()
-    ssh_to_hive(hive)
+    file_name = os.path.basename(sys.argv[0])
+    if file_name == 'hive':
+        hive = pick_best_hive()
+        ssh_to_hive(hive)
+    elif file_name == 'mount_hive':
+        hive = pick_best_hive()
+        mount_hive(hive)
+    elif file_name == 'umount_hive':
+        umount_hive()
+    else:
+        sys.exit(1)
