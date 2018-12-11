@@ -57,7 +57,11 @@ def umount_hive() -> None:
 if __name__ == '__main__':
     file_name = os.path.basename(sys.argv[0])
     if file_name == 'hive':
-        hive = pick_best_hive()
+        hive: str
+        if len(sys.argv) > 1:
+            hive = f"hive{sys.argv[1]}.cs"
+        else:
+            hive = pick_best_hive()
         ssh_to_hive(hive)
     elif file_name == 'mount_hive':
         hive = pick_best_hive()

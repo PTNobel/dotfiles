@@ -31,7 +31,7 @@ def calculateCostOfAbilityScores(abilities: AbilityScores) -> int:
 
 def main() -> None:
     totalCost:int = 0
-    while totalCost not in range(30, 37):
+    while totalCost not in range(30, 33):
         totalCost = 0
         abilities: AbilityScores = list()
         # Generate 6 ability scores

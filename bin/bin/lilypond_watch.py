@@ -75,24 +75,6 @@ def processargs(input_argv: List[str]) -> ProcessedArgs:
     return processingArgs.render_processargs()
 
 
-class ShouldExit():
-    _num_of_returns = 0
-    files_returned = []  # type: List[str]
-
-    def __init__(self, num: int) -> None:
-        self._num_of_files = num
-
-    def returnForFile(self, name: str) -> None:
-        self.files_returned.append(name)
-        self._num_of_returns += 1
-
-    def cleanTime(self) -> bool:
-        if self._num_of_returns == self._num_of_files:
-            return True
-        else:
-            return False
-
-
 def main_for_file(args: ProcessedArgs) -> None:
     os.makedirs(os.path.expandvars(args['auxdir']), exist_ok=True)
 
