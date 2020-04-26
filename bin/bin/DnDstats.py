@@ -10,6 +10,7 @@ def calculateCostOfAbilityScores(abilities: AbilityScores) -> int:
     output: int = 0
     for ability in abilities:
         output += {
+                3: -13,
                 4: -10,
                 5: -7,
                 6: -4,
