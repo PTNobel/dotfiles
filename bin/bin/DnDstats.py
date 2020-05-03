@@ -8,6 +8,7 @@ AbilityScore = NewType('AbilityScore', int)
 
 def calculateCostOfAbilityScores(abilities: List[AbilityScore]) -> int:
     return sum({
+                3: -13,
                 4: -10,
                 5: -7,
                 6: -4,
