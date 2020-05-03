@@ -1,15 +1,13 @@
 #!/usr/bin/eval python3
 
 import random
-from typing import List
+from typing import List, NewType
 
-AbilityScores = List[int]
+AbilityScore = NewType('AbilityScore', int)
 
 
-def calculateCostOfAbilityScores(abilities: AbilityScores) -> int:
-    output: int = 0
-    for ability in abilities:
-        output += {
+def calculateCostOfAbilityScores(abilities: List[AbilityScore]) -> int:
+    return sum({
                 4: -10,
                 5: -7,
                 6: -4,
@@ -26,29 +24,29 @@ def calculateCostOfAbilityScores(abilities: AbilityScores) -> int:
                 17: 15,
                 18: 19,
         }[ability]
-    return output
+        for ability in abilities)
 
 
 def main() -> None:
-    totalCost:int = 0
+    totalCost: int = 0
     while totalCost not in range(30, 33):
         totalCost = 0
-        abilities: AbilityScores = list()
+        abilities: AbilityScore = list()
         # Generate 6 ability scores
-        for i in range(6):
-            dieRolls:List[int] = list()
-            
+        for _ in range(6):
+            dieRolls: List[int] = list()
+
             # Roll 4 d6
-            for j in range(4):
+            for _ in range(4):
                 dieRolls.append(random.randint(1, 6))
 
-
             print(dieRolls)
-            abilities.append(sum(sorted(dieRolls)[1:]))
+            abilities.append(AbilityScore(sum(sorted(dieRolls)[1:])))
             print('\t' + str(abilities[-1]))
-        
+
         totalCost = calculateCostOfAbilityScores(abilities)
         print(totalCost)
+
 
 if __name__ == '__main__':
     main()
