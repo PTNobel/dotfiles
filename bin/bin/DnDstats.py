@@ -28,7 +28,7 @@ def calculateCostOfAbilityScores(abilities: List[AbilityScore]) -> int:
         for ability in abilities)
 
 
-def main() -> None:
+def main(offer_rerun=True) -> None:
     totalCost: int = 0
     while totalCost not in range(30, 33):
         totalCost = 0
@@ -41,12 +41,23 @@ def main() -> None:
             for _ in range(4):
                 dieRolls.append(random.randint(1, 6))
 
-            print(dieRolls)
+            #print(dieRolls)
             abilities.append(AbilityScore(sum(sorted(dieRolls)[1:])))
-            print('\t' + str(abilities[-1]))
+            #print('\t' + str(abilities[-1]))
 
         totalCost = calculateCostOfAbilityScores(abilities)
-        print(totalCost)
+    print("Your stats are:")
+    for i in abilities:
+        print('\t', i)
+    print("which is worth", totalCost, "point buy points")
+
+
+    if offer_rerun:
+        answer = ''
+        while answer.lower() not in {'y', 'n'}:
+            answer = input("Do you want to reroll your stats?\nIf you choose to do so you must choose the new stats.\n[y/n]: ")
+        if answer == 'y':
+            main(False)
 
 
 if __name__ == '__main__':
