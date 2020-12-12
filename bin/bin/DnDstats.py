@@ -53,11 +53,8 @@ def main(offer_rerun=True) -> None:
 
 
     if offer_rerun:
-        answer = ''
-        while answer.lower() not in {'y', 'n'}:
-            answer = input("Do you want to reroll your stats?\nIf you choose to do so you must choose the new stats.\n[y/n]: ")
-        if answer == 'y':
-            main(False)
+        main(False)
+        print("Pick your favorite of the two options above!")
 
 
 if __name__ == '__main__':
