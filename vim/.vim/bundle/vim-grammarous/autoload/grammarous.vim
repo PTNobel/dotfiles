@@ -9,22 +9,27 @@ let s:is_cygwin = has('win32unix')
 let s:is_windows = has('win32') || has('win64')
 let s:job_is_available = has('job') && has('patch-8.0.0027')
 
-let g:grammarous#root                            = fnamemodify(expand('<sfile>'), ':p:h:h')
-let g:grammarous#jar_dir                         = get(g:, 'grammarous#jar_dir', g:grammarous#root . '/misc')
-let g:grammarous#jar_url                         = get(g:, 'grammarous#jar_url', 'https://www.languagetool.org/download/LanguageTool-3.8.zip')
+let s:grammarous_root                            = fnamemodify(expand('<sfile>'), ':p:h:h')
+
+let g:grammarous#jar_dir                         = get(g:, 'grammarous#jar_dir', s:grammarous_root . '/misc')
+let g:grammarous#jar_url                         = get(g:, 'grammarous#jar_url', 'https://www.languagetool.org/download/LanguageTool-4.1.zip')
 let g:grammarous#java_cmd                        = get(g:, 'grammarous#java_cmd', 'java')
 let g:grammarous#default_lang                    = get(g:, 'grammarous#default_lang', 'en')
 let g:grammarous#use_vim_spelllang               = get(g:, 'grammarous#use_vim_spelllang', 0)
 let g:grammarous#info_window_height              = get(g:, 'grammarous#info_window_height', 10)
 let g:grammarous#info_win_direction              = get(g:, 'grammarous#info_win_direction', 'botright')
 let g:grammarous#use_fallback_highlight          = get(g:, 'grammarous#use_fallback_highlight', !exists('*matchaddpos'))
+let g:grammarous#enabled_rules                   = get(g:, 'grammarous#enabled_rules', {})
 let g:grammarous#disabled_rules                  = get(g:, 'grammarous#disabled_rules', {'*' : ['WHITESPACE_RULE', 'EN_QUOTES']})
+let g:grammarous#enabled_categories              = get(g:, 'grammarous#enabled_categories', {})
+let g:grammarous#disabled_categories             = get(g:, 'grammarous#disabled_categories', {})
 let g:grammarous#default_comments_only_filetypes = get(g:, 'grammarous#default_comments_only_filetypes', {'*' : 0})
 let g:grammarous#enable_spell_check              = get(g:, 'grammarous#enable_spell_check', 0)
 let g:grammarous#move_to_first_error             = get(g:, 'grammarous#move_to_first_error', 1)
 let g:grammarous#hooks                           = get(g:, 'grammarous#hooks', {})
 let g:grammarous#languagetool_cmd                = get(g:, 'grammarous#languagetool_cmd', '')
 let g:grammarous#show_first_error                = get(g:, 'grammarous#show_first_error', 0)
+let g:grammarous#use_location_list               = get(g:, 'grammarous#use_location_list', 0)
 
 highlight default link GrammarousError SpellBad
 highlight default link GrammarousInfoError ErrorMsg
@@ -109,13 +114,13 @@ function! s:prepare_jar(dir)
     return fnamemodify(jar, ':p')
 endfunction
 
-function! s:init()
+function! s:find_jar_path()
     if exists('s:jar_file')
         return s:jar_file
     endif
 
     if !executable(g:grammarous#java_cmd)
-        call grammarous#error('"java" command not found.  Please install Java 8+ .')
+        call grammarous#error('"java" command not found. Please install Java 8+')
         return ''
     endif
 
@@ -161,6 +166,20 @@ function! s:make_text(text)
     endif
 endfunction
 
+function! s:set_errors_to_location_list() abort
+    let f = expand('%:p')
+    let saved_efm = &l:errorformat
+    try
+        setlocal errorformat=%f:%l:%c:%m
+        let lines = map(copy(b:grammarous_result), '
+                \   printf("%s:%s:%s:%s [%s]", f, v:val.fromy + 1, v:val.fromx + 1, v:val.msg, v:val.category)
+                \')
+        lgetexpr lines
+    finally
+        let &l:errorformat = saved_efm
+    endtry
+endfunction
+
 function! s:set_errors_from_xml_string(xml) abort
     let b:grammarous_result = grammarous#get_errors_from_xml(s:XML.parse(substitute(a:xml, "\n", '', 'g')))
     let parsed = s:last_parsed_options
@@ -185,6 +204,10 @@ function! s:set_errors_from_xml_string(xml) abort
     if g:grammarous#enable_spell_check
         let s:saved_spell = &l:spell
         setlocal spell
+    endif
+
+    if g:grammarous#use_location_list
+        call s:set_errors_to_location_list()
     endif
 
     if g:grammarous#show_first_error
@@ -238,16 +261,14 @@ endfunction
 
 function! s:invoke_check(range_start, ...)
     if g:grammarous#languagetool_cmd ==# ''
-        let jar = s:init()
+        let jar = s:find_jar_path()
         if jar ==# ''
             return
         endif
-    else
-        let jar = ''
     endif
 
     if a:0 < 1
-        call grammarous#error('Invalid argument')
+        call grammarous#error('Invalid argument. At least one argument is required.')
         return
     endif
 
@@ -278,12 +299,31 @@ function! s:invoke_check(range_start, ...)
     endif
 
     let cmdargs = printf(
-            \   '-c %s -d %s -l %s --api %s',
+            \   '-c %s -l %s --api %s',
             \   &fileencoding ? &fileencoding : &encoding,
-            \   string(join(get(g:grammarous#disabled_rules, &filetype, get(g:grammarous#disabled_rules, '*', [])), ',')),
             \   lang,
             \   substitute(tmpfile, '\\\s\@!', '\\\\', 'g')
             \ )
+
+    let disabled_rules = get(g:grammarous#disabled_rules, &filetype, get(g:grammarous#disabled_rules, '*', []))
+    if !empty(disabled_rules)
+        let cmdargs = '-d ' . join(disabled_rules, ',') . ' ' . cmdargs
+    endif
+
+    let enabled_rules = get(g:grammarous#enabled_rules, &filetype, get(g:grammarous#enabled_rules, '*', []))
+    if !empty(enabled_rules)
+        let cmdargs = '-e ' . join(enabled_rules, ',') . ' ' . cmdargs
+    endif
+
+    let disabled_categories = get(g:grammarous#disabled_categories, &filetype, get(g:grammarous#disabled_categories, '*', []))
+    if !empty(disabled_categories)
+        let cmdargs = '--disablecategories ' . join(disabled_categories, ',') . ' ' . cmdargs
+    endif
+
+    let enabled_categories = get(g:grammarous#enabled_categories, &filetype, get(g:grammarous#enabled_categories, '*', []))
+    if !empty(enabled_categories)
+        let cmdargs = '--enablecategories ' . join(enabled_categories, ',') . ' ' . cmdargs
+    endif
 
     if g:grammarous#languagetool_cmd !=# ''
         let cmd = printf('%s %s', g:grammarous#languagetool_cmd, cmdargs)
@@ -431,6 +471,11 @@ function! grammarous#reset()
         execute win . 'wincmd w'
     endif
 
+    if g:grammarous#use_location_list
+        lclose
+        lgetexpr []
+    endif
+
     call grammarous#reset_highlights()
     call grammarous#info_win#stop_auto_preview()
     call grammarous#info_win#close()
@@ -550,7 +595,7 @@ function! grammarous#fixit(err)
     try
         normal! v
         call cursor(a:err.toy+1, a:err.tox)
-        normal! "gy
+        noautocmd normal! "gy
         let from = getreg('g')
         let to = split(a:err.replacements, '#', 1)[0]
         call setreg('g', to, 'v')
@@ -695,6 +740,36 @@ function! grammarous#disable_rule_at(pos, errs)
     endif
 
     return grammarous#disable_rule(e.ruleId, a:errs)
+endfunction
+
+function! grammarous#disable_category(category, errs)
+    call grammarous#info_win#close()
+
+    " Note:
+    " reverse() is needed because of removing elements in list
+    for i in reverse(range(len(a:errs)))
+        let e = a:errs[i]
+
+        if e.categoryid ==# a:category
+            if !s:remove_error_highlight(e)
+                return 0
+            endif
+            unlet a:errs[i]
+        endif
+    endfor
+
+    echomsg 'Disabled category: ' . a:category
+
+    return 1
+endfunction
+
+function! grammarous#disable_category_at(pos, errs)
+    let e = grammarous#get_error_at(a:pos, a:errs)
+    if empty(e)
+        return 0
+    endif
+
+    return grammarous#disable_category(e.categoryid, a:errs)
 endfunction
 
 function! grammarous#move_to_next_error(pos, errs)

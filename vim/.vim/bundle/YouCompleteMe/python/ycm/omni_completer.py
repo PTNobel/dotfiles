@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2013  Google Inc.
+# Copyright (C) 2011-2019 ycmd contributors
 #
 # This file is part of YouCompleteMe.
 #
@@ -14,13 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with YouCompleteMe.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-# Not installing aliases from python-future; it's unreliable and slow.
-from builtins import *  # noqa
 
 import vim
 from ycm import vimsupport
@@ -78,26 +71,38 @@ class OmniCompleter( Completer ):
     if not self._omnifunc:
       return []
 
+    # Calling directly the omnifunc may move the cursor position. This is the
+    # case with the default Vim omnifunc for C-family languages
+    # (ccomplete#Complete) which calls searchdecl to find a declaration. This
+    # function is supposed to move the cursor to the found declaration but it
+    # doesn't when called through the omni completion mapping (CTRL-X CTRL-O).
+    # So, we restore the cursor position after the omnifunc calls.
+    line, column = vimsupport.CurrentLineAndColumn()
+
     try:
-      return_value = vimsupport.GetIntValue( self._omnifunc + '(1,"")' )
-      if return_value < 0:
-        # FIXME: Technically, if the return is -1 we should raise an error
+      start_column = vimsupport.GetIntValue( self._omnifunc + '(1,"")' )
+
+      # Vim only stops completion if the value returned by the omnifunc is -3 or
+      # -2. In other cases, if the value is negative or greater than the current
+      # column, the start column is set to the current column; otherwise, the
+      # value is used as the start column.
+      if start_column in ( -3, -2 ):
         return []
+      if start_column < 0 or start_column > column:
+        start_column = column
 
       # Use the start column calculated by the omnifunc, rather than our own
       # interpretation. This is important for certain languages where our
       # identifier detection is either incorrect or not compatible with the
       # behaviour of the omnifunc. Note: do this before calling the omnifunc
-      # because it affects the value returned by 'query'
-      request_data[ 'start_column' ] = return_value + 1
+      # because it affects the value returned by 'query'.
+      request_data[ 'start_column' ] = start_column + 1
 
-      # Calling directly the omnifunc may move the cursor position. This is the
-      # case with the default Vim omnifunc for C-family languages
-      # (ccomplete#Complete) which calls searchdecl to find a declaration. This
-      # function is supposed to move the cursor to the found declaration but it
-      # doesn't when called through the omni completion mapping (CTRL-X CTRL-O).
-      # So, we restore the cursor position after calling the omnifunc.
-      line, column = vimsupport.CurrentLineAndColumn()
+      # Vim internally moves the cursor to the start column before calling again
+      # the omnifunc. Some omnifuncs like the one defined by the
+      # LanguageClient-neovim plugin depend on this behavior to compute the list
+      # of candidates.
+      vimsupport.SetCurrentLineAndColumn( line, start_column )
 
       omnifunc_call = [ self._omnifunc,
                         "(0,'",
@@ -105,20 +110,34 @@ class OmniCompleter( Completer ):
                         "')" ]
       items = vim.eval( ''.join( omnifunc_call ) )
 
-      vimsupport.SetCurrentLineAndColumn( line, column )
-
       if isinstance( items, dict ) and 'words' in items:
         items = items[ 'words' ]
 
       if not hasattr( items, '__iter__' ):
         raise TypeError( OMNIFUNC_NOT_LIST )
 
-      return list( filter( bool, items ) )
+      # Vim allows each item of the list to be either a string or a dictionary
+      # but ycmd only supports lists where items are all strings or all
+      # dictionaries. Convert all strings into dictionaries.
+      for index, item in enumerate( items ):
+        # Set the 'equal' field to 1 to disable Vim filtering.
+        if not isinstance( item, dict ):
+          items[ index ] = {
+            'word': item,
+            'equal': 1
+          }
+        else:
+          item[ 'equal' ] = 1
+
+      return items
 
     except ( TypeError, ValueError, vim.error ) as error:
       vimsupport.PostVimMessage(
         OMNIFUNC_RETURNED_BAD_VALUE + ' ' + str( error ) )
       return []
+
+    finally:
+      vimsupport.SetCurrentLineAndColumn( line, column )
 
 
   def FilterAndSortCandidatesInner( self, candidates, sort_property, query ):

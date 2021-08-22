@@ -220,6 +220,12 @@ class SwapFilesWatch():
                             full_file_name
                     )
                 )
+                self.swapsToCheck.append(
+                    os.path.join(
+                            os.path.expanduser('~/.local/share/nvim/swap'),
+                            full_file_name
+                    )
+                )
 
     def swapFilesExist(self):
         result = False

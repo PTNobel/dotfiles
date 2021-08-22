@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016 YouCompleteMe Contributors
+# Copyright (C) 2015-2019 YouCompleteMe Contributors
 #
 # This file is part of YouCompleteMe.
 #
@@ -15,63 +15,74 @@
 # You should have received a copy of the GNU General Public License
 # along with YouCompleteMe.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-# Not installing aliases from python-future; it's unreliable and slow.
-from builtins import *  # noqa
-
-from nose.tools import eq_
+import json
+from hamcrest import assert_that, equal_to
 from ycm.tests.test_utils import MockVimModule
 vim_mock = MockVimModule()
 
 from ycm.client import completion_request
 
 
-class ConvertCompletionResponseToVimDatas_test( object ):
+class ConvertCompletionResponseToVimDatas_test:
   """ This class tests the
       completion_request._ConvertCompletionResponseToVimDatas method """
 
-  def _Check( self, completion_id, completion_data, expected_vim_data ):
+  def _Check( self, completion_data, expected_vim_data ):
     vim_data = completion_request._ConvertCompletionDataToVimData(
-        completion_id,
         completion_data )
 
     try:
-      eq_( expected_vim_data, vim_data )
+      assert_that( expected_vim_data, equal_to( vim_data ) )
     except Exception:
-      print( "Expected:\n'{0}'\nwhen parsing:\n'{1}'\nBut found:\n'{2}'".format(
+      print( "Expected:\n'{}'\nwhen parsing:\n'{}'\nBut found:\n'{}'".format(
           expected_vim_data,
           completion_data,
           vim_data ) )
       raise
 
 
-  def All_Fields_test( self ):
-    self._Check( 0, {
+  def AllFields_test( self ):
+    extra_data = {
+        'doc_string':    'DOC STRING',
+    }
+    self._Check( {
       'insertion_text':  'INSERTION TEXT',
       'menu_text':       'MENU TEXT',
       'extra_menu_info': 'EXTRA MENU INFO',
       'kind':            'K',
       'detailed_info':   'DETAILED INFO',
-      'extra_data': {
-        'doc_string':    'DOC STRING',
-      },
+      'extra_data': extra_data,
     }, {
       'word'     : 'INSERTION TEXT',
       'abbr'     : 'MENU TEXT',
       'menu'     : 'EXTRA MENU INFO',
       'kind'     : 'k',
       'info'     : 'DETAILED INFO\nDOC STRING',
+      'equal'    : 1,
       'dup'      : 1,
       'empty'    : 1,
-      'user_data': '0',
+      'user_data': json.dumps( extra_data ),
     } )
 
 
-  def Just_Detailed_Info_test( self ):
-    self._Check( 9999999999, {
+  def OnlyInsertionTextField_test( self ):
+    self._Check( {
+      'insertion_text':  'INSERTION TEXT'
+    }, {
+      'word'     : 'INSERTION TEXT',
+      'abbr'     : '',
+      'menu'     : '',
+      'kind'     : '',
+      'info'     : '',
+      'equal'    : 1,
+      'dup'      : 1,
+      'empty'    : 1,
+      'user_data': '{}',
+    } )
+
+
+  def JustDetailedInfo_test( self ):
+    self._Check( {
       'insertion_text':  'INSERTION TEXT',
       'menu_text':       'MENU TEXT',
       'extra_menu_info': 'EXTRA MENU INFO',
@@ -83,35 +94,38 @@ class ConvertCompletionResponseToVimDatas_test( object ):
       'menu'     : 'EXTRA MENU INFO',
       'kind'     : 'k',
       'info'     : 'DETAILED INFO',
+      'equal'    : 1,
       'dup'      : 1,
       'empty'    : 1,
-      'user_data': '9999999999',
+      'user_data': '{}',
     } )
 
 
-  def Just_Doc_String_test( self ):
-    self._Check( 'not_an_int', {
+  def JustDocString_test( self ):
+    extra_data = {
+      'doc_string':    'DOC STRING',
+    }
+    self._Check( {
       'insertion_text':  'INSERTION TEXT',
       'menu_text':       'MENU TEXT',
       'extra_menu_info': 'EXTRA MENU INFO',
       'kind':            'K',
-      'extra_data': {
-        'doc_string':    'DOC STRING',
-      },
+      'extra_data': extra_data,
     }, {
       'word'     : 'INSERTION TEXT',
       'abbr'     : 'MENU TEXT',
       'menu'     : 'EXTRA MENU INFO',
       'kind'     : 'k',
       'info'     : 'DOC STRING',
+      'equal'    : 1,
       'dup'      : 1,
       'empty'    : 1,
-      'user_data': 'not_an_int',
+      'user_data': json.dumps( extra_data ),
     } )
 
 
-  def Extra_Info_No_Doc_String_test( self ):
-    self._Check( 0, {
+  def ExtraInfoNoDocString_test( self ):
+    self._Check( {
       'insertion_text':  'INSERTION TEXT',
       'menu_text':       'MENU TEXT',
       'extra_menu_info': 'EXTRA MENU INFO',
@@ -123,14 +137,40 @@ class ConvertCompletionResponseToVimDatas_test( object ):
       'abbr'     : 'MENU TEXT',
       'menu'     : 'EXTRA MENU INFO',
       'kind'     : 'k',
+      'info'     : '',
+      'equal'    : 1,
       'dup'      : 1,
       'empty'    : 1,
-      'user_data': '0',
+      'user_data': '{}',
     } )
 
 
-  def Extra_Info_No_Doc_String_With_Detailed_Info_test( self ):
-    self._Check( '0', {
+  def NullCharactersInExtraInfoAndDocString_test( self ):
+    extra_data = {
+      'doc_string': 'DOC\x00STRING'
+    }
+    self._Check( {
+      'insertion_text':  'INSERTION TEXT',
+      'menu_text':       'MENU TEXT',
+      'extra_menu_info': 'EXTRA MENU INFO',
+      'kind':            'K',
+      'detailed_info':   'DETAILED\x00INFO',
+      'extra_data': extra_data,
+    }, {
+      'word'     : 'INSERTION TEXT',
+      'abbr'     : 'MENU TEXT',
+      'menu'     : 'EXTRA MENU INFO',
+      'kind'     : 'k',
+      'info'     : 'DETAILEDINFO\nDOCSTRING',
+      'equal'    : 1,
+      'dup'      : 1,
+      'empty'    : 1,
+      'user_data': json.dumps( extra_data ),
+    } )
+
+
+  def ExtraInfoNoDocStringWithDetailedInfo_test( self ):
+    self._Check( {
       'insertion_text':  'INSERTION TEXT',
       'menu_text':       'MENU TEXT',
       'extra_menu_info': 'EXTRA MENU INFO',
@@ -144,50 +184,32 @@ class ConvertCompletionResponseToVimDatas_test( object ):
       'menu'     : 'EXTRA MENU INFO',
       'kind'     : 'k',
       'info'     : 'DETAILED INFO',
+      'equal'    : 1,
       'dup'      : 1,
       'empty'    : 1,
-      'user_data': '0',
+      'user_data': '{}',
     } )
 
 
-  def Empty_Insertion_Text_test( self ):
-    self._Check( 0, {
+  def EmptyInsertionText_test( self ):
+    extra_data = {
+      'doc_string':    'DOC STRING',
+    }
+    self._Check( {
       'insertion_text':  '',
       'menu_text':       'MENU TEXT',
       'extra_menu_info': 'EXTRA MENU INFO',
       'kind':            'K',
       'detailed_info':   'DETAILED INFO',
-      'extra_data': {
-        'doc_string':    'DOC STRING',
-      },
+      'extra_data': extra_data,
     }, {
       'word'     : '',
       'abbr'     : 'MENU TEXT',
       'menu'     : 'EXTRA MENU INFO',
       'kind'     : 'k',
       'info'     : 'DETAILED INFO\nDOC STRING',
+      'equal'    : 1,
       'dup'      : 1,
       'empty'    : 1,
-      'user_data': '0',
-    } )
-
-
-  def No_Insertion_Text_test( self ):
-    self._Check( 0, {
-      'menu_text':       'MENU TEXT',
-      'extra_menu_info': 'EXTRA MENU INFO',
-      'kind':            'K',
-      'detailed_info':   'DETAILED INFO',
-      'extra_data': {
-        'doc_string':    'DOC STRING',
-      },
-    }, {
-      'word'     : '',
-      'abbr'     : 'MENU TEXT',
-      'menu'     : 'EXTRA MENU INFO',
-      'kind'     : 'k',
-      'info'     : 'DETAILED INFO\nDOC STRING',
-      'dup'      : 1,
-      'empty'    : 1,
-      'user_data': '0'
+      'user_data': json.dumps( extra_data ),
     } )

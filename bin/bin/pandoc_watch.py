@@ -149,7 +149,7 @@ def main_for_file(args: ProcessedArgs) -> None:
     )
     args['build'].build()
     if not args['disable_viewer']:
-        subprocess.call(['rifle', pdfname])
+        subprocess.Popen(['zathura', pdfname])
     if os.getenv('VIM', False):
         return
 

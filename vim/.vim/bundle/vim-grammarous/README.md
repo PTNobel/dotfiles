@@ -1,7 +1,7 @@
 vim-grammarous
 ==============
 
-vim-grammarous is a powerful grammar checker for Vim.  Simply do `:GrammarousCheck` to see the powerful checking.
+vim-grammarous is a powerful grammar checker for Vim. Simply do `:GrammarousCheck` to see the powerful checking.
 This plugin automatically downloads [LanguageTool](https://www.languagetool.org/), which requires Java 8+.
 
 This plugin can use job feature on Vim 8.0.27 (or later) or Neovim. It enables asynchronous command execution so you don't need to
@@ -20,7 +20,7 @@ Execute the grammar checker for current buffer (when `[range]` is specified, the
 
 1. It makes LanguageTool check grammar (It takes a while)
 2. It highlights the locations of detected grammar errors
-3. When you move the cursor to a location of an error, it automatically shows the error with the information window.
+3. When you move the cursor to a location of an error, it automatically shows the error with the information window (named `[Grammarous]`).
 
 Please do `:GrammarousCheck --help` to show more detail about the command.
 
@@ -50,11 +50,18 @@ You can use some mappings in the information window, which is opened to show the
 
 ### `<Plug>` mappings to execute actions anywhere
 
-vim-grammarous provides these global mappings in normal mode.  You can set them to your favorite keys by `:nmap`.
-However, above local mappings are enough to deal with grammar errors.  They are not always necessary.
+The above local mappings are enough to deal with grammar errors.
+
+However, for a more convenient use, vim-grammarous provides the following global mappings to enable
+using all grammarous actions globally within vim. This might be beneficial, as the standard mappings
+only work within the info window, which loses focus after every action.
+
+By mapping the actions listed below to your favorite shortcuts, it is possible to map all actions
+that work within the info window, to work globally within vim. This is done via `:nmap` and an example
+for a mapping would be `:nmap <F5> (grammarous-move-to-next-error)`.
 
 | Mappings                                    | Description                                          |
-| -----------------------------------------   |:---------------------------------------------------- |
+| ------------------------------------------- |:---------------------------------------------------- |
 | `<Plug>(grammarous-move-to-info-window)`    | Move the cursor to the info window                   |
 | `<Plug>(grammarous-open-info-window)`       | Open the info window for the error under the cursor  |
 | `<Plug>(grammarous-reset)`                  | Reset the current check                              |
@@ -87,8 +94,8 @@ Execute below command in the buffer already checked or you want to check.
 
 ### `grammarous` denite.nvim source
 
-For [denite.nvim](https://github.com/Shougo/denite.nvim) users, `grammarous` denite source is available. Note that the kind is currently set to `file`, which means that actions a user can use are limited to open(jump), preview, etc.
-Execute below command in the buffer already checked.
+For [denite.nvim](https://github.com/Shougo/denite.nvim) users, `grammarous` denite source is available. Note that the kind is currently set to `file`,
+which means that actions a user can use are limited to open(jump), preview, etc. Execute below command in the buffer already checked.
 
 ```
 :Denite grammarous
@@ -116,6 +123,17 @@ let g:grammarous#default_comments_only_filetypes = {
             \ }
 ```
 
+### How are rules added to the default rule set?
+
+Please use `g:grammarous#enabled_rules` to enable additional rules. The value is dictionary whose keys
+are a filetype (`*` means 'any') and whose values are a list of rule names.
+
+For example, below setting enables `PASSIVE_VOICE` rule in all filetypes.
+
+```vim
+let g:grammarous#enabled_rules = {'*' : ['PASSIVE_VOICE']}
+```
+
 ### Some rules annoy me.
 
 Please use `g:grammarous#disabled_rules` to disable specific rules.
@@ -129,7 +147,33 @@ let g:grammarous#disabled_rules = {
             \ }
 ```
 
-The rule names are displayed in Vim command line when you disable the rule in the info window or `<Plug>(grammarous-disable-rule)`.
+The rule names are displayed in Vim command line when you disable the rule in the info window or by `<Plug>(grammarous-disable-rule)`.
+
+### How are categories added to the default rule set?
+
+Please use `g:grammarous#enabled_categories` to enable additional categories. The value is dictionary whose keys
+are a filetype (`*` means 'any') and whose values are a list of categories names.
+
+For example, below setting enables `PASSIVE_VOICE` rule in all filetypes.
+
+```vim
+let g:grammarous#enabled_categories = {'*' : ['PUNCTUATION']}
+```
+
+### Some categories annoy me.
+
+Please use `g:grammarous#disabled_categories` to disable specific categories.
+
+For example, below setting disables some categories for each filetype. `*` means all filetypes, `help` means vim help.
+
+```vim
+let g:grammarous#disabled_categories = {
+            \ '*' : ['PUNCTUATION'],
+            \ 'help' : ['PUNCTUATION', 'TYPOGRAPHY'],
+            \ }
+```
+
+The category names are displayed in Vim command line when you disable the category in the info window or by `<Plug>(grammarous-disable-category)`.
 
 ### How do I use this plugin with vim's spelllang?
 
@@ -169,11 +213,15 @@ let g:grammarous#languagetool_cmd = 'languagetool'
 
 Please set `g:grammarous#show_first_error` to `1`. It opens an information window after `:GrammarousCheck` immediately when some error detected.
 
+### I want to use a location list to jump among errors
+
+Please set `g:grammarous#use_location_list` to `1`. It sets all grammatical errors to location list.
+This variable is set to `0` by default to avoid conflicts of location list usage with other plugins.
 
 ## Automatic installation
 
 This plugin attempts to install [LanguageTool](https://www.languagetool.org/) using `curl` or `wget` command at first time.
-If it fails, you should install it manually.  Please download zip file of LanguageTool and extract it to `path/to/vim-grammarous/misc`.
+If it fails, you should install it manually. Please download zip file of LanguageTool and extract it to `path/to/vim-grammarous/misc`.
 
 
 ## Requirements
@@ -186,7 +234,7 @@ If it fails, you should install it manually.  Please download zip file of Langua
 
 ## Future
 
-- __Ignore specific regions__ : Enable to specify the region which vim-grammarous should not check.  It is helpful for GFM's fenced code blocks.
+- __Ignore specific regions__ : Enable to specify the region which vim-grammarous should not check. It is helpful for GFM's fenced code blocks.
 - __Incremental grammarous check__ : Check only the sentences you input while starting from entering and leaving insert mode.
 
 

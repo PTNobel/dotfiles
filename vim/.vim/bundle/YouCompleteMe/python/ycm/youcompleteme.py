@@ -15,14 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with YouCompleteMe.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-# Not installing aliases from python-future; it's unreliable and slow.
-from builtins import *  # noqa
-
-from future.utils import iteritems
 import base64
 import json
 import logging
@@ -31,11 +23,9 @@ import signal
 import vim
 from subprocess import PIPE
 from tempfile import NamedTemporaryFile
-from ycm import base, paths, vimsupport
-from ycm.buffer import ( BufferDict,
-                         DIAGNOSTIC_UI_FILETYPES,
-                         DIAGNOSTIC_UI_ASYNC_FILETYPES )
-from ycmd import server_utils, user_options_store, utils
+from ycm import base, paths, signature_help, vimsupport
+from ycm.buffer import BufferDict
+from ycmd import utils
 from ycmd.request_wrap import RequestWrap
 from ycm.omni_completer import OmniCompleter
 from ycm import syntax_parse
@@ -44,6 +34,8 @@ from ycm.client.base_request import BaseRequest, BuildRequestData
 from ycm.client.completer_available_request import SendCompleterAvailableRequest
 from ycm.client.command_request import SendCommandRequest
 from ycm.client.completion_request import CompletionRequest
+from ycm.client.signature_help_request import ( SignatureHelpRequest,
+                                                SigHelpAvailableByFileType )
 from ycm.client.debug_info_request import ( SendDebugInfoRequest,
                                             FormatDebugInfoResponse )
 from ycm.client.omni_completion_request import OmniCompletionRequest
@@ -85,17 +77,12 @@ CORE_UNEXPECTED_MESSAGE = (
 CORE_MISSING_MESSAGE = (
   'YCM core library not detected; you need to compile YCM before using it. '
   'Follow the instructions in the documentation.' )
-CORE_PYTHON2_MESSAGE = (
-  "YCM core library compiled for Python 2 but loaded in Python 3. "
-  "Set the 'g:ycm_server_python_interpreter' option to a Python 2 "
-  "interpreter path." )
-CORE_PYTHON3_MESSAGE = (
-  "YCM core library compiled for Python 3 but loaded in Python 2. "
-  "Set the 'g:ycm_server_python_interpreter' option to a Python 3 "
-  "interpreter path." )
 CORE_OUTDATED_MESSAGE = (
   'YCM core library too old; PLEASE RECOMPILE by running the install.py '
   'script. See the documentation for more details.' )
+NO_PYTHON2_SUPPORT_MESSAGE = (
+  'YCM has dropped support for python2. '
+  'You need to recompile it with python3 instead.' )
 SERVER_IDLE_SUICIDE_SECONDS = 1800  # 30 minutes
 CLIENT_LOGFILE_FORMAT = 'ycm_'
 SERVER_LOGFILE_FORMAT = 'ycmd_{port}_{std}_'
@@ -105,7 +92,7 @@ SERVER_LOGFILE_FORMAT = 'ycmd_{port}_{std}_'
 HANDLE_FLAG_INHERIT = 0x00000001
 
 
-class YouCompleteMe( object ):
+class YouCompleteMe:
   def __init__( self ):
     self._available_completers = {}
     self._user_options = None
@@ -113,6 +100,9 @@ class YouCompleteMe( object ):
     self._omnicomp = None
     self._buffers = None
     self._latest_completion_request = None
+    self._latest_signature_help_request = None
+    self._signature_help_available_requests = SigHelpAvailableByFileType()
+    self._signature_help_state = signature_help.SignatureHelpState()
     self._logger = logging.getLogger( 'ycm' )
     self._client_logfile = None
     self._server_stdout = None
@@ -131,11 +121,9 @@ class YouCompleteMe( object ):
     self._user_notified_about_crash = False
     self._filetypes_with_keywords_loaded = set()
     self._server_is_ready_with_cache = False
-    self._message_poll_request = None
+    self._message_poll_requests = {}
 
-    base.LoadJsonDefaultsIntoVim()
-    user_options_store.SetAll( base.BuildServerConf() )
-    self._user_options = user_options_store.GetAll()
+    self._user_options = base.GetUserOptions()
     self._omnicomp = OmniCompleter( self._user_options )
     self._buffers = BufferDict( self._user_options )
 
@@ -254,23 +242,22 @@ class YouCompleteMe( object ):
 
     return_code = self._server_popen.poll()
     logfile = os.path.basename( self._server_stderr )
-    if return_code == server_utils.CORE_UNEXPECTED_STATUS:
-      error_message = CORE_UNEXPECTED_MESSAGE.format(
-          logfile = logfile )
-    elif return_code == server_utils.CORE_MISSING_STATUS:
+    # See https://github.com/Valloric/ycmd#exit-codes for the list of exit
+    # codes.
+    if return_code == 3:
+      error_message = CORE_UNEXPECTED_MESSAGE.format( logfile = logfile )
+    elif return_code == 4:
       error_message = CORE_MISSING_MESSAGE
-    elif return_code == server_utils.CORE_PYTHON2_STATUS:
-      error_message = CORE_PYTHON2_MESSAGE
-    elif return_code == server_utils.CORE_PYTHON3_STATUS:
-      error_message = CORE_PYTHON3_MESSAGE
-    elif return_code == server_utils.CORE_OUTDATED_STATUS:
+    elif return_code == 7:
       error_message = CORE_OUTDATED_MESSAGE
+    elif return_code == 8:
+      error_message = NO_PYTHON2_SUPPORT_MESSAGE
     else:
-      error_message = EXIT_CODE_UNEXPECTED_MESSAGE.format(
-          code = return_code,
-          logfile = logfile )
+      error_message = EXIT_CODE_UNEXPECTED_MESSAGE.format( code = return_code,
+                                                           logfile = logfile )
 
-    error_message = SERVER_SHUTDOWN_MESSAGE + ' ' + error_message
+    if return_code != 8:
+      error_message = SERVER_SHUTDOWN_MESSAGE + ' ' + error_message
     self._logger.error( error_message )
     vimsupport.PostVimMessage( error_message )
 
@@ -294,6 +281,7 @@ class YouCompleteMe( object ):
   def SendCompletionRequest( self, force_semantic = False ):
     request_data = BuildRequestData()
     request_data[ 'force_semantic' ] = force_semantic
+
     if not self.NativeFiletypeCompletionUsable():
       wrapped_request_data = RequestWrap( request_data )
       if self._omnicomp.ShouldUseNow( wrapped_request_data ):
@@ -319,13 +307,87 @@ class YouCompleteMe( object ):
     return response
 
 
+  def SignatureHelpAvailableRequestComplete( self, filetype, send_new=True ):
+    """Triggers or polls signature help available request. Returns whether or
+    not the request is complete. When send_new is False, won't send a new
+    request, only return the current status (This is used by the tests)"""
+    if not send_new and filetype not in self._signature_help_available_requests:
+      return False
+
+    return self._signature_help_available_requests[ filetype ].Done()
+
+
+  def SendSignatureHelpRequest( self ):
+    """Send a signature help request, if we're ready to. Return whether or not a
+    request was sent (and should be checked later)"""
+    if not self.NativeFiletypeCompletionUsable():
+      return False
+
+    for filetype in vimsupport.CurrentFiletypes():
+      if not self.SignatureHelpAvailableRequestComplete( filetype ):
+        continue
+
+      sig_help_available = self._signature_help_available_requests[
+          filetype ].Response()
+      if sig_help_available == 'NO':
+        continue
+
+      if sig_help_available == 'PENDING':
+        # Send another /signature_help_available request
+        self._signature_help_available_requests[ filetype ].Start( filetype )
+        continue
+
+      if not self._latest_completion_request:
+        return False
+
+      request_data = self._latest_completion_request.request_data.copy()
+      request_data[ 'signature_help_state' ] = self._signature_help_state.state
+
+      self._AddExtraConfDataIfNeeded( request_data )
+
+      self._latest_signature_help_request = SignatureHelpRequest( request_data )
+      self._latest_signature_help_request.Start()
+      return True
+
+    return False
+
+
+  def SignatureHelpRequestReady( self ):
+    return bool( self._latest_signature_help_request and
+                 self._latest_signature_help_request.Done() )
+
+
+  def GetSignatureHelpResponse( self ):
+    return self._latest_signature_help_request.Response()
+
+
+  def ClearSignatureHelp( self ):
+    self.UpdateSignatureHelp( {} )
+    if self._latest_signature_help_request:
+      self._latest_signature_help_request.Reset()
+
+
+  def UpdateSignatureHelp( self, signature_info ):
+    self._signature_help_state = signature_help.UpdateSignatureHelp(
+      self._signature_help_state,
+      signature_info )
+
+
   def SendCommandRequest( self,
                           arguments,
-                          completer,
                           modifiers,
                           has_range,
                           start_line,
                           end_line ):
+    final_arguments = []
+    for argument in arguments:
+      # The ft= option which specifies the completer when running a command is
+      # ignored because it has not been working for a long time. The option is
+      # still parsed to not break users that rely on it.
+      if argument.startswith( 'ft=' ):
+        continue
+      final_arguments.append( argument )
+
     extra_data = {
       'options': {
         'tab_size': vimsupport.GetIntValue( 'shiftwidth()' ),
@@ -335,7 +397,11 @@ class YouCompleteMe( object ):
     if has_range:
       extra_data.update( vimsupport.BuildRange( start_line, end_line ) )
     self._AddExtraConfDataIfNeeded( extra_data )
-    return SendCommandRequest( arguments, completer, modifiers, extra_data )
+
+    return SendCommandRequest( final_arguments,
+                               modifiers,
+                               self._user_options[ 'goto_buffer_command' ],
+                               extra_data )
 
 
   def GetDefinedSubcommands( self ):
@@ -383,6 +449,9 @@ class YouCompleteMe( object ):
 
 
   def UpdateWithNewDiagnosticsForFile( self, filepath, diagnostics ):
+    if not self._user_options[ 'show_diagnostics_ui' ]:
+      return
+
     bufnr = vimsupport.GetBufferNumberForFilename( filepath )
     if bufnr in self._buffers and vimsupport.BufferIsVisible( bufnr ):
       # Note: We only update location lists, etc. for visible buffers, because
@@ -421,18 +490,17 @@ class YouCompleteMe( object ):
       # Try again in a jiffy
       return True
 
-    if not self._message_poll_request:
-      self._message_poll_request = MessagesPoll()
+    for w in vim.windows:
+      for filetype in vimsupport.FiletypesForBuffer( w.buffer ):
+        if filetype not in self._message_poll_requests:
+          self._message_poll_requests[ filetype ] = MessagesPoll( w.buffer )
 
-    if not self._message_poll_request.Poll( self ):
-      # Don't poll again until some event which might change the server's mind
-      # about whether to provide messages for the current buffer (e.g. buffer
-      # visit, file ready to parse, etc.)
-      self._message_poll_request = None
-      return False
+        # None means don't poll this filetype
+        if ( self._message_poll_requests[ filetype ] and
+             not self._message_poll_requests[ filetype ].Poll( self ) ):
+          self._message_poll_requests[ filetype ] = None
 
-    # Poll again in a jiffy
-    return True
+    return any( self._message_poll_requests.values() )
 
 
   def OnFileReadyToParse( self ):
@@ -459,7 +527,19 @@ class YouCompleteMe( object ):
     self.CurrentBuffer().UpdateMatches()
 
 
+  def OnFileTypeSet( self ):
+    buffer_number = vimsupport.GetCurrentBufferNumber()
+    filetypes = vimsupport.CurrentFiletypes()
+    self._buffers[ buffer_number ].UpdateFromFileTypes( filetypes )
+    self.OnBufferVisit()
+
+
   def OnBufferVisit( self ):
+    for filetype in vimsupport.CurrentFiletypes():
+      # Send the signature help available request for these filetypes if we need
+      # to (as a side effect of checking if it is complete)
+      self.SignatureHelpAvailableRequestComplete( filetype, True )
+
     extra_data = {}
     self._AddUltiSnipsDataIfNeeded( extra_data )
     SendEventNotificationAsync( 'BufferVisit', extra_data = extra_data )
@@ -507,17 +587,6 @@ class YouCompleteMe( object ):
     return self.CurrentBuffer().GetWarningCount()
 
 
-  def DiagnosticUiSupportedForCurrentFiletype( self ):
-    return any( x in DIAGNOSTIC_UI_FILETYPES or
-                x in DIAGNOSTIC_UI_ASYNC_FILETYPES
-                for x in vimsupport.CurrentFiletypes() )
-
-
-  def ShouldDisplayDiagnostics( self ):
-    return bool( self._user_options[ 'show_diagnostics_ui' ] and
-                 self.DiagnosticUiSupportedForCurrentFiletype() )
-
-
   def _PopulateLocationListWithLatestDiagnostics( self ):
     return self.CurrentBuffer().PopulateLocationList()
 
@@ -540,15 +609,12 @@ class YouCompleteMe( object ):
          current_buffer.FileParseRequestReady( block ) and
          self.NativeFiletypeCompletionUsable() ):
 
-      if self.ShouldDisplayDiagnostics():
+      if self._user_options[ 'show_diagnostics_ui' ]:
         # Forcefuly update the location list, etc. from the parse request when
         # doing something like :YcmDiags
-        current_buffer.UpdateDiagnostics( block is True )
+        current_buffer.UpdateDiagnostics( block )
       else:
-        # YCM client has a hard-coded list of filetypes which are known
-        # to support diagnostics, self.DiagnosticUiSupportedForCurrentFiletype()
-        #
-        # For filetypes which don't support diagnostics, we just want to check
+        # If the user disabled diagnostics, we just want to check
         # the _latest_file_parse_request for any exception or UnknownExtraConf
         # response, to allow the server to raise configuration warnings, etc.
         # to the user. We ignore any other supplied data.
@@ -593,7 +659,9 @@ class YouCompleteMe( object ):
                       self._server_stdout,
                       self._server_stderr ]
 
-    debug_info = SendDebugInfoRequest()
+    extra_data = {}
+    self._AddExtraConfDataIfNeeded( extra_data )
+    debug_info = SendDebugInfoRequest( extra_data )
     if debug_info:
       completer = debug_info[ 'completer' ]
       if completer:
@@ -628,7 +696,7 @@ class YouCompleteMe( object ):
   def ToggleLogs( self, *filenames ):
     logfiles = self.GetLogfiles()
     if not filenames:
-      sorted_logfiles = sorted( list( logfiles ) )
+      sorted_logfiles = sorted( logfiles )
       try:
         logfile_index = vimsupport.SelectFromList(
           'Which logfile do you wish to open (or close if already open)?',
@@ -749,5 +817,5 @@ class YouCompleteMe( object ):
     extra_data[ 'ultisnips_snippets' ] = [
       { 'trigger': trigger,
         'description': snippet[ 'description' ] }
-      for trigger, snippet in iteritems( snippets )
+      for trigger, snippet in snippets.items()
     ]

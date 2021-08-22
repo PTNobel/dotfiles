@@ -1,13 +1,7 @@
-bash
 bin
+starship
 contrib
-i3
-mpd
-pentadactyl
-screen
 systemd
 tmux
-vim
 nvim
-X
 zsh

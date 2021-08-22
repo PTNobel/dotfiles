@@ -126,7 +126,8 @@ def find_files(argv: List[str]):
                             argv + [file_name[1:-4]])
                     )
             )
-    for file_name in os.listdir(os.path.expanduser('~/.cache/vim/swap')):
+    for file_name in os.listdir(os.path.expanduser('~/.cache/vim/swap')) + \
+            os.listdir(os.path.expanduser('~/.local/share/nvim/swap')):
         if len(file_name) > 8 and file_name[-8:] == '.tex.swp' \
                 and is_swap_in_cur_dir(file_name, cur_dir):
                 output.append(

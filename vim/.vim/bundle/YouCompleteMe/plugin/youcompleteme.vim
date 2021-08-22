@@ -54,10 +54,20 @@ elseif !has( 'timers' )
         \ echohl None
   call s:restore_cpo()
   finish
-elseif !has( 'python' ) && !has( 'python3' )
+elseif ( v:version > 800 || ( v:version == 800 && has( 'patch1436' ) ) ) &&
+     \ !has( 'python3_compiled' )
   echohl WarningMsg |
         \ echomsg "YouCompleteMe unavailable: requires Vim compiled with " .
-        \ "Python (2.7.1+ or 3.4+) support." |
+        \ "Python (3.5.1+) support." |
+        \ echohl None
+  call s:restore_cpo()
+  finish
+" These calls try to load the Python 3 libraries when Vim is
+" compiled dynamically against them. Since only one can be loaded at a time on
+" some platforms, we first check if Python 3 is available.
+elseif !has( 'python3' )
+  echohl WarningMsg |
+        \ echomsg "YouCompleteMe unavailable: unable to load Python." |
         \ echohl None
   call s:restore_cpo()
   finish
@@ -72,11 +82,36 @@ endif
 
 let g:loaded_youcompleteme = 1
 
-" NOTE: Most defaults are in third_party/ycmd/ycmd/default_settings.json. They
-" are loaded into Vim globals with the 'ycm_' prefix if such a key does not
-" already exist; thus, the user can override the defaults.
-" The only defaults that are here are the ones that are only relevant to the YCM
-" Vim client and not the ycmd server.
+let s:default_options = {}
+if exists( '*json_decode' )
+  let s:script_folder_path = expand( '<sfile>:p:h' )
+  let s:option_file = s:script_folder_path .
+        \ '/../third_party/ycmd/ycmd/default_settings.json'
+  if filereadable( s:option_file )
+    let s:default_options = json_decode( join( readfile( s:option_file ) ) )
+  endif
+endif
+
+"
+" List of YCM options.
+"
+let g:ycm_filetype_whitelist =
+      \ get( g:, 'ycm_filetype_whitelist', { "*": 1 } )
+
+let g:ycm_filetype_blacklist =
+      \ get( g:, 'ycm_filetype_blacklist', {
+      \   'tagbar': 1,
+      \   'notes': 1,
+      \   'markdown': 1,
+      \   'netrw': 1,
+      \   'unite': 1,
+      \   'text': 1,
+      \   'vimwiki': 1,
+      \   'pandoc': 1,
+      \   'infolog': 1,
+      \   'leaderf': 1,
+      \   'mail': 1
+      \ } )
 
 let g:ycm_open_loclist_on_ycm_diags =
       \ get( g:, 'ycm_open_loclist_on_ycm_diags', 1 )
@@ -138,6 +173,9 @@ let g:ycm_echo_current_diagnostic =
       \ get( g:, 'ycm_echo_current_diagnostic',
       \ get( g:, 'syntastic_echo_current_error', 1 ) )
 
+let g:ycm_filter_diagnostics =
+      \ get( g:, 'ycm_filter_diagnostics', {} )
+
 let g:ycm_always_populate_location_list =
       \ get( g:, 'ycm_always_populate_location_list',
       \ get( g:, 'syntastic_always_populate_loc_list', 0 ) )
@@ -150,11 +188,121 @@ let g:ycm_warning_symbol =
       \ get( g:, 'ycm_warning_symbol',
       \ get( g:, 'syntastic_warning_symbol', '>>' ) )
 
+let g:ycm_complete_in_comments =
+      \ get( g:, 'ycm_complete_in_comments', 0 )
+
+let g:ycm_complete_in_strings =
+      \ get( g:, 'ycm_complete_in_strings', 1 )
+
+let g:ycm_collect_identifiers_from_tags_files =
+      \ get( g:, 'ycm_collect_identifiers_from_tags_files', 0 )
+
+let g:ycm_seed_identifiers_with_syntax =
+      \ get( g:, 'ycm_seed_identifiers_with_syntax', 0 )
+
 let g:ycm_goto_buffer_command =
       \ get( g:, 'ycm_goto_buffer_command', 'same-buffer' )
 
 let g:ycm_disable_for_files_larger_than_kb =
       \ get( g:, 'ycm_disable_for_files_larger_than_kb', 1000 )
+
+"
+" List of ycmd options.
+"
+let g:ycm_filepath_completion_use_working_dir =
+      \ get( g:, 'ycm_filepath_completion_use_working_dir', 0 )
+
+let g:ycm_auto_trigger =
+      \ get( g:, 'ycm_auto_trigger', 1 )
+
+let g:ycm_min_num_of_chars_for_completion =
+      \ get( g:, 'ycm_min_num_of_chars_for_completion', 2 )
+
+let g:ycm_min_identifier_candidate_chars =
+      \ get( g:, 'ycm_min_num_identifier_candidate_chars', 0 )
+
+let g:ycm_semantic_triggers =
+      \ get( g:, 'ycm_semantic_triggers', {} )
+
+let g:ycm_filetype_specific_completion_to_disable =
+      \ get( g:, 'ycm_filetype_specific_completion_to_disable',
+      \      { 'gitcommit': 1 } )
+
+let g:ycm_collect_identifiers_from_comments_and_strings =
+      \ get( g:, 'ycm_collect_identifiers_from_comments_and_strings', 0 )
+
+let g:ycm_max_num_identifier_candidates =
+      \ get( g:, 'ycm_max_num_identifier_candidates', 10 )
+
+let g:ycm_max_num_candidates =
+      \ get( g:, 'ycm_max_num_candidates', 50 )
+
+let g:ycm_extra_conf_globlist =
+      \ get( g:, 'ycm_extra_conf_globlist', [] )
+
+let g:ycm_global_ycm_extra_conf =
+      \ get( g:, 'ycm_global_ycm_extra_conf', '' )
+
+let g:ycm_confirm_extra_conf =
+      \ get( g:, 'ycm_confirm_extra_conf', 1 )
+
+let g:ycm_max_diagnostics_to_display =
+      \ get( g:, 'ycm_max_diagnostics_to_display', 30 )
+
+let g:ycm_filepath_blacklist =
+      \ get( g:, 'ycm_filepath_blacklist', {
+      \   'html': 1,
+      \   'jsx': 1,
+      \   'xml': 1
+      \ } )
+
+let g:ycm_auto_start_csharp_server =
+      \ get( g:, 'ycm_auto_start_csharp_server', 1 )
+
+let g:ycm_auto_stop_csharp_server =
+      \ get( g:, 'ycm_auto_stop_csharp_server', 1 )
+
+let g:ycm_use_ultisnips_completer =
+      \ get( g:, 'ycm_use_ultisnips_completer', 1 )
+
+let g:ycm_csharp_server_port =
+      \ get( g:, 'ycm_csharp_server_port', 0 )
+
+let g:ycm_use_clangd =
+      \ get( g:, 'ycm_use_clangd', 1 )
+
+let g:ycm_clangd_binary_path =
+      \ get( g:, 'ycm_clangd_binary_path', '' )
+
+let g:ycm_clangd_args =
+      \ get( g:, 'ycm_clangd_args', [] )
+
+let g:ycm_clangd_uses_ycmd_caching =
+      \ get( g:, 'ycm_clangd_uses_ycmd_caching', 1 )
+
+" These options are not documented.
+let g:ycm_java_jdtls_extension_path =
+      \ get( g:, 'ycm_java_jdtls_extension_path', [] )
+
+let g:ycm_java_jdtls_use_clean_workspace =
+      \ get( g:, 'ycm_java_jdtls_use_clean_workspace', 1 )
+
+let g:ycm_java_jdtls_workspace_root_path =
+      \ get( g:, 'ycm_java_jdtls_workspace_root_path', '' )
+
+" This option is deprecated.
+let g:ycm_python_binary_path =
+      \ get( g:, 'ycm_python_binary_path', '' )
+
+" Populate any other (undocumented) options set in the ycmd
+" default_settings.json. This ensures that any part of ycm that uses ycmd code
+" will have the default set. I'm looking at you, Omni-completer.
+for key in keys( s:default_options )
+  if ! has_key( g:, 'ycm_' . key )
+    let g:[ 'ycm_' . key ] = s:default_options[ key ]
+  endif
+endfor
+unlet key
 
 if has( 'vim_starting' ) " Loading at startup.
   " We defer loading until after VimEnter to allow the gui to fork (see

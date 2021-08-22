@@ -1,0 +1,13 @@
+[Unit]
+Description=Umount Private directory
+Before=systemd-exit.service
+DefaultDependencies=no
+Requires=shutdown.target
+After=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ecryptfs-umount-private
+
+[Install]
+WantedBy=exit.target

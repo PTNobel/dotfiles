@@ -58,6 +58,9 @@ autocmd BufNewFile,BufRead *.java set ts=4
 autocmd BufNewFile,BufRead *.java set softtabstop=4
 autocmd BufNewFile,BufRead *.java set shiftwidth=4
 
+autocmd BufNewFile,BufRead *.c set ts=2
+autocmd BufNewFile,BufRead *.c set softtabstop=2
+autocmd BufNewFile,BufRead *.c set shiftwidth=2
 set incsearch
 set hlsearch
 
@@ -92,6 +95,10 @@ let g:indentLine_color_gui = '#09AA08'
 let g:indentLine_char = '│'
 let g:tex_comment_nospell= 1
 
+python3 from powerline.vim import setup as powerline_setup
+python3 powerline_setup()
+python3 del powerline_setup
+
 let g:powerline_pycmd = 'py3'
 set laststatus=2 " Always display the statusline in all windows
 set showtabline=2 " Always display the tabline, even if there is only one tab
@@ -123,7 +130,7 @@ let g:ycm_extra_conf_globlist = ['~/Code/UCSD-Extensions/CCppProgrammingOne/*']
 let g:languagetool_jar = '/usr/share/java/languagetool/languagetool-commandline.jar'
 
 set mouse=a
-source /usr/share/vim/vim81/macros/matchit.vim
+source /usr/share/vim/vim82/macros/matchit.vim
 
 " autocmd bufnewfile *.c so ~/.vim/c_header.txt
 " autocmd bufnewfile *.h so ~/.vim/h_header.txt
@@ -137,3 +144,34 @@ source /usr/share/vim/vim81/macros/matchit.vim
 " autocmd bufnewfile *.cpp exe "1," . 10 . "g/DATE.*/s//" .strftime("%B %e, %Y")
 " autocmd bufnewfile *_Quiz.txt exe "1," . 10 . "g/FILE_NAME.*/s//" .expand("%")
 " autocmd bufnewfile *_Quiz.txt exe "1," . 10 . "g/DATE.*/s//" .strftime("%B %e, %Y")
+"
+set tabstop=4 expandtab shiftwidth=4 smarttab
+set grepprg=ag\ --vimgrep\ $*
+set grepformat=%f:%l:%c:%m
+let g:syntastic_rust_checkers = ['cargo'] 
+
+let g:ycm_language_server =
+\ [
+\   {
+\     'name': 'rust',
+\     'cmdline': ['rust-analyzer'],
+\     'filetypes': ['rust'],
+\     'project_root_files': ['Cargo.toml']
+\   }
+\ ]
+
+let g:syntastic_python_checkers = ['pyflakes'] 
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-shift-tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-tab>"
+
+let delimitMate_expand_cr = 1
+
+syntax enable
+set background=dark
+colorscheme solarized
+
+set backupdir=~/.cache/vim/backup/
+

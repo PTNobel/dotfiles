@@ -18,12 +18,12 @@ int main( int argc, char *argv[] )
         return 1;
     }
 
-    else if( strcmp(argv[1],"abs") == 0 )
+    /* else if( strcmp(argv[1],"abs") == 0 )
     {
         setuid( 0 );
         system( "/usr/bin/abs" );
         return 0;
-    }
+    } */
 
     else if(strcmp(argv[1],"alpm") == 0 )
     {
