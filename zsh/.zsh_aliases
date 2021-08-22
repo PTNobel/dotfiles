@@ -13,11 +13,10 @@ alias dmesg='dmesg -HL'
 ## New commands ## {{{
 alias da='date "+%A, %B %d, %Y [%T]"'
 alias du1='du --max-depth=1'
-alias hist='history | grep'         # requires an argument
 alias openports='ss --all --numeric --processes --ipv4 --ipv6'
 alias pgg='ps -Af | grep'           # requires an argument
-alias open=rifle
-alias gopen=gvfs-open
+#alias open=rifle
+#alias gopen=gvfs-open
 # }}}
 
 # Privileged access
@@ -102,3 +101,12 @@ alias pianobar='pianoctl'
 alias calc_sci='ipython --profile=scipy_calc'
 alias calc_sym='ipython --profile=sympy_calc'
 alias idea='builtin cd "$(realpath .)" && idea'
+alias matlab='matlab -nodesktop -nosplash'
+
+setup_ABCD() {
+    export PYTHONPATH="/home/parthnobel/Documents/2018-Fall/Research/ABCD/ABCD/ABCD-NL/:/home/parthnobel/Documents/2018-Fall/Research/ABCD/ABCD/ABCD-NL/ABCD_NL" 
+    source ~/Documents/2018-Fall/Research/venv/bin/activate
+}
+alias remap_caps_to_escape="setxkbmap -option caps:escape"
+alias restart_networking="systemctl restart netctl-auto@wlp2s0.service"
+alias connect_to_airbears="sudo netctl-auto switch-to wlp2s0-AirBears2"

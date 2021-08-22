@@ -1,0 +1,39 @@
+
+# Inserts a blank line between shell prompts
+add_newline = false
+
+command_timeout = 1000 # Wait a second for git
+
+# Replace the "❯" symbol in the prompt with "➜"
+#[character]                            # The name of the module we are configuring is "character"
+#success_symbol = "[➜](bold green)"     # The "success_symbol" segment is being set to "➜" with the color "bold green"
+
+[hostname]
+ssh_only = false
+
+#[line_break]
+#disabled = true
+
+[memory_usage]
+disabled = false
+
+[time]
+disabled = false
+
+[battery]
+
+[[battery.display]]
+threshold = 80
+style = "white"
+
+[[battery.display]]
+threshold = 50
+style = "yellow"
+
+[[battery.display]]
+threshold = 25
+style = "red"
+
+[[battery.display]]
+threshold = 15
+style = "red bold"
